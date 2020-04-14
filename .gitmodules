@@ -1,0 +1,27 @@
+[submodule "thirdparty/assimp"]
+	path = thirdparty/assimp
+	url = https://github.com/assimp/assimp
+[submodule "thirdparty/glfw"]
+	path = thirdparty/glfw
+	url = https://github.com/glfw/glfw
+[submodule "thirdparty/glm"]
+	path = thirdparty/glm
+	url = https://github.com/g-truc/glm
+[submodule "thirdparty/imgui"]
+	path = thirdparty/imgui
+	url = https://github.com/ocornut/imgui
+[submodule "thirdparty/openal"]
+	path = thirdparty/openal
+	url = https://github.com/kcat/openal-soft
+[submodule "thirdparty/json"]
+	path = thirdparty/json
+	url = https://github.com/nlohmann/json
+[submodule "thirdparty/cpptoml"]
+	path = thirdparty/cpptoml
+	url = https://github.com/skystrife/cpptoml
+[submodule "thirdparty/lua"]
+	path = thirdparty/lua
+	url = https://github.com/lubgr/lua-cmake
+[submodule "thirdparty/steam_controller"]
+	path = thirdparty/steam_controller
+	url = https://github.com/ltjax/steam_controller
