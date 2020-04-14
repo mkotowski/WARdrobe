@@ -213,9 +213,9 @@ set_target_properties (ex-common PROPERTIES
     FOLDER thirdparty/openal
 )
 
-set_target_properties (native-tools PROPERTIES
-    FOLDER thirdparty/openal
-)
+#set_target_properties (native-tools PROPERTIES
+#    FOLDER thirdparty/openal
+#)
 
 set_target_properties (OpenAL PROPERTIES
     FOLDER thirdparty/openal
