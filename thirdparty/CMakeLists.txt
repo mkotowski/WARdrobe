@@ -274,6 +274,7 @@ set_target_properties (lua PROPERTIES
 msg(HEADER "[STB_IMAGE]")
 
 set(STB_IMAGE_DIR "${THIRDPARTY_DIR}/stb_image")
+
 add_library("stb_image" STATIC 
 	"${STB_IMAGE_DIR}/stb_image.cpp" 
 	"${STB_IMAGE_DIR}/stb_image.h")
@@ -282,6 +283,12 @@ target_include_directories("stb_image" PRIVATE "${STB_IMAGE_DIR}")
 
 set(STB_IMAGE_LIBRARY "stb_image")
 set(STB_IMAGE_INCLUDE_DIR "${STB_IMAGE_DIR}")
+
+set_property(GLOBAL PROPERTY 
+	STB_IMAGE_DIR "${STB_IMAGE_DIR}")
+set_property(GLOBAL PROPERTY 
+	STB_IMAGE_INCLUDE_DIR "${STB_IMAGE_DIR}")
+
 
 set_target_properties (stb_image PROPERTIES
 	FOLDER thirdparty/stb_image
