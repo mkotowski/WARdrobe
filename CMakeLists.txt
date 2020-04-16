@@ -147,8 +147,13 @@ endif()
 file(READ "${PROJECT_SOURCE_DIR}/settings/DefaultSettings.toml" 
 		WARDROBE_DEFAULT_SETTINGS_STRING)
 
-string(REGEX REPLACE "\n" "\\\\n\\\\\n" WARDROBE_DEFAULT_SETTINGS_STRING "${WARDROBE_DEFAULT_SETTINGS_STRING}")
-string(REGEX REPLACE "\"" "\\\\\"" WARDROBE_DEFAULT_SETTINGS_STRING "${WARDROBE_DEFAULT_SETTINGS_STRING}")
+string(REGEX REPLACE "\n" "\\\\n\\\\\n" 
+	WARDROBE_DEFAULT_SETTINGS_STRING 
+	"${WARDROBE_DEFAULT_SETTINGS_STRING}")
+
+string(REGEX REPLACE "\"" "\\\\\"" 
+	WARDROBE_DEFAULT_SETTINGS_STRING 
+	"${WARDROBE_DEFAULT_SETTINGS_STRING}")
 
 configure_file (
 	"${PROJECT_SOURCE_DIR}/config/Version.h.in"
@@ -264,10 +269,6 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 	# endif()
 endif()
 
-# SUPPRESS WARNINGS ###########################################################
-
-# cmake_policy(SET CMP0053 OLD)
-
 # SUBDIRECTORIES ##############################################################
 
 # thirdparty libraries
@@ -279,7 +280,6 @@ add_subdirectory(libs)
 # main executable
 add_subdirectory(game)
 
-# if Visual Studio used,
 if(MSVC)
 	# set the starting project in the generated solution to `game`
 	set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" 
@@ -313,16 +313,12 @@ endif(MSVC)
 # PREPARE COMPILED EXECUTABLE, DLLS, AND ASSETS ###############################
 
 include(InstallRequiredSystemLibraries)
+
 install(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} DESTINATION "bin" COMPONENT game)
 
 install(TARGETS game RUNTIME DESTINATION "bin" COMPONENT game)
 install(TARGETS openal-info RUNTIME DESTINATION "bin" COMPONENT game)
-
-# if(MVSC)
-	install(TARGETS OpenAL RUNTIME DESTINATION "bin" COMPONENT game)
-# else()
-# 	install(TARGETS OpenAL LIBRARY DESTINATION "bin" COMPONENT game)
-# endif()
+install(TARGETS OpenAL RUNTIME DESTINATION "bin" COMPONENT game)
 
 # Copy all assets to resources file
 install(
@@ -337,24 +333,7 @@ install(
 	COMPONENT game
 	RENAME "settings.toml")
 
-# install(TARGETS h-w DESTINATION bin)
-
-# install(FILES hw.cpp DESTINATION src)
-
-# set_property(INSTALL "bin/$<TARGET_FILE_NAME:game>"
-# 	PROPERTY CPACK_START_MENU_SHORTCUTS "WARdrobe"
-# )
-
-# set_property(INSTALL "src/hw.cpp"
-# 	PROPERTY CPACK_START_MENU_SHORTCUTS "Source Code" "Same Source Code"
-# )
-
 # PACKAGING ###################################################################
-
-# Package Generator
-# set(CPACK_OUTPUT_FILE_PREFIX "")
-#set(CPACK_GENERATOR "NSIS" 
-#	CACHE STRING "Generators to support. semi-colon delimited list")
 
 # CPACK ### METADATA ##########################################################
 
@@ -373,21 +352,12 @@ set(CPACK_PACKAGE_FILE_NAME
 
 set(CPACK_COMPONENTS_ALL game)
 
-
-# set(CPACK_PACKAGE_ICON 
-# 	"${CMAKE_SOURCE_DIR}/resources/images/icons/wardrobe.ico")
-
 # CPACK ### WIX-SPECIFIC SETTINGS #############################################
  
 # allow installers to replace existing installations that use the same GUID
 set(CPACK_WIX_UPGRADE_GUID "35367698-CDE9-4AC4-8BCA-9240DC7A71AF")
 
 set(CPACK_WIX_UNINSTALL "1")
-
-# set(CPACK_PACKAGE_EXECUTABLES
-#   "my-libapp" "CPack WiX Test"
-#   "my-other-app" "Second CPack WiX Test"
-# )
 
 # CPACK ### NSIS-SPECIFIC SETTINGS ############################################
 
@@ -453,8 +423,11 @@ set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README.md")
 set(CPACK_SOURCE_IGNORE_FILES 
 	"${CMAKE_SOURCE_DIR}/build/;${CMAKE_SOURCE_DIR}/.git/")
 
-set(CPACK_PACKAGE_EXECUTABLES "wardrobe;WARdrobe Self-Assembly")
-set(CPACK_CREATE_DESKTOP_LINKS "wardrobe;WARdrobe")
+set(CPACK_PACKAGE_EXECUTABLES 
+	"wardrobe" "WARdrobe Self-Assembly")
+
+set(CPACK_CREATE_DESKTOP_LINKS 
+	"wardrobe")
 
 # CPACK ### CHECKSUM GENERATION ###############################################
 
