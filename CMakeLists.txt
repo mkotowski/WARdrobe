@@ -144,6 +144,12 @@ endif()
 
 # CMAKE-GENERATED C HEADERS ###################################################
 
+file(READ "${PROJECT_SOURCE_DIR}/settings/DefaultSettings.toml" 
+		WARDROBE_DEFAULT_SETTINGS_STRING)
+
+string(REGEX REPLACE "\n" "\\\\n\\\\\n" WARDROBE_DEFAULT_SETTINGS_STRING "${WARDROBE_DEFAULT_SETTINGS_STRING}")
+string(REGEX REPLACE "\"" "\\\\\"" WARDROBE_DEFAULT_SETTINGS_STRING "${WARDROBE_DEFAULT_SETTINGS_STRING}")
+
 configure_file (
 	"${PROJECT_SOURCE_DIR}/config/Version.h.in"
 	"${PROJECT_BINARY_DIR}/config/Version.h"

@@ -9,9 +9,11 @@ extern "C"
 #include "lualib.h"
 }
 
+#include "AssetManager.hpp"
 #include "AudioManager.hpp"
 #include "Game.hpp"
-#include "AssetManager.hpp"
+
+#include "Constants.h"
 
 extern "C"
 {
@@ -63,9 +65,12 @@ luaTest()
 	std::string  aa = a.LoadTextFile(path);
 	std::cout << aa << std::endl;
 
+	std::cout << std::endl << WARDROBE_DEFAULT_SETTINGS_STRING << std::endl;
+
 	unsigned long size;
-	auto b = a.LoadBinaryFile("audio/footsteps.raw", size);
-	std::cout << "file size: " << size << " and first int value: " << static_cast<int>(b[0]) << std::endl;
+	auto          b = a.LoadBinaryFile("audio/footsteps.raw", size);
+	std::cout << "file size: " << size
+	          << " and first int value: " << static_cast<int>(b[0]) << std::endl;
 	free(b);
 
 	std::cout << "** Test Lua embedding" << std::endl;
@@ -80,7 +85,7 @@ luaTest()
 	std::cout << "** Load chunk. without executing it" << std::endl;
 	if (luaL_loadfile(L, "assets/scripts/luascript.lua")) {
 		std::cerr << "Something went wrong loading the chunk (syntax error?)"
-		     << std::endl;
+		          << std::endl;
 		std::cerr << lua_tostring(L, -1) << std::endl;
 		lua_pop(L, 1);
 	}
