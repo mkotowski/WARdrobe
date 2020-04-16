@@ -21,11 +21,11 @@ set_property(GLOBAL PROPERTY
 	STEAM_CONTROLLER_INCLUDE_DIR "${STEAM_CONTROLLER_DIR}/include")
 
 set_target_properties (steam_controller PROPERTIES
-    FOLDER thirdparty/steam_controller
+	FOLDER thirdparty/steam_controller
 )
 
 set_target_properties (demo PROPERTIES
-    FOLDER thirdparty/steam_controller
+	FOLDER thirdparty/steam_controller
 )
 
 # GLAD ########################################################################
@@ -74,44 +74,42 @@ set(ASSIMP_INSTALL OFF CACHE BOOL
 	"Disable this if you want to use assimp as a submodule." 
 	FORCE)
 
-# BUILD_DOCS
-
 add_subdirectory(assimp)
 
 set(ASSIMP_INCLUDE_DIR "${THIRDPARTY_DIR}/assimp")
 
 set_target_properties (assimp PROPERTIES
-    FOLDER thirdparty/assimp
+	FOLDER thirdparty/assimp
 )
 
 set_target_properties (assimp_cmd PROPERTIES
-    FOLDER thirdparty/assimp
+	FOLDER thirdparty/assimp
 )
 
 set_target_properties (IrrXML PROPERTIES
-    FOLDER thirdparty/assimp
+	FOLDER thirdparty/assimp
 )
 
 set_target_properties (uninstall PROPERTIES
-    FOLDER thirdparty/assimp
+	FOLDER thirdparty/assimp
 )
 
 if(ASSIMP_BUILD_TESTS)
 	set_target_properties (unit PROPERTIES
-    	FOLDER thirdparty/assimp
+		FOLDER thirdparty/assimp
 	)
 endif(ASSIMP_BUILD_TESTS)
 
 set_target_properties (zlib PROPERTIES
-    FOLDER thirdparty/assimp
+	FOLDER thirdparty/assimp
 )
 
 set_target_properties (zlibstatic PROPERTIES
-    FOLDER thirdparty/assimp
+	FOLDER thirdparty/assimp
 )
 
 set_target_properties (UpdateAssimpLibsDebugSymbolsAndDLLs PROPERTIES
-    FOLDER thirdparty/assimp
+	FOLDER thirdparty/assimp
 )
 
 # GLFW ########################################################################
@@ -202,27 +200,29 @@ set(ALSOFT_TESTS OFF CACHE BOOL
 add_subdirectory(openal)
 
 set_target_properties (build_version PROPERTIES
-    FOLDER thirdparty/openal
+	FOLDER thirdparty/openal
 )
 
 set_target_properties (common PROPERTIES
-    FOLDER thirdparty/openal
+	FOLDER thirdparty/openal
 )
 
 set_target_properties (ex-common PROPERTIES
-    FOLDER thirdparty/openal
+	FOLDER thirdparty/openal
 )
 
-#set_target_properties (native-tools PROPERTIES
-#    FOLDER thirdparty/openal
-#)
+if (TARGET native-tools)
+	set_target_properties (native-tools PROPERTIES
+		FOLDER thirdparty/openal
+	)
+endif()
 
 set_target_properties (OpenAL PROPERTIES
-    FOLDER thirdparty/openal
+	FOLDER thirdparty/openal
 )
 
 set_target_properties (openal-info PROPERTIES
-    FOLDER thirdparty/openal
+	FOLDER thirdparty/openal
 )
 
 set_target_properties(openal-info PROPERTIES OUTPUT_NAME "openal-info")
