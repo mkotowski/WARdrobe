@@ -1,3 +1,6 @@
+set(CMAKE_POLICY_DEFAULT_CMP0054 NEW)
+set(CMAKE_POLICY_DEFAULT_CMP0053 NEW)
+
 set(THIRDPARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 
 msg(STATUS "[CONFIGURE EXTERNAL PROJECTS - START]")
@@ -12,9 +15,10 @@ set(STEAM_CONTROLLER_DIR "${THIRDPARTY_DIR}/steam_controller")
 set(STEAM_CONTROLLER_LIBRARY "steam_controller")
 set(STEAM_CONTROLLER_INCLUDE_DIR "${STEAM_CONTROLLER_DIR}/include")
 
-set_property(GLOBAL PROPERTY STEAM_CONTROLLER_DIR "${THIRDPARTY_DIR}/steam_controller")
-set_property(GLOBAL PROPERTY STEAM_CONTROLLER_INCLUDE_DIR "${STEAM_CONTROLLER_DIR}/include")
-
+set_property(GLOBAL PROPERTY 
+	STEAM_CONTROLLER_DIR "${THIRDPARTY_DIR}/steam_controller")
+set_property(GLOBAL PROPERTY 
+	STEAM_CONTROLLER_INCLUDE_DIR "${STEAM_CONTROLLER_DIR}/include")
 
 set_target_properties (steam_controller PROPERTIES
     FOLDER thirdparty/steam_controller
@@ -195,10 +199,6 @@ set(ALSOFT_TESTS OFF CACHE BOOL
 	"Build and install test programs" 
 	FORCE)
 
-# set(LIBTYPE STATIC CACHE STRING 
-# 	"Openal library type" 
-# 	FORCE)
-
 add_subdirectory(openal)
 
 set_target_properties (build_version PROPERTIES
@@ -226,8 +226,6 @@ set_target_properties (openal-info PROPERTIES
 )
 
 set_target_properties(openal-info PROPERTIES OUTPUT_NAME "openal-info")
-
-# add_dependencies(OpenAL openal-info)
 
 # NLOHMANN JSON ###############################################################
 
