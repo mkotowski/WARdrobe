@@ -454,6 +454,10 @@ set(CPACK_SOURCE_IGNORE_FILES
 set(CPACK_PACKAGE_EXECUTABLES "wardrobe;WARdrobe Self-Assembly")
 set(CPACK_CREATE_DESKTOP_LINKS "wardrobe;WARdrobe")
 
+# CPACK ### CHECKSUM GENERATION ###############################################
+
+set(CPACK_PACKAGE_CHECKSUM "MD5")
+
 # CPACK ### INCLUDE CPACK AFTER SETTINGS ######################################
 
 include(CPack)
