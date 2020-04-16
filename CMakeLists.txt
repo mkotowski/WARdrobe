@@ -324,6 +324,13 @@ install(
 	DESTINATION "bin/assets"
 	COMPONENT game)
 
+# Copy settings.toml to the game install directory
+install(
+	FILES "${CMAKE_SOURCE_DIR}/settings/DefaultSettings.toml" 
+	DESTINATION "bin"
+	COMPONENT game
+	RENAME "settings.toml")
+
 # install(TARGETS h-w DESTINATION bin)
 
 # install(FILES hw.cpp DESTINATION src)

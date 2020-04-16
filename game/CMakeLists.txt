@@ -53,6 +53,13 @@ endif()
 
 file(COPY "${CMAKE_SOURCE_DIR}/assets" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
+#file(COPY "${CMAKE_SOURCE_DIR}/settings/DefaultSettings.toml" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+file(GENERATE 
+	OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/settings.toml"
+	INPUT "${CMAKE_SOURCE_DIR}/settings/DefaultSettings.toml" )
+
+
 #add_custom_command(TARGET game POST_BUILD
 #	COMMAND ${CMAKE_COMMAND} -E copy_if_different
 #		"${CMAKE_SOURCE_DIR}/Debug"
