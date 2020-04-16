@@ -26,7 +26,7 @@ RenderSystem::Update(float                             dt,
 		Draw();
 	}
 
-	std::cout << "Rendering updated\n";
+	//std::cout << "Rendering updated\n";
 }
 
 void

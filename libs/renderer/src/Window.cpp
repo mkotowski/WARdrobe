@@ -15,8 +15,12 @@ void
 key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if (key == GLFW_KEY_E && action == GLFW_PRESS) {
+		
 	}
 
+	if (glfwGetKeyName(key, scancode) != NULL) {
+		std::cout << "The key name: " << glfwGetKeyName(key, scancode) << std::endl;
+	}
 	std::cout << "The key " << scancode << " : " << scancode << " mods: " << mods
 	          << "\n";
 }
@@ -70,6 +74,12 @@ framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	// Re-render the scene because the current frame was drawn for the old
 	// resolution
 	// draw();
+}
+
+void
+scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	std::cout << "Scroll: " << xoffset << " " << yoffset << std::endl;
 }
 
 void
@@ -189,6 +199,7 @@ Window::Window(std::string windowTitle)
 		SetMonitorCallback(monitor_callback);
 		glfwSetKeyCallback(window, key_callback);
 		glfwSetJoystickCallback(joystick_callback);
+		glfwSetScrollCallback(window, scroll_callback);
 
 		/*const char* pctwinshock =
 		  "03000000790000000600000000000000,G-Shark "
