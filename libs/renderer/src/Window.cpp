@@ -271,7 +271,24 @@ int
 Window::CreateContext()
 {
 	// Create window with graphics context
-	window = glfwCreateWindow(1280, 720, windowTitle.c_str(), NULL, NULL);
+
+	Settings windowSettings = ConfigManager::GetSettings();
+
+	window = glfwCreateWindow(windowSettings.size[0], windowSettings.size[1], windowTitle.c_str(), NULL, NULL);
+
+	std::string cursorMode = windowSettings.cursorMode;
+	int cursorModeValue = GLFW_CURSOR_NORMAL;
+
+	if (cursorMode == "hidden") 
+	{
+		cursorModeValue = GLFW_CURSOR_HIDDEN;
+	} 
+	else if (cursorMode == "disabled") 
+	{
+		cursorModeValue = GLFW_CURSOR_DISABLED;
+	}
+
+	glfwSetInputMode(window, GLFW_CURSOR, cursorModeValue);
 
 	if (window == NULL) {
 		std::cout << "Failed to create GLFW window" << std::endl;

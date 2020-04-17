@@ -30,6 +30,7 @@ target_include_directories(assetmanager PUBLIC
 	"${CMAKE_BINARY_DIR}/config/"
 )
 
-# target_link_libraries(assetmanager PRIVATE glad glfw glm assimp)
+#target_link_libraries(assetmanager PRIVATE glad glfw glm assimp)
+target_link_libraries(assetmanager PRIVATE cpptoml)
 
 target_compile_features(assetmanager PUBLIC cxx_std_17)

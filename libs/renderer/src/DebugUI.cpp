@@ -28,6 +28,13 @@ DebugUI::DebugUI(GLFWwindow* window, const char* glsl_version)
 
 	// if (monitorCount > 0 && monitors[0] != NULL) {
 	//}
+
+	Settings settingsFromFile = ConfigManager::GetSettings();
+
+	borderlessWindow = settingsFromFile.borderless;
+	fullScreenWindow = settingsFromFile.fullscreen;
+	resizableWindow = settingsFromFile.resizable;
+	vsyncEnabled = settingsFromFile.vsync;
 }
 
 DebugUI::~DebugUI()
