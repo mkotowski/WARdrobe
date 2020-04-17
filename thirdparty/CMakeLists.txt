@@ -259,6 +259,9 @@ add_library(doc INTERFACE)
 
 add_subdirectory(cpptoml)
 
+set_property(GLOBAL PROPERTY 
+	CPPTOML_INCLUDE_DIR "${THIRDPARTY_DIR}/cpptoml/include")
+
 # LUA #########################################################################
 
 msg(HEADER "[LUA]")
