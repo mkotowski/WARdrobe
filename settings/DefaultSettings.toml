@@ -1,0 +1,20 @@
+# The default game settings
+
+[graphics]
+vsync = true
+
+  [graphics.window]
+  default_mode = "fullscreen" # "windowed"
+
+    [graphics.window.windowed_mode]
+    default_size = [ 800, 600 ] # width px, height px
+    resizable = true
+    borderless = false
+
+  [graphics.window]
+  default_mode = "fullscreen" # "windowed"
+
+[input]
+
+  [input.mouse]
+  cursor_mode = "normal" # "hidden", "disabled"
