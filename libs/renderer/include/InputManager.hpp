@@ -20,6 +20,7 @@ public:
 	void AddGamepadButton(int gamepadId, int gamepadButton);
 
 	void UpdateKey(int key, int action, int mods);
+	void UpdateButton(int button, int action, int mods);
 
 	void SetCursorTracking(int isTracked);
 	void SetScrollTracking(int isTracked);
@@ -50,9 +51,12 @@ private:
 
 	// mouse buttons added to tracking
 	std::set<std::pair<int, int>> trackedButtons{};
+	std::map<std::pair<int, int>, std::pair<int, int>> buttonValues{};
 
 	bool isMouseCursorTracked = false;
 	bool isMouseScrollTracked = false;
+
+	bool isMouseButtonHoldDown[5] = {false, false, false, false, false};
 
 	// GAMEPADS //
 

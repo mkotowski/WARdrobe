@@ -16,7 +16,9 @@ InputManager::AddKey(int key, int mods)
 void
 InputManager::AddButton(int mouse_button, int mods)
 {
-	trackedKeys.insert({ std::make_pair(mouse_button, mods) });
+	trackedButtons.insert({ std::make_pair(mouse_button, mods) });
+	buttonValues.insert(
+	  { std::make_pair(mouse_button, mods), std::make_pair(0, 0) });
 }
 
 bool
@@ -84,6 +86,62 @@ InputManager::UpdateKey(int key, int action, int mods)
 }
 
 void
+InputManager::UpdateButton(int button, int action, int mods)
+{
+	auto buttonData = std::make_pair(button, mods);
+
+	if (trackedButtons.find(buttonData) != trackedButtons.end()) {
+
+		// Move the old state to the first position
+		std::swap(buttonValues[buttonData].first, buttonValues[buttonData].second);
+
+		auto oldState = buttonValues[buttonData].first;
+		buttonValues[buttonData].second = action;
+
+		std::cout << "Button updated! " << buttonValues[buttonData].first
+		          << buttonValues[buttonData].second << " " << mods;
+
+		// Check the new state
+		if (action == GLFW_RELEASE) {
+			if (!isMouseButtonHoldDown[button]) {
+				// The key is idle for pair <0,0>
+				std::cout << "\t[IDLE]\n";
+			}
+
+			if (isMouseButtonHoldDown[button]) {
+				// The key is released for pairs <1,0> and <2,0>
+				std::cout << "\t[RELEASED]\n";
+			}
+		}
+		if (action == GLFW_PRESS) {
+			if (!isMouseButtonHoldDown[button]) {
+				// The key is pressed for pair <0,1>
+				std::cout << "\t[PRESSED]\n";
+			}
+
+			if (isMouseButtonHoldDown[button]) {
+				// The key is on repeat for pairs <1,1> (unlikely) and <2,2> and <1,2>
+				std::cout << "\t[REPEAT]\n";
+			}
+		}
+
+		if (action == GLFW_PRESS) {
+			isMouseButtonHoldDown[button] = true;
+		} else {
+			isMouseButtonHoldDown[button] = false;
+		}
+	}
+
+	/*std::cout << "Buttons: [ ";
+
+	for (auto& button : trackedButtons) {
+		std::cout << isMouseButtonHoldDown[std::get<0>(button)] << " ";
+	}
+
+	std::cout << "]" << std::endl;*/
+}
+
+void
 InputManager::RemoveKey(int key, int mods)
 {
 	auto keyData = std::make_pair(key, mods);
@@ -93,7 +151,11 @@ InputManager::RemoveKey(int key, int mods)
 
 void
 InputManager::RemoveButton(int mouse_button, int mods)
-{}
+{
+	auto buttonData = std::make_pair(mouse_button, mods);
+	trackedButtons.erase(buttonData);
+	buttonValues.erase(buttonData);
+}
 
 bool
 InputManager::RemoveGamepad(int gamepadId)
@@ -127,8 +189,12 @@ InputManager::Update(GLFWwindow* window)
 	}
 
 	for (auto& button : trackedButtons) {
-		int state = glfwGetMouseButton(window, std::get<0>(button));
-		// ...
+		isMouseButtonHoldDown[std::get<0>(button)] =
+		  static_cast<bool>(glfwGetMouseButton(window, std::get<0>(button)));
+
+		buttonValues[button].first = buttonValues[button].second;
+		buttonValues[button].second =
+		  glfwGetMouseButton(window, std::get<0>(button));
 	}
 
 	// all gamepads data will be conflated to single input

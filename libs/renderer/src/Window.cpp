@@ -21,8 +21,7 @@ Window::DefaultDropCallback(GLFWwindow* window, int count, const char** paths)
 InputData
 Window::ProcessInput()
 {
-	InputData inputData;
-	// input->Update(this->window);
+	InputData inputData = input->Update(this->window);
 
 	/*if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 	  glfwSetWindowShouldClose(window, true);
@@ -100,6 +99,11 @@ Window::DefaultJoystickCallback(int jid, int event)
 void
 Window::DefaultMouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
+	Window* handler = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+
+	handler->input->UpdateButton(button, action, mods);
+	
+
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
 	}
 
@@ -204,10 +208,13 @@ Window::Window(std::string windowTitle)
 
 	input->AddKey(GLFW_KEY_0, 0);
 	input->AddKey(GLFW_KEY_0, GLFW_MOD_ALT);
-
 	input->AddKey(GLFW_KEY_ESCAPE, 0);
-	input->AddKey(GLFW_KEY_9, GLFW_MOD_ALT);
-	input->AddKey(GLFW_KEY_8, 0);
+
+	input->AddButton(GLFW_MOUSE_BUTTON_LEFT, 0);
+	input->AddButton(GLFW_MOUSE_BUTTON_RIGHT, 0);
+	input->AddButton(GLFW_MOUSE_BUTTON_MIDDLE, 0);
+	input->AddButton(GLFW_MOUSE_BUTTON_4, 0);
+	input->AddButton(GLFW_MOUSE_BUTTON_5, 0);
 
 	int err = Setup();
 
