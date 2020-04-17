@@ -8,10 +8,14 @@
 // common ones: gl3w, glew, glad. You may use another loader/header of your
 // choice (glext, glLoadGen, etc.), or chose to manually implement your own.
 
-#include <glad/glad.h> // Initialize with gladLoadGL()
-#include <GLFW/glfw3.h> // Include glfw3.h after our OpenGL definitions
+// Initialize with gladLoadGL()
+#include <glad/glad.h>
+// Include glfw3.h **after** our OpenGL definitions
+#include <GLFW/glfw3.h>
 
 #include "Constants.h"
+
+#include "InputManager.hpp"
 
 #if INCLUDE_DEBUG_UI
 #include "DebugUI.hpp"
@@ -55,17 +59,30 @@ public:
 	template<typename Function>
 	void SetErrorCallback(Function glfw_error_callback);
 
+	template<typename Function>
+	void SetKeyCallback(Function key_callback);
+
+	// https://stackoverflow.com/questions/7676971/
+	// pointing-to-a-function-that-is-a-class-member-glfw-setkeycallback
+	static void DefaultKeyCallback(GLFWwindow* window,
+	                               int         key,
+	                               int         scancode,
+	                               int         action,
+	                               int         mods);
+
 #if INCLUDE_DEBUG_UI
-	DebugUI*    GetDebugUI() { return debugUi; }
+	DebugUI* GetDebugUI() { return debugUi; }
 #endif // INCLUDE_DEBUG_UI
 
 	void ProcessInput();
+
+	std::shared_ptr<InputManager> GetInputManager() { return input; }
 
 private:
 	GLFWwindow* window;
 
 #if INCLUDE_DEBUG_UI
-	DebugUI*    debugUi;
+	DebugUI* debugUi;
 #endif // INCLUDE_DEBUG_UI
 
 	std::string windowTitle;
@@ -80,4 +97,6 @@ private:
 	int Setup();
 	int CreateContext();
 	int InitializeOpenGLLoader();
+
+	std::shared_ptr<InputManager> input = nullptr;
 };

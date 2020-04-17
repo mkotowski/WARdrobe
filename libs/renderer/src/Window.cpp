@@ -1,9 +1,7 @@
 #include <iostream>
 #include <stdio.h>
-#include <clocale>
 
 #include "Window.hpp"
-
 
 static void
 glfw_error_callback(int error, const char* description)
@@ -14,8 +12,9 @@ glfw_error_callback(int error, const char* description)
 void
 key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+	// window->GetInputManager()->UpdateKey(key, scancode, action, mods);
+
 	if (key == GLFW_KEY_E && action == GLFW_PRESS) {
-		
 	}
 
 	if (glfwGetKeyName(key, scancode) != NULL) {
@@ -28,7 +27,6 @@ key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 void
 drop_callback(GLFWwindow* window, int count, const char** paths)
 {
-	std::setlocale(LC_ALL, "pl_PL.UTF-8");
 	for (int i = 0; i < count; i++)
 		// handle_dropped_file(paths[i]);
 		std::cout << "File dropped: " << paths[i];
@@ -37,25 +35,28 @@ drop_callback(GLFWwindow* window, int count, const char** paths)
 void
 Window::ProcessInput()
 {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-		glfwSetWindowShouldClose(window, true);
+	input->Update(this->window);
+
+	/*if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+	  glfwSetWindowShouldClose(window, true);
 	}
 
 	GLFWgamepadstate state;
 
 	if (glfwGetGamepadState(GLFW_JOYSTICK_1, &state)) {
-		if (state.buttons[GLFW_GAMEPAD_BUTTON_A] == GLFW_PRESS) {
-			std::cout << "Gamepad A\n";
-		}
+	  if (state.buttons[GLFW_GAMEPAD_BUTTON_A] == GLFW_PRESS) {
+	    std::cout << "Gamepad A\n";
+	  }
 
-		if (abs(state.axes[GLFW_GAMEPAD_AXIS_RIGHT_X]) >= 0.01f) {
-			std::cout << "Axis Right X: " << state.axes[GLFW_GAMEPAD_AXIS_RIGHT_X] << "\n";
-		}
+	  if (abs(state.axes[GLFW_GAMEPAD_AXIS_RIGHT_X]) >= 0.01f) {
+	    std::cout << "Axis Right X: " << state.axes[GLFW_GAMEPAD_AXIS_RIGHT_X] <<
+	"\n";
+	  }
 
-		if (state.buttons[GLFW_GAMEPAD_BUTTON_B] == GLFW_PRESS) {
-			std::cout << "Gamepad B\n";
-		}
-	}
+	  if (state.buttons[GLFW_GAMEPAD_BUTTON_B] == GLFW_PRESS) {
+	    std::cout << "Gamepad B\n";
+	  }
+	}*/
 }
 
 void
@@ -169,14 +170,52 @@ Window::SetMonitorCallback(Function monitor_callback)
 
 template<typename Function>
 void
+Window::SetKeyCallback(Function key_callback)
+{
+	glfwSetKeyCallback(window, key_callback);
+}
+
+template<typename Function>
+void
 Window::SetErrorCallback(Function glfw_error_callback)
 {
 	glfwSetErrorCallback(glfw_error_callback);
 }
 
+void
+Window::DefaultKeyCallback(GLFWwindow* window,
+                           int         key,
+                           int         scancode,
+                           int         action,
+                           int         mods)
+{
+	Window* handler = 
+		reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+
+	handler->input->UpdateKey(key, action, mods);
+
+	/*if (key == GLFW_KEY_E && action == GLFW_PRESS) {
+	}
+
+	if (glfwGetKeyName(key, scancode) != NULL) {
+		std::cout << "The key name: " << glfwGetKeyName(key, scancode) << std::endl;
+	}
+	std::cout << "The key " << scancode << " : " << scancode << " mods: " << mods
+	          << "\n";*/
+}
+
 Window::Window(std::string windowTitle)
   : windowTitle(windowTitle)
 {
+	input = std::make_shared<InputManager>();
+
+	input->AddKey(GLFW_KEY_0, 0);
+	input->AddKey(GLFW_KEY_0, GLFW_MOD_ALT);
+
+	input->AddKey(GLFW_KEY_ESCAPE, 0);
+	input->AddKey(GLFW_KEY_9, GLFW_MOD_ALT);
+	input->AddKey(GLFW_KEY_8, 0);
+
 	int err = Setup();
 
 	if (err == 1) {
@@ -192,12 +231,16 @@ Window::Window(std::string windowTitle)
 			std::cout << "Error while initializing OpenGL loader!\n";
 		}
 
+		// https://discourse.glfw.org/t/what-is-a-possible-use-of-glfwgetwindowuserpointer/1294
+		glfwSetWindowUserPointer(window, reinterpret_cast<void*>(this));
+
 		// Set GLFW window callbacks
 		SetWindowCloseCallback(window_close_callback);
 		SetDropCallback(drop_callback);
 		SetMouseButtonCallback(mouse_button_callback);
 		SetMonitorCallback(monitor_callback);
-		glfwSetKeyCallback(window, key_callback);
+		SetKeyCallback(DefaultKeyCallback);
+		// glfwSetKeyCallback(window, key_callback);
 		glfwSetJoystickCallback(joystick_callback);
 		glfwSetScrollCallback(window, scroll_callback);
 
@@ -215,7 +258,7 @@ Window::Window(std::string windowTitle)
 		  "rightshoulder:b5,rightstick:b11,righttrigger:b7,rightx:a2,righty:a3,"
 		  "start:b9,x:b3,y:b0,platform:Windows,";
 
-		if(glfwUpdateGamepadMappings(pctwinshock)) {
+		if (glfwUpdateGamepadMappings(pctwinshock)) {
 			std::cout << "Game mapping updated!\n";
 		}
 
