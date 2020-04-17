@@ -147,8 +147,13 @@ endif()
 file(READ "${PROJECT_SOURCE_DIR}/settings/DefaultSettings.toml" 
 		WARDROBE_DEFAULT_SETTINGS_STRING)
 
-string(REGEX REPLACE "\n" "\\\\n\\\\\n" WARDROBE_DEFAULT_SETTINGS_STRING "${WARDROBE_DEFAULT_SETTINGS_STRING}")
-string(REGEX REPLACE "\"" "\\\\\"" WARDROBE_DEFAULT_SETTINGS_STRING "${WARDROBE_DEFAULT_SETTINGS_STRING}")
+string(REGEX REPLACE "\n" "\\\\n\\\\\n" 
+	WARDROBE_DEFAULT_SETTINGS_STRING 
+	"${WARDROBE_DEFAULT_SETTINGS_STRING}")
+
+string(REGEX REPLACE "\"" "\\\\\"" 
+	WARDROBE_DEFAULT_SETTINGS_STRING 
+	"${WARDROBE_DEFAULT_SETTINGS_STRING}")
 
 configure_file (
 	"${PROJECT_SOURCE_DIR}/config/Version.h.in"
@@ -264,10 +269,6 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 	# endif()
 endif()
 
-# SUPPRESS WARNINGS ###########################################################
-
-# cmake_policy(SET CMP0053 OLD)
-
 # SUBDIRECTORIES ##############################################################
 
 # thirdparty libraries
@@ -279,7 +280,6 @@ add_subdirectory(libs)
 # main executable
 add_subdirectory(game)
 
-# if Visual Studio used,
 if(MSVC)
 	# set the starting project in the generated solution to `game`
 	set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" 
@@ -313,16 +313,12 @@ endif(MSVC)
 # PREPARE COMPILED EXECUTABLE, DLLS, AND ASSETS ###############################
 
 include(InstallRequiredSystemLibraries)
+
 install(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} DESTINATION "bin" COMPONENT game)
 
 install(TARGETS game RUNTIME DESTINATION "bin" COMPONENT game)
 install(TARGETS openal-info RUNTIME DESTINATION "bin" COMPONENT game)
-
-# if(MVSC)
-	install(TARGETS OpenAL RUNTIME DESTINATION "bin" COMPONENT game)
-# else()
-# 	install(TARGETS OpenAL LIBRARY DESTINATION "bin" COMPONENT game)
-# endif()
+install(TARGETS OpenAL RUNTIME DESTINATION "bin" COMPONENT game)
 
 # Copy all assets to resources file
 install(
@@ -337,24 +333,7 @@ install(
 	COMPONENT game
 	RENAME "settings.toml")
 
-# install(TARGETS h-w DESTINATION bin)
-
-# install(FILES hw.cpp DESTINATION src)
-
-# set_property(INSTALL "bin/$<TARGET_FILE_NAME:game>"
-# 	PROPERTY CPACK_START_MENU_SHORTCUTS "WARdrobe"
-# )
-
-# set_property(INSTALL "src/hw.cpp"
-# 	PROPERTY CPACK_START_MENU_SHORTCUTS "Source Code" "Same Source Code"
-# )
-
 # PACKAGING ###################################################################
-
-# Package Generator
-# set(CPACK_OUTPUT_FILE_PREFIX "")
-set(CPACK_GENERATOR "ZIP" 
-	CACHE STRING "Generators to support. semi-colon delimited list")
 
 # CPACK ### METADATA ##########################################################
 
@@ -368,14 +347,21 @@ set(CPACK_PACKAGE_DESCRIPTION_SUMMARY
 set(CPACK_PACKAGE_VENDOR "ACME")
 set(CPACK_PACKAGE_CONTACT "support@acme.corp")
 
-set(CPACK_PACKAGE_FILE_NAME 
-	"${CMAKE_PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
+if(CMAKE_BUILD_TYPE MATCHES "^[Dd]ebug" AND NOT IS_MULTI_CONFIG)
+	set(DEBUG_STRING "-debug")
+elseif(NOT DEFINED DEBUG_STRING)
+	set(DEBUG_STRING "")
+endif()
+
+if(NOT DEFINED CPACK_PACKAGE_FILE_NAME)
+	set(INSTALLER_VERSION_STRING
+		"${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}${DEBUG_STRING}")
+
+	set(CPACK_PACKAGE_FILE_NAME 
+		"${CMAKE_PROJECT_NAME}-${INSTALLER_VERSION_STRING}")
+endif()
 
 set(CPACK_COMPONENTS_ALL game)
-
-
-# set(CPACK_PACKAGE_ICON 
-# 	"${CMAKE_SOURCE_DIR}/resources/images/icons/wardrobe.ico")
 
 # CPACK ### WIX-SPECIFIC SETTINGS #############################################
  
@@ -383,11 +369,6 @@ set(CPACK_COMPONENTS_ALL game)
 set(CPACK_WIX_UPGRADE_GUID "35367698-CDE9-4AC4-8BCA-9240DC7A71AF")
 
 set(CPACK_WIX_UNINSTALL "1")
-
-# set(CPACK_PACKAGE_EXECUTABLES
-#   "my-libapp" "CPack WiX Test"
-#   "my-other-app" "Second CPack WiX Test"
-# )
 
 # CPACK ### NSIS-SPECIFIC SETTINGS ############################################
 
@@ -411,20 +392,22 @@ set(CPACK_NSIS_PACKAGE_NAME "WARdrobe")
 
 # CPACK ### SELECT THE INSTALLER BUILDER ######################################
 
-if (WIN32)
-	if(USE_WIX_TOOLSET)
-		# this need WiX Tooset installed and a path to candle.exe
-		set(CPACK_GENERATOR "WIX")
+if(NOT CPACK_GENERATOR)
+	if (WIN32)
+		if(USE_WIX_TOOLSET)
+			# this need WiX Tooset installed and a path to candle.exe
+			set(CPACK_GENERATOR "WIX")
+		else()
+			# this needs NSIS installed, and available
+			set(CPACK_GENERATOR "NSIS")
+		endif ()
+		set(CPACK_SOURCE_GENERATOR "ZIP")
+	elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+		set(CPACK_GENERATOR "PackageMake")
 	else()
-		# this needs NSIS installed, and available
-		set(CPACK_GENERATOR "NSIS")
-	endif ()
-	set(CPACK_SOURCE_GENERATOR "ZIP")
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-	set(CPACK_GENERATOR "PackageMake")
-else()
-	set(CPACK_GENERATOR "DEB")
-	set(CPACK_SOURCE_GENERATOR "TGZ")
+		set(CPACK_GENERATOR "DEB")
+		set(CPACK_SOURCE_GENERATOR "TGZ")
+	endif()
 endif()
 
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Michał K. Kotowski") #required!
@@ -451,8 +434,11 @@ set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README.md")
 set(CPACK_SOURCE_IGNORE_FILES 
 	"${CMAKE_SOURCE_DIR}/build/;${CMAKE_SOURCE_DIR}/.git/")
 
-set(CPACK_PACKAGE_EXECUTABLES "wardrobe;WARdrobe Self-Assembly")
-set(CPACK_CREATE_DESKTOP_LINKS "wardrobe;WARdrobe")
+set(CPACK_PACKAGE_EXECUTABLES 
+	"wardrobe" "WARdrobe Self-Assembly")
+
+set(CPACK_CREATE_DESKTOP_LINKS 
+	"wardrobe")
 
 # CPACK ### CHECKSUM GENERATION ###############################################
 
@@ -464,37 +450,107 @@ include(CPack)
 
 # TARGETS FOR GENERATING MULTIPLE INSTALLERS AT ONCE ##########################
 
-# ADD_CUSTOM_TARGET(
-# release_package
-# 	COMMAND cmake -E remove_directory ${CMAKE_INSTALL_PREFIX}
-# 	# COMMAND cmake -DCOMPONENT="game" -P cmake_install.cmake
-# 	# COMMAND cmake -P cmake_install.cmake
-# 	COMMAND ${CMAKE_COMMAND} -DDEBUG_MODE=OFF --build ${CMAKE_BINARY_DIR} --target game --config Release
-# 	# COMMAND cmake -DCOMPONENT="Libs" -P cmake_install.cmake
-# 	COMMAND cpack --config
-# 	${CMAKE_BINARY_DIR}/CPackConfig.cmake
-# )
+if(WIN32 AND MSVC)
 
-# ADD_CUSTOM_TARGET(
-# debug_package
-# 	COMMAND cmake -E remove_directory ${CMAKE_INSTALL_PREFIX}
-# 	# COMMAND cmake -DCOMPONENT="game" -P cmake_install.cmake
-# 	#COMMAND cmake -P cmake_install.cmake
-# 	COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target game --config Debug
-# 	# COMMAND cmake -DCOMPONENT="Libs" -P cmake_install.cmake
-# 	COMMAND cpack --config
-# 	${CMAKE_BINARY_DIR}/CPackConfig.cmake
-# )
+	ADD_CUSTOM_TARGET(
+	windows_debug_packages
+		COMMAND ${CMAKE_COMMAND} 
+			${CMAKE_SOURCE_DIR} 
+			-G "Visual Studio 16 2019" 
+			-DINCLUDE_DEBUG_UI=ON
+			-DDEBUG_STRING="-debug"
+		COMMAND ${CMAKE_COMMAND} 
+			-E remove_directory ${CMAKE_INSTALL_PREFIX}
+		COMMAND ${CMAKE_COMMAND} 
+			--build ${CMAKE_BINARY_DIR} 
+			--target ALL_BUILD 
+			--config Debug
+		COMMAND ${CMAKE_COMMAND} 
+			-P cmake_install.cmake
+		COMMAND cpack 
+			--config ${CMAKE_BINARY_DIR}/CPackConfig.cmake 
+			-C Debug 
+			-G ZIP
+		COMMAND cpack 
+			--config ${CMAKE_BINARY_DIR}/CPackConfig.cmake 
+			-C Debug 
+			-G WIX
+		COMMAND cpack 
+			--config ${CMAKE_BINARY_DIR}/CPackConfig.cmake 
+			-C Debug 
+			-G NSIS
+	)
 
-# set_target_properties (debug_package PROPERTIES
-# 	FOLDER packaging
-# )
+	ADD_CUSTOM_TARGET(
+	windows_release_with_debug_tools_packages
+		COMMAND ${CMAKE_COMMAND} 
+			${CMAKE_SOURCE_DIR} 
+			-G "Visual Studio 16 2019" 
+			-DINCLUDE_DEBUG_UI=ON 
+			-DHIDE_CRT_WIN32_MSVC=OFF
+			-DDEBUG_STRING="-rc" # release candidate
+		COMMAND ${CMAKE_COMMAND} 
+			-E remove_directory ${CMAKE_INSTALL_PREFIX}
+		COMMAND ${CMAKE_COMMAND} 
+			--build ${CMAKE_BINARY_DIR} 
+			--target ALL_BUILD 
+			--config Release
+		COMMAND ${CMAKE_COMMAND} 
+			-P cmake_install.cmake
+		COMMAND cpack 
+			--config ${CMAKE_BINARY_DIR}/CPackConfig.cmake 
+			-C Release 
+			-G ZIP
+		COMMAND cpack 
+			--config ${CMAKE_BINARY_DIR}/CPackConfig.cmake 
+			-C Release 
+			-G WIX
+		COMMAND cpack 
+			--config ${CMAKE_BINARY_DIR}/CPackConfig.cmake 
+			-C Release 
+			-G NSIS
+	)
 
-# set_target_properties (release_package PROPERTIES
-# 	FOLDER packaging
-# )
+	ADD_CUSTOM_TARGET(
+	windows_release_packages
+		COMMAND ${CMAKE_COMMAND} 
+			${CMAKE_SOURCE_DIR} 
+			-G "Visual Studio 16 2019" 
+			-DINCLUDE_DEBUG_UI=OFF 
+			-DHIDE_CRT_WIN32_MSVC=ON
+			-DDEBUG_STRING=""
+		COMMAND ${CMAKE_COMMAND} 
+			-E remove_directory ${CMAKE_INSTALL_PREFIX}
+		COMMAND ${CMAKE_COMMAND} 
+			--build ${CMAKE_BINARY_DIR} 
+			--target ALL_BUILD 
+			--config Release
+		COMMAND ${CMAKE_COMMAND} 
+			-P cmake_install.cmake
+		COMMAND cpack 
+			--config ${CMAKE_BINARY_DIR}/CPackConfig.cmake 
+			-C Release 
+			-G ZIP
+		COMMAND cpack 
+			--config ${CMAKE_BINARY_DIR}/CPackConfig.cmake 
+			-C Release 
+			-G WIX
+		COMMAND cpack 
+			--config ${CMAKE_BINARY_DIR}/CPackConfig.cmake 
+			-C Release 
+			-G NSIS
+	)
 
-# add_custom_target(build_all_configs
-# 	COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target ALL_BUILD --config Debug
-# 	COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target ALL_BUILD --config Release
-# )
+	set_target_properties (windows_debug_packages PROPERTIES
+		FOLDER packages
+	)
+
+	set_target_properties (windows_release_with_debug_tools_packages PROPERTIES
+		FOLDER packages
+	)
+
+	set_target_properties (windows_release_packages PROPERTIES
+		FOLDER packages
+	)
+
+endif(WIN32 AND MSVC)

@@ -1,3 +1,6 @@
+set(CMAKE_POLICY_DEFAULT_CMP0054 NEW)
+set(CMAKE_POLICY_DEFAULT_CMP0053 NEW)
+
 set(THIRDPARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 
 msg(STATUS "[CONFIGURE EXTERNAL PROJECTS - START]")
@@ -12,16 +15,17 @@ set(STEAM_CONTROLLER_DIR "${THIRDPARTY_DIR}/steam_controller")
 set(STEAM_CONTROLLER_LIBRARY "steam_controller")
 set(STEAM_CONTROLLER_INCLUDE_DIR "${STEAM_CONTROLLER_DIR}/include")
 
-set_property(GLOBAL PROPERTY STEAM_CONTROLLER_DIR "${THIRDPARTY_DIR}/steam_controller")
-set_property(GLOBAL PROPERTY STEAM_CONTROLLER_INCLUDE_DIR "${STEAM_CONTROLLER_DIR}/include")
-
+set_property(GLOBAL PROPERTY 
+	STEAM_CONTROLLER_DIR "${THIRDPARTY_DIR}/steam_controller")
+set_property(GLOBAL PROPERTY 
+	STEAM_CONTROLLER_INCLUDE_DIR "${STEAM_CONTROLLER_DIR}/include")
 
 set_target_properties (steam_controller PROPERTIES
-    FOLDER thirdparty/steam_controller
+	FOLDER thirdparty/steam_controller
 )
 
 set_target_properties (demo PROPERTIES
-    FOLDER thirdparty/steam_controller
+	FOLDER thirdparty/steam_controller
 )
 
 # GLAD ########################################################################
@@ -70,44 +74,42 @@ set(ASSIMP_INSTALL OFF CACHE BOOL
 	"Disable this if you want to use assimp as a submodule." 
 	FORCE)
 
-# BUILD_DOCS
-
 add_subdirectory(assimp)
 
 set(ASSIMP_INCLUDE_DIR "${THIRDPARTY_DIR}/assimp")
 
 set_target_properties (assimp PROPERTIES
-    FOLDER thirdparty/assimp
+	FOLDER thirdparty/assimp
 )
 
 set_target_properties (assimp_cmd PROPERTIES
-    FOLDER thirdparty/assimp
+	FOLDER thirdparty/assimp
 )
 
 set_target_properties (IrrXML PROPERTIES
-    FOLDER thirdparty/assimp
+	FOLDER thirdparty/assimp
 )
 
 set_target_properties (uninstall PROPERTIES
-    FOLDER thirdparty/assimp
+	FOLDER thirdparty/assimp
 )
 
 if(ASSIMP_BUILD_TESTS)
 	set_target_properties (unit PROPERTIES
-    	FOLDER thirdparty/assimp
+		FOLDER thirdparty/assimp
 	)
 endif(ASSIMP_BUILD_TESTS)
 
 set_target_properties (zlib PROPERTIES
-    FOLDER thirdparty/assimp
+	FOLDER thirdparty/assimp
 )
 
 set_target_properties (zlibstatic PROPERTIES
-    FOLDER thirdparty/assimp
+	FOLDER thirdparty/assimp
 )
 
 set_target_properties (UpdateAssimpLibsDebugSymbolsAndDLLs PROPERTIES
-    FOLDER thirdparty/assimp
+	FOLDER thirdparty/assimp
 )
 
 # GLFW ########################################################################
@@ -195,39 +197,35 @@ set(ALSOFT_TESTS OFF CACHE BOOL
 	"Build and install test programs" 
 	FORCE)
 
-# set(LIBTYPE STATIC CACHE STRING 
-# 	"Openal library type" 
-# 	FORCE)
-
 add_subdirectory(openal)
 
 set_target_properties (build_version PROPERTIES
-    FOLDER thirdparty/openal
+	FOLDER thirdparty/openal
 )
 
 set_target_properties (common PROPERTIES
-    FOLDER thirdparty/openal
+	FOLDER thirdparty/openal
 )
 
 set_target_properties (ex-common PROPERTIES
-    FOLDER thirdparty/openal
+	FOLDER thirdparty/openal
 )
 
-#set_target_properties (native-tools PROPERTIES
-#    FOLDER thirdparty/openal
-#)
+if (TARGET native-tools)
+	set_target_properties (native-tools PROPERTIES
+		FOLDER thirdparty/openal
+	)
+endif()
 
 set_target_properties (OpenAL PROPERTIES
-    FOLDER thirdparty/openal
+	FOLDER thirdparty/openal
 )
 
 set_target_properties (openal-info PROPERTIES
-    FOLDER thirdparty/openal
+	FOLDER thirdparty/openal
 )
 
 set_target_properties(openal-info PROPERTIES OUTPUT_NAME "openal-info")
-
-# add_dependencies(OpenAL openal-info)
 
 # NLOHMANN JSON ###############################################################
 
@@ -261,6 +259,9 @@ add_library(doc INTERFACE)
 
 add_subdirectory(cpptoml)
 
+set_property(GLOBAL PROPERTY 
+	CPPTOML_INCLUDE_DIR "${THIRDPARTY_DIR}/cpptoml/include")
+
 # LUA #########################################################################
 
 msg(HEADER "[LUA]")
@@ -269,6 +270,31 @@ add_subdirectory(lua)
 
 set_target_properties (lua PROPERTIES
 	FOLDER thirdparty/lua
+)
+
+# stb_image ###################################################################
+
+msg(HEADER "[STB_IMAGE]")
+
+set(STB_IMAGE_DIR "${THIRDPARTY_DIR}/stb_image")
+
+add_library("stb_image" STATIC 
+	"${STB_IMAGE_DIR}/stb_image.cpp" 
+	"${STB_IMAGE_DIR}/stb_image.h")
+
+target_include_directories("stb_image" PRIVATE "${STB_IMAGE_DIR}")
+
+set(STB_IMAGE_LIBRARY "stb_image")
+set(STB_IMAGE_INCLUDE_DIR "${STB_IMAGE_DIR}")
+
+set_property(GLOBAL PROPERTY 
+	STB_IMAGE_DIR "${STB_IMAGE_DIR}")
+set_property(GLOBAL PROPERTY 
+	STB_IMAGE_INCLUDE_DIR "${STB_IMAGE_DIR}")
+
+
+set_target_properties (stb_image PROPERTIES
+	FOLDER thirdparty/stb_image
 )
 
 msg(STATUS "[CONFIGURE EXTERNAL PROJECTS - END]")
