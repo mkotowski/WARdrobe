@@ -10,32 +10,19 @@ glfw_error_callback(int error, const char* description)
 }
 
 void
-key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+Window::DefaultDropCallback(GLFWwindow* window, int count, const char** paths)
 {
-	// window->GetInputManager()->UpdateKey(key, scancode, action, mods);
-
-	if (key == GLFW_KEY_E && action == GLFW_PRESS) {
-	}
-
-	if (glfwGetKeyName(key, scancode) != NULL) {
-		std::cout << "The key name: " << glfwGetKeyName(key, scancode) << std::endl;
-	}
-	std::cout << "The key " << scancode << " : " << scancode << " mods: " << mods
-	          << "\n";
-}
-
-void
-drop_callback(GLFWwindow* window, int count, const char** paths)
-{
-	for (int i = 0; i < count; i++)
-		// handle_dropped_file(paths[i]);
+	for (int i = 0; i < count; i++) {
+		// handle dropped file
 		std::cout << "File dropped: " << paths[i];
+	}
 }
 
-void
+InputData
 Window::ProcessInput()
 {
-	input->Update(this->window);
+	InputData inputData;
+	// input->Update(this->window);
 
 	/*if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 	  glfwSetWindowShouldClose(window, true);
@@ -57,17 +44,19 @@ Window::ProcessInput()
 	    std::cout << "Gamepad B\n";
 	  }
 	}*/
+
+	return inputData;
 }
 
 void
-window_close_callback(GLFWwindow* window)
+Window::DefaultWindowCloseCallback(GLFWwindow* window)
 {
 	// if (!time_to_close)
 	glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
 void
-framebuffer_size_callback(GLFWwindow* window, int width, int height)
+Window::DefaultFramebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
 	// make sure the viewport matches the new window dimensions; note that width
 	// and height will be significantly larger than specified on retina displays.
@@ -78,13 +67,13 @@ framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 
 void
-scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+Window::DefaultScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	std::cout << "Scroll: " << xoffset << " " << yoffset << std::endl;
 }
 
 void
-monitor_callback(GLFWmonitor* monitor, int event)
+Window::DefaultMonitorCallback(GLFWmonitor* monitor, int event)
 {
 	if (event == GLFW_CONNECTED) {
 		// The monitor was connected
@@ -94,7 +83,7 @@ monitor_callback(GLFWmonitor* monitor, int event)
 }
 
 void
-joystick_callback(int jid, int event)
+Window::DefaultJoystickCallback(int jid, int event)
 {
 	if (event == GLFW_CONNECTED) {
 		// The joystick was connected
@@ -109,7 +98,7 @@ joystick_callback(int jid, int event)
 }
 
 void
-mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+Window::DefaultMouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
 	}
@@ -182,6 +171,20 @@ Window::SetErrorCallback(Function glfw_error_callback)
 	glfwSetErrorCallback(glfw_error_callback);
 }
 
+template<typename Function>
+void
+Window::SetScrollCallback(Function scroll_callback)
+{
+	glfwSetScrollCallback(window, scroll_callback);
+}
+
+template<typename Function>
+void
+Window::SetJoystickCallback(Function joystick_callback)
+{
+	glfwSetJoystickCallback(joystick_callback);
+}
+
 void
 Window::DefaultKeyCallback(GLFWwindow* window,
                            int         key,
@@ -189,19 +192,9 @@ Window::DefaultKeyCallback(GLFWwindow* window,
                            int         action,
                            int         mods)
 {
-	Window* handler = 
-		reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+	Window* handler = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
 
 	handler->input->UpdateKey(key, action, mods);
-
-	/*if (key == GLFW_KEY_E && action == GLFW_PRESS) {
-	}
-
-	if (glfwGetKeyName(key, scancode) != NULL) {
-		std::cout << "The key name: " << glfwGetKeyName(key, scancode) << std::endl;
-	}
-	std::cout << "The key " << scancode << " : " << scancode << " mods: " << mods
-	          << "\n";*/
 }
 
 Window::Window(std::string windowTitle)
@@ -235,21 +228,13 @@ Window::Window(std::string windowTitle)
 		glfwSetWindowUserPointer(window, reinterpret_cast<void*>(this));
 
 		// Set GLFW window callbacks
-		SetWindowCloseCallback(window_close_callback);
-		SetDropCallback(drop_callback);
-		SetMouseButtonCallback(mouse_button_callback);
-		SetMonitorCallback(monitor_callback);
+		SetWindowCloseCallback(DefaultWindowCloseCallback);
+		SetDropCallback(DefaultDropCallback);
+		SetMouseButtonCallback(DefaultMouseButtonCallback);
+		SetMonitorCallback(DefaultMonitorCallback);
 		SetKeyCallback(DefaultKeyCallback);
-		// glfwSetKeyCallback(window, key_callback);
-		glfwSetJoystickCallback(joystick_callback);
-		glfwSetScrollCallback(window, scroll_callback);
-
-		/*const char* pctwinshock =
-		  "03000000790000000600000000000000,G-Shark "
-		  "GS-GP702,a:b2,b:b1,back:b8,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0."
-		  "1,leftshoulder:b4,leftstick:b10,lefttrigger:b6,leftx:a0,lefty:a1,"
-		  "rightshoulder:b5,rightstick:b11,righttrigger:b7,rightx:a2,righty:a4,"
-		  "start:b9,x:b3,y:b0,platform:Windows,";*/
+		SetJoystickCallback(DefaultJoystickCallback);
+		SetScrollCallback(DefaultScrollCallback);
 
 		const char* pctwinshock =
 		  "03000000790000000600000000000000,G-Shark "
@@ -267,14 +252,9 @@ Window::Window(std::string windowTitle)
 #endif // INCLUDE_DEBUG_UI
 
 		SetClearColor(0.45f, 0.55f, 0.60f, 0.00f);
-		// SetClearColor(0.00f, 0.00f, 0.00f, 0.00f);
 
 		glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
 		SetViewport(0, 0, framebufferWidth, framebufferHeight);
-
-		char                 version = (char)glGetString(GL_VERSION);
-		const unsigned char* glver = glGetString(GL_VERSION);
-		std::cout << "Detected OpenGL version: " << glver << std::endl;
 	}
 }
 

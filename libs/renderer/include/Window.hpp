@@ -62,19 +62,51 @@ public:
 	template<typename Function>
 	void SetKeyCallback(Function key_callback);
 
-	// https://stackoverflow.com/questions/7676971/
+	template<typename Function>
+	void SetScrollCallback(Function scroll_callback);
+
+	template<typename Function>
+	void SetJoystickCallback(Function joystick_callback);
+
+	// Default GLFW Callbacks
+	// For accessing the Window instance memebers:
+	// @look https://stackoverflow.com/questions/7676971/
 	// pointing-to-a-function-that-is-a-class-member-glfw-setkeycallback
+
 	static void DefaultKeyCallback(GLFWwindow* window,
 	                               int         key,
 	                               int         scancode,
 	                               int         action,
 	                               int         mods);
 
+	static void DefaultWindowCloseCallback(GLFWwindow* window);
+
+	static void DefaultDropCallback(GLFWwindow*  window,
+	                                int          count,
+	                                const char** paths);
+
+	static void DefaultMouseButtonCallback(GLFWwindow* window,
+	                                       int         button,
+	                                       int         action,
+	                                       int         mods);
+
+	static void DefaultFramebufferSizeCallback(GLFWwindow* window,
+	                                           int         width,
+	                                           int         height);
+
+	static void DefaultMonitorCallback(GLFWmonitor* monitor, int event);
+
+	static void DefaultScrollCallback(GLFWwindow* window,
+	                                  double      xoffset,
+	                                  double      yoffset);
+
+	static void DefaultJoystickCallback(int jid, int event);
+
 #if INCLUDE_DEBUG_UI
 	DebugUI* GetDebugUI() { return debugUi; }
 #endif // INCLUDE_DEBUG_UI
 
-	void ProcessInput();
+	InputData ProcessInput();
 
 	std::shared_ptr<InputManager> GetInputManager() { return input; }
 
