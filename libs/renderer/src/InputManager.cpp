@@ -135,16 +135,34 @@ InputManager::UpdateButton(int button, int action, int mods)
 	/*std::cout << "Buttons: [ ";
 
 	for (auto& button : trackedButtons) {
-		std::cout << isMouseButtonHoldDown[std::get<0>(button)] << " ";
+	  std::cout << isMouseButtonHoldDown[std::get<0>(button)] << " ";
 	}
 
 	std::cout << "]" << std::endl;*/
 }
 
 void
-InputManager::UpdateGamepad(int jid, int event)
+InputManager::UpdateGamepad(int jid)
 {
+	if (glfwJoystickIsGamepad(jid)) {
+		GLFWgamepadstate state;
 
+		if (glfwGetGamepadState(jid, &state)) {
+			std::cout << "Buttons pressed: ";
+
+			for (int i = 0; i < GLFW_GAMEPAD_BUTTON_LAST; i++) {
+				std::cout << static_cast<int>(state.buttons[i]);
+			}
+
+			for (int i = 0; i < GLFW_GAMEPAD_AXIS_LAST; i++) {
+				std::cout << " " << static_cast<float>(state.axes[i]) << " ";
+			}
+
+			std::cout << std::endl;
+		}
+	} else {
+		// remove gamepad!
+	}
 }
 
 void
@@ -182,57 +200,25 @@ InputManager::Update(GLFWwindow* window)
 {
 	InputData data;
 
-	for (auto& key : trackedKeys) {
-		int state = glfwGetKey(window, std::get<0>(key));
+	/*for (auto& key : trackedKeys) {
+	  int state = glfwGetKey(window, std::get<0>(key));
+	  UpdateKey(std::get<0>(key), state, std::get<1>(key));
+	  // UpdateKey(std::get<0>(key), state, std::get<1>(key));
+	}*/
 
-		/*if (state == GLFW_PRESS || state == GLFW_REPEAT) {
-		  // const char* key_name = glfwGetKeyName(std::get<0>(key), 0);
-		  // std::cout << "Warunek spe³niony dla: " << key_name << std::endl;
-		} else {
-		  UpdateKey(std::get<0>(key), state, std::get<1>(key));
-		}*/
-		// UpdateKey(std::get<0>(key), state, std::get<1>(key));
-	}
+	/*for (auto& button : trackedButtons) {
+	  isMouseButtonHoldDown[std::get<0>(button)] =
+	    static_cast<bool>(glfwGetMouseButton(window, std::get<0>(button)));
 
-	for (auto& button : trackedButtons) {
-		isMouseButtonHoldDown[std::get<0>(button)] =
-		  static_cast<bool>(glfwGetMouseButton(window, std::get<0>(button)));
-
-		buttonValues[button].first = buttonValues[button].second;
-		buttonValues[button].second =
-		  glfwGetMouseButton(window, std::get<0>(button));
-	}
+	  buttonValues[button].first = buttonValues[button].second;
+	  buttonValues[button].second =
+	    glfwGetMouseButton(window, std::get<0>(button));
+	}*/
 
 	// all gamepads data will be conflated to single input
 	// na zasadzie input A z pada 1 OR input A z pada 2 OR ...
 	for (auto& gamepad : conectedGamepads) {
-		if (glfwJoystickIsGamepad(gamepad)) {
-			GLFWgamepadstate state;
-
-			if (glfwGetGamepadState(gamepad, &state)) {
-				std::cout << "Buttons pressed: ";
-
-				for (int i = 0; i < GLFW_GAMEPAD_BUTTON_LAST; i++) {
-					std::cout << static_cast<int>(state.buttons[i]);
-				}
-
-				for (int i = 0; i < GLFW_GAMEPAD_AXIS_LAST; i++) {
-					std::cout << " " << static_cast<float>(state.axes[i]) << " ";
-				}
-
-				std::cout << std::endl;
-
-				/*if (state.buttons[GLFW_GAMEPAD_BUTTON_A]) {
-					std::cout << "AAAAAAAAA\n";
-				}*/
-
-				// ...
-				state.axes[GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER];
-				// ...
-			}
-		} else {
-			// remove gamepad!
-		}
+		UpdateGamepad(gamepad);
 	}
 
 	return data;
