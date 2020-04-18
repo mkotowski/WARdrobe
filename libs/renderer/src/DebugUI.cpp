@@ -32,7 +32,9 @@ DebugUI::DebugUI(GLFWwindow* window, const char* glsl_version)
 	Settings settingsFromFile = ConfigManager::GetSettings();
 
 	borderlessWindow = settingsFromFile.borderless;
-	fullScreenWindow = settingsFromFile.fullscreen;
+	fullScreenWindow =
+	  settingsFromFile
+	    .fullscreen; // FIXME: fullscreen doesn't work at start of the game
 	resizableWindow = settingsFromFile.resizable;
 	vsyncEnabled = settingsFromFile.vsync;
 }

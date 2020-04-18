@@ -51,38 +51,25 @@ void
 ConfigManager::SetSettingsFromParsedFile(
   std::shared_ptr<cpptoml::table> parsedFile)
 {
-	settingsFromFile.borderless =
-	  parsedFile
-	    ->get_qualified_as<bool>("graphics.window.windowed_mode.borderless")
-	    .
-	    operator*();
-	settingsFromFile.resizable =
-	  parsedFile
-	    ->get_qualified_as<bool>("graphics.window.windowed_mode.resizable")
-	    .
-	    operator*();
+	settingsFromFile.borderless = *parsedFile->get_qualified_as<bool>(
+	  "graphics.window.windowed_mode.borderless");
+	settingsFromFile.resizable = *parsedFile->get_qualified_as<bool>(
+	  "graphics.window.windowed_mode.resizable");
 	settingsFromFile.vsync =
-	  parsedFile->get_qualified_as<bool>("graphics.vsync").operator*();
+	  *parsedFile->get_qualified_as<bool>("graphics.vsync");
 
-	auto sizeVector = parsedFile
-	                    ->get_qualified_array_of<int64_t>(
-	                      "graphics.window.windowed_mode.default_size")
-	                    .
-	                    operator*();
+	auto sizeVector = *parsedFile->get_qualified_array_of<int64_t>(
+	  "graphics.window.windowed_mode.default_size");
 
 	settingsFromFile.size[0] = sizeVector[0];
 	settingsFromFile.size[1] = sizeVector[1];
 
 	std::string screenMode =
-	  parsedFile->get_qualified_as<std::string>("graphics.window.default_mode")
-	    .
-	    operator*();
+	  *parsedFile->get_qualified_as<std::string>("graphics.window.default_mode");
 
 	screenMode == "fullscreen" ? settingsFromFile.fullscreen = true
 	                           : settingsFromFile.fullscreen = false;
 
 	settingsFromFile.cursorMode =
-	  parsedFile->get_qualified_as<std::string>("input.mouse.cursor_mode")
-	    .
-	    operator*();
+	  *parsedFile->get_qualified_as<std::string>("input.mouse.cursor_mode");
 }
