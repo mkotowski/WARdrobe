@@ -55,7 +55,9 @@ Window::DefaultWindowCloseCallback(GLFWwindow* window)
 }
 
 void
-Window::DefaultFramebufferSizeCallback(GLFWwindow* window, int width, int height)
+Window::DefaultFramebufferSizeCallback(GLFWwindow* window,
+                                       int         width,
+                                       int         height)
 {
 	// make sure the viewport matches the new window dimensions; note that width
 	// and height will be significantly larger than specified on retina displays.
@@ -66,7 +68,9 @@ Window::DefaultFramebufferSizeCallback(GLFWwindow* window, int width, int height
 }
 
 void
-Window::DefaultScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+Window::DefaultScrollCallback(GLFWwindow* window,
+                              double      xoffset,
+                              double      yoffset)
 {
 	std::cout << "Scroll: " << xoffset << " " << yoffset << std::endl;
 }
@@ -84,34 +88,40 @@ Window::DefaultMonitorCallback(GLFWmonitor* monitor, int event)
 void
 Window::DefaultJoystickCallback(int jid, int event)
 {
-	if (event == GLFW_CONNECTED) {
-		// The joystick was connected
-		std::cout << "Joystick connected: " << glfwGetJoystickGUID(jid) << "\n";
-		if (glfwGetGamepadName(jid)) {
-			std::cout << "Gamepad name: " << glfwGetGamepadName(jid) << "\n";
+	Window* handler = Window::mainWindowPtr;
+
+	glfwSetJoystickUserPointer(jid, mainWindowPtr);
+
+	std::cout << jid << " " << glfwJoystickIsGamepad(jid) << " "
+	          << glfwGetJoystickUserPointer(jid) << std::endl;
+
+	if (handler != NULL) {
+		if (event == GLFW_CONNECTED) {
+			// The joystick was connected
+			handler->input->AddGamepad(jid);
+
+			std::cout << "Joystick connected (" << glfwGetJoystickGUID(jid) << ") ";
+			if (glfwGetGamepadName(jid)) {
+				std::cout << glfwGetGamepadName(jid) << "\n";
+			}
+		} else if (event == GLFW_DISCONNECTED) {
+			// The joystick was disconnected
+			handler->input->RemoveGamepad(jid);
+
+			std::cout << "Joystick disconnected!\n";
 		}
-	} else if (event == GLFW_DISCONNECTED) {
-		// The joystick was disconnected
-		std::cout << "Joystick disconnected\n";
 	}
 }
 
 void
-Window::DefaultMouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+Window::DefaultMouseButtonCallback(GLFWwindow* window,
+                                   int         button,
+                                   int         action,
+                                   int         mods)
 {
 	Window* handler = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
 
 	handler->input->UpdateButton(button, action, mods);
-	
-
-	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
-	}
-
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-	}
-
-	if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS) {
-	}
 
 	// Advanced Buttons
 	// XButton1	4th mouse button. Typically performs the same function as
@@ -122,12 +132,6 @@ Window::DefaultMouseButtonCallback(GLFWwindow* window, int button, int action, i
 	if (button == GLFW_MOUSE_BUTTON_4 && action == GLFW_PRESS) {
 		// SetShouldClose(GLFW_TRUE);
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
-	}
-
-	// GLFW_MOUSE_FORWARD
-	if (button == GLFW_MOUSE_BUTTON_5 && action == GLFW_PRESS) {
-		// SetShouldClose(GLFW_TRUE);
-		glClearColor(0, 0, 0, 1);
 	}
 }
 
@@ -201,6 +205,8 @@ Window::DefaultKeyCallback(GLFWwindow* window,
 	handler->input->UpdateKey(key, action, mods);
 }
 
+Window* Window::mainWindowPtr = nullptr;
+
 Window::Window(std::string windowTitle)
   : windowTitle(windowTitle)
 {
@@ -231,6 +237,9 @@ Window::Window(std::string windowTitle)
 			std::cout << "Error while initializing OpenGL loader!\n";
 		}
 
+		// mainWindowPtr = reinterpret_cast<void*>(this);
+		mainWindowPtr = this;
+
 		// https://discourse.glfw.org/t/what-is-a-possible-use-of-glfwgetwindowuserpointer/1294
 		glfwSetWindowUserPointer(window, reinterpret_cast<void*>(this));
 
@@ -252,6 +261,12 @@ Window::Window(std::string windowTitle)
 
 		if (glfwUpdateGamepadMappings(pctwinshock)) {
 			std::cout << "Game mapping updated!\n";
+		}
+
+		for (int jid = 0; jid < GLFW_JOYSTICK_LAST; jid++) {
+			if (glfwJoystickPresent(jid)) {
+				DefaultJoystickCallback(jid, GLFW_CONNECTED);
+			}
 		}
 
 #if INCLUDE_DEBUG_UI

@@ -110,6 +110,8 @@ public:
 
 	std::shared_ptr<InputManager> GetInputManager() { return input; }
 
+	static Window* mainWindowPtr;
+
 private:
 	GLFWwindow* window;
 

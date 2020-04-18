@@ -142,6 +142,12 @@ InputManager::UpdateButton(int button, int action, int mods)
 }
 
 void
+InputManager::UpdateGamepad(int jid, int event)
+{
+
+}
+
+void
 InputManager::RemoveKey(int key, int mods)
 {
 	auto keyData = std::make_pair(key, mods);

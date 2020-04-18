@@ -21,6 +21,7 @@ public:
 
 	void UpdateKey(int key, int action, int mods);
 	void UpdateButton(int button, int action, int mods);
+	void UpdateGamepad(int jid, int event);
 
 	void SetCursorTracking(int isTracked);
 	void SetScrollTracking(int isTracked);
