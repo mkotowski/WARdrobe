@@ -15,7 +15,7 @@ public:
 	~InputManager();
 	void AddKey(int key, int mods);
 	void AddButton(int mouse_button, int mods);
-	bool AddGamepad(int gamepadId);
+	void AddGamepad(int gamepadId);
 	void AddGamepadAxis(int gamepadId, int gamepadAxis);
 	void AddGamepadButton(int gamepadId, int gamepadButton);
 
@@ -28,7 +28,7 @@ public:
 
 	void RemoveKey(int key, int mods);
 	void RemoveButton(int mouse_button, int mods);
-	bool RemoveGamepad(int gamepadId);
+	void RemoveGamepad(int gamepadId);
 	void RemoveGamepadAxis(int gamepadId, int gamepadAxis);
 	void RemoveGamepadButton(int gamepadId, int gamepadButton);
 

@@ -21,10 +21,10 @@ InputManager::AddButton(int mouse_button, int mods)
 	  { std::make_pair(mouse_button, mods), std::make_pair(0, 0) });
 }
 
-bool
+void
 InputManager::AddGamepad(int gamepadId)
 {
-	return false;
+	conectedGamepads.insert(gamepadId);
 }
 
 void
@@ -163,10 +163,10 @@ InputManager::RemoveButton(int mouse_button, int mods)
 	buttonValues.erase(buttonData);
 }
 
-bool
+void
 InputManager::RemoveGamepad(int gamepadId)
 {
-	return false;
+	conectedGamepads.erase(gamepadId);
 }
 
 void
@@ -210,9 +210,21 @@ InputManager::Update(GLFWwindow* window)
 			GLFWgamepadstate state;
 
 			if (glfwGetGamepadState(gamepad, &state)) {
-				if (state.buttons[GLFW_GAMEPAD_BUTTON_A]) {
-					// ...
+				std::cout << "Buttons pressed: ";
+
+				for (int i = 0; i < GLFW_GAMEPAD_BUTTON_LAST; i++) {
+					std::cout << static_cast<int>(state.buttons[i]);
 				}
+
+				for (int i = 0; i < GLFW_GAMEPAD_AXIS_LAST; i++) {
+					std::cout << " " << static_cast<float>(state.axes[i]) << " ";
+				}
+
+				std::cout << std::endl;
+
+				/*if (state.buttons[GLFW_GAMEPAD_BUTTON_A]) {
+					std::cout << "AAAAAAAAA\n";
+				}*/
 
 				// ...
 				state.axes[GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER];
