@@ -1,19 +1,18 @@
 #version 330 core
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aColor;
+layout (location = 2) in vec2 aTexCoord;
 
-layout (location = 0) in vec3 inPos;
-layout (location = 1) in vec3 inNormal;
+out vec2 TexCoord;
+out vec3 ourColor;
 
-uniform mat4 uModel;
-uniform mat4 uView;
-uniform mat4 uProjection;
-
-out vec3 normal;
-out vec3 fragPosWorld;
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
 
 void main()
 {
-	fragPosWorld = vec3(uModel * vec4(inPos, 1.0));
-	normal = vec3(uModel * vec4(inNormal, 0.0));
-
-	gl_Position = uProjection * uView * uModel * vec4(inPos, 1.0f);
+	gl_Position = projection * view * model * vec4(aPos, 1.0f);
+	ourColor = aColor;
+	TexCoord = vec2(aTexCoord.x, aTexCoord.y);
 }

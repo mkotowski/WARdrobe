@@ -10,6 +10,7 @@
 #include "PhysicsSystem.hpp"
 #include "RenderSystem.hpp"
 
+
 Game::Game(std::string windowTitle)
 {
 	gameWindow = new Window(windowTitle);
@@ -29,6 +30,9 @@ Game::Loop()
 	gameplayManager->RegisterComponent<Gravity>();
 	gameplayManager->RegisterComponent<RigidBody>();
 	gameplayManager->RegisterComponent<Transform>();
+	gameplayManager->RegisterComponent<Model>();
+	gameplayManager->RegisterComponent<Shader>();
+	gameplayManager->RegisterComponent<Renderer>();
 
 	// Register the systems used during the gameplay
 	auto physicsSystem = gameplayManager->RegisterSystem<PhysicsSystem>();
@@ -71,9 +75,21 @@ Game::Loop()
 		                                                   randRotation(generator),
 		                                                   randRotation(generator)),
 		                                         glm::vec3(scale, scale, scale) });
+
+		gameplayManager->AddComponent(
+		entity, Model("../../../assets/models/level.obj")
+		);
+		gameplayManager->AddComponent(
+		entity, Shader("../../../assets/shaders/vertex.glsl", "../../../assets/shaders/fragment.glsl")
+		);
+		gameplayManager->AddComponent(
+		entity, Renderer()
+		);
 	}
 
 	float dt = 0.0f;
+	
+	
 
 	renderSystem->Init();
 
