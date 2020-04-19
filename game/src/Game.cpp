@@ -109,10 +109,10 @@ Game::Loop()
 		                                         glm::vec3(scale, scale, scale) });
 
 		gameplayManager->AddComponent(
-		entity, Model("../../../assets/models/Wolf_dae.dae")
+		entity, Model("assets/models/Wolf_dae.dae")
 		);
 		gameplayManager->AddComponent(
-		entity, Shader("../../../assets/shaders/vertex.glsl", "../../../assets/shaders/fragment.glsl")
+		entity, Shader("assets/shaders/vertex.glsl", "assets/shaders/fragment.glsl")
 		);
 		gameplayManager->AddComponent(
 		entity, Renderer()
