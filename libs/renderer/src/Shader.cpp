@@ -3,7 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
-
+/*
 Shader::Shader(std::string const& vertexPath, std::string const& fragmentPath)
 {
 	std::string fragmentFileContents;
@@ -75,3 +75,4 @@ Shader::Activate()
 {
 	glUseProgram(mId);
 }
+*/

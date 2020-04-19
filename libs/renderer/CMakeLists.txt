@@ -21,13 +21,18 @@ get_property(IMGUI_INCLUDE_DIR GLOBAL PROPERTY IMGUI_INCLUDE_DIR)
 
 # TARGET SETTINGS #############################################################
 
-target_include_directories(renderer PUBLIC 
-	"${CMAKE_CURRENT_SOURCE_DIR}/include/"
-	"${GLAD_INCLUDE_DIR}"
-	"${GLFW_INCLUDE_DIR}"
-	"${IMGUI_INCLUDE_DIR}"
-	"${IMGUI_INCLUDE_DIR}/examples/"
-	"${CMAKE_BINARY_DIR}/config/"
+get_property(STB_IMAGE_INCLUDE_DIR GLOBAL PROPERTY STB_IMAGE_INCLUDE_DIR)
+
+target_include_directories(renderer PUBLIC
+    "${CMAKE_BINARY_DIR}/thirdparty/assimp/include" 
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/"
+    "${CMAKE_SOURCE_DIR}/thirdparty/assimp/include/"
+    "${GLAD_INCLUDE_DIR}"
+    "${GLFW_INCLUDE_DIR}"
+    "${IMGUI_INCLUDE_DIR}"
+    "${IMGUI_INCLUDE_DIR}/examples/"
+    "${CMAKE_BINARY_DIR}/config/"
+    "${STB_IMAGE_INCLUDE_DIR}"
 )
 
 target_link_libraries(renderer PRIVATE glad glfw glm imgui assimp assetmanager)
