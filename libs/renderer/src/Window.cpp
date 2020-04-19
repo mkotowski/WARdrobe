@@ -1,9 +1,8 @@
+#include <clocale>
 #include <iostream>
 #include <stdio.h>
-#include <clocale>
 
 #include "Window.hpp"
-
 
 static void
 glfw_error_callback(int error, const char* description)
@@ -45,7 +44,8 @@ Window::ProcessInput()
 		}
 
 		if (abs(state.axes[GLFW_GAMEPAD_AXIS_RIGHT_X]) >= 0.01f) {
-			std::cout << "Axis Right X: " << state.axes[GLFW_GAMEPAD_AXIS_RIGHT_X] << "\n";
+			std::cout << "Axis Right X: " << state.axes[GLFW_GAMEPAD_AXIS_RIGHT_X]
+			          << "\n";
 		}
 
 		if (state.buttons[GLFW_GAMEPAD_BUTTON_B] == GLFW_PRESS) {
@@ -204,7 +204,7 @@ Window::Window(std::string windowTitle)
 		  "rightshoulder:b5,rightstick:b11,righttrigger:b7,rightx:a2,righty:a3,"
 		  "start:b9,x:b3,y:b0,platform:Windows,";
 
-		if(glfwUpdateGamepadMappings(pctwinshock)) {
+		if (glfwUpdateGamepadMappings(pctwinshock)) {
 			std::cout << "Game mapping updated!\n";
 		}
 
@@ -271,7 +271,27 @@ int
 Window::CreateContext()
 {
 	// Create window with graphics context
-	window = glfwCreateWindow(1280, 720, windowTitle.c_str(), NULL, NULL);
+
+	Settings windowSettings = ConfigManager::GetSettings();
+
+	window = glfwCreateWindow(windowSettings.size[0],
+	                          windowSettings.size[1],
+	                          windowTitle.c_str(),
+	                          NULL,
+	                          NULL);
+
+	glfwSetWindowAttrib(window, GLFW_DECORATED, !windowSettings.borderless);
+
+	std::string cursorMode = windowSettings.cursorMode;
+	int         cursorModeValue = GLFW_CURSOR_NORMAL;
+
+	if (cursorMode == "hidden") {
+		cursorModeValue = GLFW_CURSOR_HIDDEN;
+	} else if (cursorMode == "disabled") {
+		cursorModeValue = GLFW_CURSOR_DISABLED;
+	}
+
+	glfwSetInputMode(window, GLFW_CURSOR, cursorModeValue);
 
 	if (window == NULL) {
 		std::cout << "Failed to create GLFW window" << std::endl;

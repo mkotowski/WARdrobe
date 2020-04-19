@@ -13,9 +13,11 @@
 
 #include "Constants.h"
 
-#if INCLUDE_DEBUG_UI
+#if INCLUDE_DEBUG_UI // INCLUDE_DEBUG_UI
 #include "DebugUI.hpp"
-#endif // INCLUDE_DEBUG_UI
+#else
+#include "ConfigManager.hpp"
+#endif
 
 class Window
 {

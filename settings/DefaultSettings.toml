@@ -11,9 +11,6 @@ vsync = true
     resizable = true
     borderless = false
 
-  [graphics.window]
-  default_mode = "fullscreen" # "windowed"
-
 [input]
 
   [input.mouse]
