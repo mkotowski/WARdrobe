@@ -56,3 +56,8 @@ packages/
 
 .*.swp
 .DS_Store
+
+# ALLOW
+
+# Allow
+!assets/**/*.obj

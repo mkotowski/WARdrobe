@@ -35,6 +35,6 @@ target_include_directories(renderer PUBLIC
     "${STB_IMAGE_INCLUDE_DIR}"
 )
 
-target_link_libraries(renderer PRIVATE glad glfw glm imgui assimp)
+target_link_libraries(renderer PRIVATE glad glfw glm imgui assimp assetmanager)
 
 target_compile_features(renderer PUBLIC cxx_std_17)

@@ -4,6 +4,8 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
+#include "ConfigManager.hpp"
+
 class DebugUI
 {
 public:
@@ -18,13 +20,13 @@ public:
 
 private:
 	// GLFW Window hints (properties)
-	bool borderlessWindow = false;
+	bool borderlessWindow;
 	bool transparentWindow = false;
-	bool fullScreenWindow = false;
-	bool resizableWindow = true;
+	bool fullScreenWindow;
+	bool resizableWindow;
 
 	bool wireframeMode = false;
-	bool vsyncEnabled = true;
+	bool vsyncEnabled;
 
 	// the number of monitors detected
 	int monitorCount;

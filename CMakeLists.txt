@@ -235,38 +235,51 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 	# Testing only available if this is the main app
 	include(CTest)
 
-	# if(BUILD_WARDROBE_DOC)
-	# 	# Docs only available if this is the main app
-	# 	find_package(Doxygen)
-	# 	if(DOXYGEN_FOUND)
-	# 		message(STATUS "Doxygen found, creating target started")
-	# 		get_property(
-	# 			IS_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+	if(BUILD_WARDROBE_DOC)
+		# Docs only available if this is the main app
+		find_package(Doxygen 
+			REQUIRED dot 
+			OPTIONAL_COMPONENTS mscgen dia)
 
-	# 		#CMAKE_CONFIGURATION_TYPES
-	# 		if (CMAKE_BUILD_TYPE MATCHES "^[Dd]ebug" OR IS_MULTI_CONFIG)
-	# 			set(DOXYGEN_GENERATE_HTML  YES)
-	# 			set(DOXYGEN_GENERATE_LATEX NO)
-	# 			set(DOXYGEN_GENERATE_MAN   NO)
+		if(NOT DOXYGEN_FOUND)
+			message(FATAL_ERROR "Doxygen is needed to build the documentation")
+		endif()
 
-	# 			# DOXYGEN_PROJECT_NAME PROJECT_NAME
-	# 			# DOXYGEN_PROJECT_NUMBER PROJECT_VERSION
-	# 			# DOXYGEN_PROJECT_BRIEF PROJECT_DESCRIPTION
-	# 			# DOXYGEN_OUTPUT_DIRECTORY
-	# 			# Set to CMAKE_CURRENT_BINARY_DIR by this module. 
+		if(DOXYGEN_FOUND)
+			message(STATUS "Doxygen found, creating target started")
 
-	# 			set(DOXYGEN_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/docs")
+			set(DOXYGEN_USE_MDFILE_AS_MAINPAGE "README.md")
 
-	# 			doxygen_add_docs(
-	# 				documentation
-	# 				${PROJECT_SOURCE_DIR} ALL
-	# 				COMMENT "Generating API documentation with Doxygen"
-	# 			)
-	# 		endif()
-	# 	else()
-	# 		message(STATUS "Doxygen not found, not building docs")
-	# 	endif()
-	# endif()
+			get_property(
+				IS_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+
+			#CMAKE_CONFIGURATION_TYPES
+			if (CMAKE_BUILD_TYPE MATCHES "^[Dd]ebug" OR IS_MULTI_CONFIG)
+				set(DOXYGEN_GENERATE_HTML  YES)
+				set(DOXYGEN_GENERATE_LATEX NO)
+				set(DOXYGEN_GENERATE_MAN   NO)
+
+				# DOXYGEN_PROJECT_NAME PROJECT_NAME
+				# DOXYGEN_PROJECT_NUMBER PROJECT_VERSION
+				# DOXYGEN_PROJECT_BRIEF PROJECT_DESCRIPTION
+				# DOXYGEN_OUTPUT_DIRECTORY
+				# Set to CMAKE_CURRENT_BINARY_DIR by this module. 
+
+				set(DOXYGEN_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/docs")
+
+				doxygen_add_docs(
+					documentation
+					"${PROJECT_SOURCE_DIR}/README.md"
+					"${PROJECT_SOURCE_DIR}/game"
+					"${PROJECT_SOURCE_DIR}/libs"
+					"${PROJECT_SOURCE_DIR}/config"
+					COMMENT "Generating API documentation with Doxygen"
+				)
+			endif()
+		else()
+			message(STATUS "Doxygen not found, not building docs")
+		endif()
+	endif()
 endif()
 
 # SUBDIRECTORIES ##############################################################
@@ -353,8 +366,13 @@ elseif(NOT DEFINED DEBUG_STRING)
 	set(DEBUG_STRING "")
 endif()
 
-set(CPACK_PACKAGE_FILE_NAME 
-	"${CMAKE_PROJECT_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}${DEBUG_STRING}")
+if(NOT DEFINED CPACK_PACKAGE_FILE_NAME)
+	set(INSTALLER_VERSION_STRING
+		"${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}${DEBUG_STRING}")
+
+	set(CPACK_PACKAGE_FILE_NAME 
+		"${CMAKE_PROJECT_NAME}-${INSTALLER_VERSION_STRING}")
+endif()
 
 set(CPACK_COMPONENTS_ALL game)
 
