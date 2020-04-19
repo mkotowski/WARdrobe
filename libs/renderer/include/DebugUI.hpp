@@ -18,6 +18,10 @@ public:
 	void RenderFrame();
 	void DrawFrame();
 
+	struct AppLog;
+
+	void ShowAppLog(bool* p_open);
+
 private:
 	// GLFW Window hints (properties)
 	bool borderlessWindow;
@@ -27,6 +31,8 @@ private:
 
 	bool wireframeMode = false;
 	bool vsyncEnabled;
+
+	bool isLogDisplayed = true;
 
 	// the number of monitors detected
 	int monitorCount;
