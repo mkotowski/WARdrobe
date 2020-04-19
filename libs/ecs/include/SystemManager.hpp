@@ -53,6 +53,7 @@ public:
 		signature.set(componentType);
 
 		// Set the signature for this system
+		signatures.erase(typeName);
 		signatures.insert({typeName, signature});
 	}
 

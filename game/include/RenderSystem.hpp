@@ -9,6 +9,7 @@
 #include "ecs.hpp"
 #include "Shader.hpp"
 #include "Model.hpp"
+#include "Camera.hpp"
 #include "Renderer.hpp"
 #include "AssetManager.hpp"
 
@@ -19,23 +20,23 @@ public:
 	            std::shared_ptr<ComponentManager> componentManager) override;
 	void Init();
 	void Draw();
-
-private:
-
+	Entity cameraEntity;
 };
 
 void
 RenderSystem::Update(float                             dt,
                      std::shared_ptr<ComponentManager> componentManager)
 {
+	
 	for (auto const& entity : entities) {
-
-		componentManager->GetComponent<Renderer>(entity).Draw(
-			&componentManager->GetComponent<Shader>(entity),
-			&componentManager->GetComponent<Model>(entity),
-			0
-		);
-		Draw();
+		
+		auto& renderer = componentManager->GetComponent<Renderer>(entity);
+		auto& shader = componentManager->GetComponent<Shader>(entity);
+		auto& model = componentManager->GetComponent<Model>(entity);
+		
+		renderer.Draw(&shader, &model, 0, &componentManager->GetComponent<Camera>(cameraEntity));
+		
+			 	 	
 	}
 
 	std::cout << "Rendering updated\n";
@@ -69,6 +70,7 @@ RenderSystem::Init()
 		std::cout << "Failed to load texture" << std::endl;
 	}
 	stbi_image_free(data);
+
 }
 
 void

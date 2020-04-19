@@ -5,17 +5,13 @@ Renderer::Renderer()
 
 }
 
-void Renderer::Draw(Shader *ourShader, Model *ourModel, unsigned int textureID)
+
+void Renderer::Draw(Shader *ourShader, Model *ourModel, unsigned int textureID, Camera *sceneCamera)
 {
     ourShader->use();
-    //Camera - temporary here, will be removed
-    glm::vec3 cameraPos = glm::vec3(0.0f, 5.0f, 30.0f);
-    glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-    glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1.0f, 0.1f, 100.0f); 
-    glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+    glm::mat4 projection = glm::perspective(glm::radians(sceneCamera->fieldOfView), 1.0f, 0.1f, 100.0f); 
+    glm::mat4 view = glm::lookAt(sceneCamera->cameraPos, sceneCamera->cameraPos + sceneCamera->cameraFront, sceneCamera->cameraUp);
     glm::mat4 model = glm::mat4(1.0f);
     glm::vec4 newColor = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
 	model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));

@@ -9,6 +9,7 @@
 #include "ecs.hpp"
 #include "PhysicsSystem.hpp"
 #include "RenderSystem.hpp"
+#include "CameraSystem.hpp"
 
 
 Game::Game(std::string windowTitle)
@@ -33,21 +34,51 @@ Game::Loop()
 	gameplayManager->RegisterComponent<Model>();
 	gameplayManager->RegisterComponent<Shader>();
 	gameplayManager->RegisterComponent<Renderer>();
+	gameplayManager->RegisterComponent<Camera>();
 
 	// Register the systems used during the gameplay
 	auto physicsSystem = gameplayManager->RegisterSystem<PhysicsSystem>();
 
+	auto cameraSystem = gameplayManager->RegisterSystem<CameraSystem>();
+
+	auto renderSystem = gameplayManager->RegisterSystem<RenderSystem>();
+
 	// Set the components required by a system
+	
+	//PhysicsSystem
 	gameplayManager->SetRequiredComponent<PhysicsSystem>(
 	  gameplayManager->GetComponentType<Gravity>());
 	gameplayManager->SetRequiredComponent<PhysicsSystem>(
 	  gameplayManager->GetComponentType<RigidBody>());
 	gameplayManager->SetRequiredComponent<PhysicsSystem>(
 	  gameplayManager->GetComponentType<Transform>());
+	  
+	
+	//CameraSystem
+	gameplayManager->SetRequiredComponent<CameraSystem>(
+	 	gameplayManager->GetComponentType<Camera>());
 
-	auto renderSystem = gameplayManager->RegisterSystem<RenderSystem>();
+	
 
-	std::vector<Entity> entities(1);
+	
+	//RenderSystem
+	gameplayManager->SetRequiredComponent<RenderSystem>(
+		gameplayManager->GetComponentType<Renderer>());
+
+	//Create cameraEntity and add Camera component to it and attach it to the RenderSystem
+	Entity cameraEntity = gameplayManager->CreateEntity();
+	
+	gameplayManager->AddComponent(
+	  	cameraEntity,
+	  	Camera(glm::vec3(-0.4f, 0.0f, 1.0f),
+	  	 					glm::vec3(0.0f, 0.0f, -1.0f),
+	  	 					glm::vec3(0.0f, 1.0f, 0.0f),
+	  	 					45.0f)
+		);
+
+	renderSystem->cameraEntity = cameraEntity;
+
+	std::vector<Entity> entities(1);	
 
 	std::default_random_engine            generator;
 	std::uniform_real_distribution<float> randPosition(-100.0f, 100.0f);
@@ -59,6 +90,7 @@ Game::Loop()
 
 	for (auto& entity : entities) {
 		entity = gameplayManager->CreateEntity();
+
 
 		gameplayManager->AddComponent(
 		  entity, Gravity{ glm::vec3(0.0f, randGravity(generator), 0.0f) });
@@ -77,7 +109,7 @@ Game::Loop()
 		                                         glm::vec3(scale, scale, scale) });
 
 		gameplayManager->AddComponent(
-		entity, Model("../../../assets/models/level.obj")
+		entity, Model("../../../assets/models/Wolf_dae.dae")
 		);
 		gameplayManager->AddComponent(
 		entity, Shader("../../../assets/shaders/vertex.glsl", "../../../assets/shaders/fragment.glsl")
@@ -85,12 +117,12 @@ Game::Loop()
 		gameplayManager->AddComponent(
 		entity, Renderer()
 		);
+
+		
 	}
 
 	float dt = 0.0f;
 	
-	
-
 	renderSystem->Init();
 
 	while (!gameWindow->ShouldClose()) {
