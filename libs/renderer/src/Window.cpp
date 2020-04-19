@@ -1,3 +1,4 @@
+#include <clocale>
 #include <iostream>
 #include <stdio.h>
 
@@ -34,10 +35,10 @@ Window::ProcessInput()
 	    std::cout << "Gamepad A\n";
 	  }
 
-	  if (abs(state.axes[GLFW_GAMEPAD_AXIS_RIGHT_X]) >= 0.01f) {
-	    std::cout << "Axis Right X: " << state.axes[GLFW_GAMEPAD_AXIS_RIGHT_X] <<
-	"\n";
-	  }
+		if (abs(state.axes[GLFW_GAMEPAD_AXIS_RIGHT_X]) >= 0.01f) {
+			std::cout << "Axis Right X: " << state.axes[GLFW_GAMEPAD_AXIS_RIGHT_X]
+			          << "\n";
+		}
 
 	  if (state.buttons[GLFW_GAMEPAD_BUTTON_B] == GLFW_PRESS) {
 	    std::cout << "Gamepad B\n";
@@ -327,7 +328,27 @@ int
 Window::CreateContext()
 {
 	// Create window with graphics context
-	window = glfwCreateWindow(1280, 720, windowTitle.c_str(), NULL, NULL);
+
+	Settings windowSettings = ConfigManager::GetSettings();
+
+	window = glfwCreateWindow(windowSettings.size[0],
+	                          windowSettings.size[1],
+	                          windowTitle.c_str(),
+	                          NULL,
+	                          NULL);
+
+	glfwSetWindowAttrib(window, GLFW_DECORATED, !windowSettings.borderless);
+
+	std::string cursorMode = windowSettings.cursorMode;
+	int         cursorModeValue = GLFW_CURSOR_NORMAL;
+
+	if (cursorMode == "hidden") {
+		cursorModeValue = GLFW_CURSOR_HIDDEN;
+	} else if (cursorMode == "disabled") {
+		cursorModeValue = GLFW_CURSOR_DISABLED;
+	}
+
+	glfwSetInputMode(window, GLFW_CURSOR, cursorModeValue);
 
 	if (window == NULL) {
 		std::cout << "Failed to create GLFW window" << std::endl;

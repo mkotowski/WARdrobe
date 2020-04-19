@@ -14,12 +14,13 @@
 #include <GLFW/glfw3.h>
 
 #include "Constants.h"
-
 #include "InputManager.hpp"
 
-#if INCLUDE_DEBUG_UI
+#if INCLUDE_DEBUG_UI // INCLUDE_DEBUG_UI
 #include "DebugUI.hpp"
-#endif // INCLUDE_DEBUG_UI
+#else
+#include "ConfigManager.hpp"
+#endif
 
 class Window
 {

@@ -15,6 +15,7 @@ extern "C"
 
 #include "AssetManager.hpp"
 #include "AudioManager.hpp"
+#include "ConfigManager.hpp"
 #include "Game.hpp"
 
 #include "Constants.h"
@@ -156,6 +157,7 @@ main()
 	luaTest();
 
 	std::shared_ptr<AssetManager> assetManager = std::make_shared<AssetManager>();
+	std::shared_ptr<ConfigManager> configManager = std::make_shared<ConfigManager>("settings.toml");
 
 	std::thread t1(call_from_thread, std::ref(assetManager));
 	std::thread t2(call_render);

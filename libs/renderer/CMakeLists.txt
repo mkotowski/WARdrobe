@@ -30,6 +30,6 @@ target_include_directories(renderer PUBLIC
 	"${CMAKE_BINARY_DIR}/config/"
 )
 
-target_link_libraries(renderer PRIVATE glad glfw glm imgui assimp)
+target_link_libraries(renderer PRIVATE glad glfw glm imgui assimp assetmanager)
 
 target_compile_features(renderer PUBLIC cxx_std_17)
