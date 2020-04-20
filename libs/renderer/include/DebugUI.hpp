@@ -18,6 +18,8 @@ public:
 	void RenderFrame();
 	void DrawFrame();
 
+	void Overlay();
+
 private:
 	// GLFW Window hints (properties)
 	bool borderlessWindow;
@@ -27,6 +29,9 @@ private:
 
 	bool wireframeMode = false;
 	bool vsyncEnabled;
+
+	bool showOverlay = true;
+	bool showDemoWindow = false;
 
 	// the number of monitors detected
 	int monitorCount;
