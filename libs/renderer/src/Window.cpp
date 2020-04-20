@@ -325,6 +325,18 @@ Window::ShouldClose()
 	return glfwWindowShouldClose(window);
 }
 
+int
+Window::GetWindowWidth()
+{
+	return framebufferWidth;
+}
+
+int
+Window::GetWindowHeight()
+{
+	return framebufferHeight;
+}
+
 void
 Window::PollEvents()
 {
@@ -397,7 +409,10 @@ Window::SwapBuffers()
 
 void
 Window::UpdateViewport()
-{}
+{
+	glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
+	SetViewport(0, 0, framebufferWidth, framebufferHeight);
+}
 
 void
 Window::Close()
