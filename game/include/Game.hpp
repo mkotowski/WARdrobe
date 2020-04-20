@@ -1,7 +1,9 @@
 #pragma once
 
-#include "Version.h"
+#include <vector>
+
 #include "Constants.h"
+#include "Version.h"
 
 #include "Window.hpp"
 #include "ecs.hpp"
@@ -15,6 +17,7 @@ public:
 	Window* GetGameWindow() { return gameWindow; }
 
 	GameplayManager* gameplayManager;
+	Logger*          logger;
 
 	void Loop();
 

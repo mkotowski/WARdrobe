@@ -8,7 +8,7 @@
 // common ones: gl3w, glew, glad. You may use another loader/header of your
 // choice (glext, glLoadGen, etc.), or chose to manually implement your own.
 
-#include <glad/glad.h> // Initialize with gladLoadGL()
+#include <glad/glad.h>  // Initialize with gladLoadGL()
 #include <GLFW/glfw3.h> // Include glfw3.h after our OpenGL definitions
 
 #include "Constants.h"
@@ -58,7 +58,7 @@ public:
 	void SetErrorCallback(Function glfw_error_callback);
 
 #if INCLUDE_DEBUG_UI
-	DebugUI*    GetDebugUI() { return debugUi; }
+	DebugUI* GetDebugUI() { return debugUi; }
 #endif // INCLUDE_DEBUG_UI
 
 	void ProcessInput();
@@ -67,7 +67,7 @@ private:
 	GLFWwindow* window;
 
 #if INCLUDE_DEBUG_UI
-	DebugUI*    debugUi;
+	DebugUI* debugUi;
 #endif // INCLUDE_DEBUG_UI
 
 	std::string windowTitle;
