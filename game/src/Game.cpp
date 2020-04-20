@@ -121,6 +121,30 @@ Game::Loop()
 		
 	}
 
+	Entity entity = gameplayManager->CreateEntity();
+
+	gameplayManager->AddComponent(
+	  entity, Gravity{ glm::vec3(0.0f, randGravity(generator), 0.0f) });
+
+	gameplayManager->AddComponent(
+	  entity,
+	  RigidBody{ glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f) });
+
+	gameplayManager->AddComponent(entity,
+	                              Transform{ glm::vec3(randPosition(generator),
+	                                                   randPosition(generator),
+	                                                   randPosition(generator)),
+	                                         glm::vec3(randRotation(generator),
+	                                                   randRotation(generator),
+	                                                   randRotation(generator)),
+	                                         glm::vec3(scale, scale, scale) });
+
+	gameplayManager->AddComponent(entity, Model("assets/models/Wolf_dae.dae"));
+	gameplayManager->AddComponent(
+	  entity,
+	  Shader("assets/shaders/vertex1.glsl", "assets/shaders/fragment.glsl"));
+	gameplayManager->AddComponent(entity, Renderer(true));
+
 	float dt = 0.0f;
 	
 	renderSystem->Init();

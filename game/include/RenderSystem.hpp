@@ -34,7 +34,16 @@ RenderSystem::Update(float                             dt,
 		auto& shader = componentManager->GetComponent<Shader>(entity);
 		auto& model = componentManager->GetComponent<Model>(entity);
 		
-		renderer.Draw(&shader, &model, 0, &componentManager->GetComponent<Camera>(cameraEntity));
+		if (entity == 1) {
+			renderer.Draw(&shader,
+			              &model,
+			              0,
+			              &componentManager->GetComponent<Camera>(cameraEntity));
+		} else if (entity == 2) {
+			renderer.DrawGeometry(&shader,
+			              1,
+			              &componentManager->GetComponent<Camera>(cameraEntity));
+		}
 		
 			 	 	
 	}
