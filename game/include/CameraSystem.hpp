@@ -20,5 +20,11 @@ void
 CameraSystem::Update(float                             dt,
                      std::shared_ptr<ComponentManager> componentManager)
 {
+    for (auto& entity : entities)
+    {
+        auto& camera = componentManager->GetComponent<Camera>(entity);
+        auto& transform = componentManager->GetComponent<Transform>(entity);
 
+        camera.cameraPos = transform.position;
+    }
 }
