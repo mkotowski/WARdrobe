@@ -80,7 +80,7 @@ Game::Loop()
 	  	Camera(glm::vec3(0.0f, 0.0f, 0.0f),
 	  	 					glm::vec3(0.0f, 0.0f, -1.0f),
 	  	 					glm::vec3(0.0f, 1.0f, 0.0f),
-	  	 					45.0f)
+	  	 					80.0f)
 		);
 
 	renderSystem->cameraEntity = cameraEntity;
@@ -106,7 +106,7 @@ Game::Loop()
 		  RigidBody{ glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f) });
 
 		gameplayManager->AddComponent(entity,
-		                              Transform{ glm::vec3(-0.3f, 0.3f, 0.0f),
+		                              Transform{ glm::vec3(0.0f, 0.0f, 0.0f),
 		                                         glm::vec3(90.0f, 0.0f, 0.0f),
 		                                         glm::vec3(1.0f, 1.0f, 1.0f) });
 
@@ -127,7 +127,7 @@ Game::Loop()
 	Entity modelEntity = gameplayManager->CreateEntity();
 
 	gameplayManager->AddComponent(modelEntity,
-		                              Transform{ glm::vec3(-0.5f, 0.0f, 0.0f),
+		                              Transform{ glm::vec3(0.0f, 0.0f, 0.0f),
 		                                         glm::vec3(0.0f, 0.0f, 0.0f),
 		                                         glm::vec3(0.1f, 0.1f, 0.1f) });
 
