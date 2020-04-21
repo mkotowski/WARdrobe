@@ -38,6 +38,9 @@ public:
 
 	int ShouldClose();
 
+	int GetWindowWidth();
+	int GetWindowHeight();
+
 	GLFWwindow* GetWindow() { return window; }
 
 	// GLFW Callback Setters
