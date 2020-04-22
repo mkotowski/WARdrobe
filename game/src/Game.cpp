@@ -144,6 +144,35 @@ Game::Loop()
 		Renderer()
 	);
 
+	Entity billboardEntity = gameplayManager->CreateEntity();
+
+	gameplayManager->AddComponent(billboardEntity,
+	                              Transform{ glm::vec3(0.0f, 0.0f, -3.0f),
+	                                         glm::vec3(30.0f, 30.0f, 0.0f),
+	                                         glm::vec3(10.0f, 10.0f, 10.0f) });
+
+	gameplayManager->AddComponent(
+	  billboardEntity,
+	  Model("assets/models/chr_knight.obj", "assets/textures/chr_knight.png"));
+	gameplayManager->AddComponent(
+	  billboardEntity,
+	  Shader("assets/shaders/vertex1.glsl", "assets/shaders/fragment.glsl"));
+
+	float vertices[] = {
+		0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // top right
+		0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // bottom right
+		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom left
+		-0.5f, 0.5f,  0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f  // top left
+	};
+
+	unsigned int indices[] = {
+		// note that we start from 0!
+		0, 1, 3, // first triangle
+		1, 2, 3  // second triangle
+	};
+
+	gameplayManager->AddComponent(billboardEntity, Renderer(true, vertices, 32, indices, 6));
+
 	float dt = 0.0f;
 	
 	renderSystem->Init();
