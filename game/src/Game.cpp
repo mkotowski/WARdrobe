@@ -42,6 +42,8 @@ Game::Loop()
 	auto cameraSystem = gameplayManager->RegisterSystem<CameraSystem>();
 
 	auto renderSystem = gameplayManager->RegisterSystem<RenderSystem>();
+	// Add reference to a window
+	renderSystem->window = this->gameWindow;
 
 	// Set the components required by a system
 	
@@ -53,27 +55,32 @@ Game::Loop()
 	gameplayManager->SetRequiredComponent<PhysicsSystem>(
 	  gameplayManager->GetComponentType<Transform>());
 	  
-	
 	//CameraSystem
 	gameplayManager->SetRequiredComponent<CameraSystem>(
 	 	gameplayManager->GetComponentType<Camera>());
-
-	
-
+	gameplayManager->SetRequiredComponent<CameraSystem>(
+		gameplayManager->GetComponentType<Transform>());
 	
 	//RenderSystem
 	gameplayManager->SetRequiredComponent<RenderSystem>(
 		gameplayManager->GetComponentType<Renderer>());
+	gameplayManager->SetRequiredComponent<RenderSystem>(
+		gameplayManager->GetComponentType<Transform>());
 
 	//Create cameraEntity and add Camera component to it and attach it to the RenderSystem
 	Entity cameraEntity = gameplayManager->CreateEntity();
 	
+	gameplayManager->AddComponent(cameraEntity,
+	                              Transform{ glm::vec3(0.0f, 0.0f, 3.0f),
+	                                         glm::vec3(0.0f, 0.0f, 0.0f),
+	                                         glm::vec3(1.0f, 1.0f, 1.0f) });
+
 	gameplayManager->AddComponent(
 	  	cameraEntity,
-	  	Camera(glm::vec3(-0.4f, 0.0f, 1.0f),
+	  	Camera(glm::vec3(0.0f, 0.0f, 0.0f),
 	  	 					glm::vec3(0.0f, 0.0f, -1.0f),
 	  	 					glm::vec3(0.0f, 1.0f, 0.0f),
-	  	 					45.0f)
+	  	 					80.0f)
 		);
 
 	renderSystem->cameraEntity = cameraEntity;
@@ -91,35 +98,51 @@ Game::Loop()
 	for (auto& entity : entities) {
 		entity = gameplayManager->CreateEntity();
 
-
 		gameplayManager->AddComponent(
-		  entity, Gravity{ glm::vec3(0.0f, randGravity(generator), 0.0f) });
+		  entity, Gravity{ glm::vec3(0.0f, 0.0f, 0.1f) });
 
 		gameplayManager->AddComponent(
 		  entity,
 		  RigidBody{ glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f) });
 
 		gameplayManager->AddComponent(entity,
-		                              Transform{ glm::vec3(randPosition(generator),
-		                                                   randPosition(generator),
-		                                                   randPosition(generator)),
-		                                         glm::vec3(randRotation(generator),
-		                                                   randRotation(generator),
-		                                                   randRotation(generator)),
-		                                         glm::vec3(scale, scale, scale) });
+		                              Transform{ glm::vec3(0.0f, 0.0f, 0.0f),
+		                                         glm::vec3(90.0f, 0.0f, 0.0f),
+		                                         glm::vec3(1.0f, 1.0f, 1.0f) });
 
 		gameplayManager->AddComponent(
-		entity, Model("assets/models/Wolf_dae.dae")
+			entity, 
+			Model("assets/models/Wolf_dae.dae", "assets/textures/stone2.jpg")
 		);
 		gameplayManager->AddComponent(
-		entity, Shader("assets/shaders/vertex.glsl", "assets/shaders/fragment.glsl")
+			entity, 
+			Shader("assets/shaders/vertex.glsl", "assets/shaders/fragment.glsl")
 		);
 		gameplayManager->AddComponent(
-		entity, Renderer()
+			entity, 
+			Renderer()
 		);
-
-		
 	}
+
+	Entity modelEntity = gameplayManager->CreateEntity();
+
+	gameplayManager->AddComponent(modelEntity,
+		                              Transform{ glm::vec3(0.0f, 0.0f, 0.0f),
+		                                         glm::vec3(0.0f, 0.0f, 0.0f),
+		                                         glm::vec3(0.1f, 0.1f, 0.1f) });
+
+	gameplayManager->AddComponent(
+		modelEntity, 
+		Model("assets/models/chr_knight.obj", "assets/textures/chr_knight.png")
+	);
+	gameplayManager->AddComponent(
+		modelEntity, 
+		Shader("assets/shaders/vertex.glsl", "assets/shaders/fragment.glsl")
+	);
+	gameplayManager->AddComponent(
+		modelEntity, 
+		Renderer()
+	);
 
 	float dt = 0.0f;
 	
@@ -129,7 +152,7 @@ Game::Loop()
 		auto startTime = std::chrono::high_resolution_clock::now();
 		gameWindow->PollEvents();
 		gameWindow->ProcessInput();
-		// w->UpdateViewport();
+		gameWindow->UpdateViewport();
 		gameWindow->ClearScreen();
 
 		gameplayManager->Update(dt);

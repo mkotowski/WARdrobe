@@ -32,6 +32,7 @@ public:
     vector<Texture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
     vector<Mesh> meshes;
     string directory;
+    unsigned int textureID;
     bool gammaCorrection;
 
     /*  Functions   */
@@ -40,23 +41,25 @@ public:
     {
         
     }
-    Model(string const &path, bool gamma = false) : gammaCorrection(gamma)
+    Model(string const &modelPath, string const &texturesPath, bool gamma = false) : gammaCorrection(gamma)
     {
-        loadModel(path);
+        loadModel(modelPath, texturesPath);
+        //textureID = TextureFromFile(texturesPath.c_str());
+        
     }
 
     // draws the model, and thus all its meshes
     void Draw(unsigned int shaderID)
     {
+        
         for(unsigned int i = 0; i < meshes.size(); i++)
             meshes[i].Draw(shaderID);
     }
     
 private:
-    unsigned int TextureFromFile(const char *path, const string &directory)
+    unsigned int TextureFromFile(string path)
     {
-        string filename = string(path);
-        filename = directory + '/' + filename;
+        string filename = path;
 
         unsigned int textureID;
         glGenTextures(1, &textureID);
@@ -95,7 +98,7 @@ private:
 
     /*  Functions   */
     // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
-    void loadModel(string const &path)
+    void loadModel(string const &path, string texturePath)
     {
         // read file via ASSIMP
         Assimp::Importer importer;
@@ -106,15 +109,14 @@ private:
             cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << endl;
             return;
         }
-        // retrieve the directory path of the filepath
-        directory = path.substr(0, path.find_last_of('/'));
+        
 
         // process ASSIMP's root node recursively
-        processNode(scene->mRootNode, scene);
+        processNode(scene->mRootNode, scene, texturePath);
     }
 
     // processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
-    void processNode(aiNode *node, const aiScene *scene)
+    void processNode(aiNode *node, const aiScene *scene, string texturePath)
     {
         // process each mesh located at the current node
         for(unsigned int i = 0; i < node->mNumMeshes; i++)
@@ -122,17 +124,17 @@ private:
             // the node object only contains indices to index the actual objects in the scene. 
             // the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
             aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-            meshes.push_back(processMesh(mesh, scene));
+            meshes.push_back(processMesh(mesh, scene, texturePath));
         }
         // after we've processed all of the meshes (if any) we then recursively process each of the children nodes
         for(unsigned int i = 0; i < node->mNumChildren; i++)
         {
-            processNode(node->mChildren[i], scene);
+            processNode(node->mChildren[i], scene, texturePath);
         }
 
     }
 
-    Mesh processMesh(aiMesh *mesh, const aiScene *scene)
+    Mesh processMesh(aiMesh *mesh, const aiScene *scene, string texturePath)
     {
         // data to fill
         vector<Vertex> vertices;
@@ -196,6 +198,16 @@ private:
         // normal: texture_normalN
 
         // 1. diffuse maps
+
+        Texture texture;
+
+        texture.id = TextureFromFile(texturePath);
+        texture.type = aiTextureType_DIFFUSE;
+        texture.path = texturePath;
+        textures.push_back(texture);
+        textures_loaded.push_back(texture);
+
+        /*
         vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
         textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
         // 2. specular maps
@@ -207,7 +219,8 @@ private:
         // 4. height maps
         std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
         textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
-        
+        */
+
         // return a mesh object created from the extracted mesh data
         return Mesh(vertices, indices, textures);
     }
@@ -216,7 +229,13 @@ private:
     // the required info is returned as a Texture struct.
     vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, string typeName)
     {
+        /*
         vector<Texture> textures;
+
+        Texture texture;
+        texture.id = TextureFromFile()
+        */
+        /*
         for(unsigned int i = 0; i < mat->GetTextureCount(type); i++)
         {
             aiString str;
@@ -234,15 +253,17 @@ private:
             }
             if(!skip)
             {   // if texture hasn't been loaded already, load it
+                
                 Texture texture;
-                texture.id = TextureFromFile(str.C_Str(), this->directory);
+                texture.id = TextureFromFile(str.C_Str());
                 texture.type = typeName;
                 texture.path = str.C_Str();
                 textures.push_back(texture);
                 textures_loaded.push_back(texture);  // store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.
             }
         }
-        return textures;
+        */
+        //return textures;
     }
 };
 

@@ -11,6 +11,22 @@ file(GLOB SOURCE_LIST CONFIGURE_DEPENDS
 file(GLOB COFIGURED_HEADERS CONFIGURE_DEPENDS 
 	"${CMAKE_BINARY_DIR}/config/*.h")
 
+# MSVC HIDE COMMAND LINE ######################################################
+
+option(HIDE_CRT_WIN32_MSVC "Hide CRT when building with MSVC" OFF)
+
+#BEFORE add_executable!
+if(HIDE_CRT_WIN32_MSVC)
+	if(MSVC)
+		set(CMAKE_EXE_LINKER_FLAGS
+			"${CMAKE_EXE_LINKER_FLAGS} 
+			/SUBSYSTEM:WINDOWS 
+			/ENTRY:mainCRTStartup"
+		)
+	endif()
+	#set_target_properties(game PROPERTIES WIN32_EXECUTABLE TRUE)
+endif()
+
 #include_directories("${PROJECT_BINARY_DIR}/config/")
 add_executable(game ${SOURCE_LIST} ${HEADER_LIST} ${COFIGURED_HEADERS})
 
@@ -33,21 +49,18 @@ target_link_libraries(game
 target_compile_features(game PRIVATE cxx_std_17)
 
 set_target_properties(game PROPERTIES OUTPUT_NAME "wardrobe")
+
+# https://cmake.org/cmake/help/v3.17/prop_tgt/PDB_NAME.html
+set_target_properties(game PROPERTIES PDB_NAME "wardrobe")
+set_target_properties(game PROPERTIES RUNTIME_OUTPUT_NAME "wardrobe")
+set_target_properties(game PROPERTIES ARCHIVE_OUTPUT_NAME "wardrobe")
+
+set_target_properties(game PROPERTIES PDB_NAME_Release "wardrobe")
+set_target_properties(game PROPERTIES PDB_NAME_Debug "wardrobe")
+set_target_properties(game PROPERTIES COMPILE_PDB_NAME "wardrobe")
+# set_target_properties(game PROPERTIES PROJECT_LABEL "wardrobe")
+
 set_target_properties(game PROPERTIES LINKER_LANGUAGE CXX)
-
-# MSVC HIDE COMMAND LINE ######################################################
-
-option(HIDE_CRT_WIN32_MSVC "Hide CRT when building with MSVC" OFF)
-
-if(HIDE_CRT_WIN32_MSVC)
-	if(MSVC)
-		set(CMAKE_EXE_LINKER_FLAGS
-			"${CMAKE_EXE_LINKER_FLAGS}
-			/SUBSYSTEM:WINDOWS
-			/ENTRY:mainCRTStartup"
-		)
-	endif()
-endif()
 
 # COPY THE GAME ASSETS ########################################################
 

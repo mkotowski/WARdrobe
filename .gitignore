@@ -11,6 +11,9 @@ CTestTestfile.cmake
 _deps
 
 # -------------------
+.vscode
+
+desktop.ini
 
 # C++
 

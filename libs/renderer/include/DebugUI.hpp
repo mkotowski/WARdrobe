@@ -149,6 +149,8 @@ public:
 
 	void ShowAppLog(bool* p_open);
 
+	void Overlay();
+
 private:
 	// GLFW Window hints (properties)
 	bool borderlessWindow;
@@ -158,6 +160,9 @@ private:
 
 	bool wireframeMode = false;
 	bool vsyncEnabled;
+
+	bool showOverlay = true;
+	bool showDemoWindow = false;
 
 	bool isLogDisplayed = true;
 

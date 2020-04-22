@@ -327,23 +327,24 @@ endif(MSVC)
 
 include(InstallRequiredSystemLibraries)
 
-install(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} DESTINATION "bin" COMPONENT game)
+# set(CMAKE_INSTALL_DEBUG_LIBRARIES_ONLY TRUE)
+install(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} DESTINATION "bin" COMPONENT "game")
 
-install(TARGETS game RUNTIME DESTINATION "bin" COMPONENT game)
-install(TARGETS openal-info RUNTIME DESTINATION "bin" COMPONENT game)
-install(TARGETS OpenAL RUNTIME DESTINATION "bin" COMPONENT game)
+install(TARGETS game RUNTIME DESTINATION "bin" COMPONENT "game")
+install(TARGETS openal-info RUNTIME DESTINATION "bin" COMPONENT "game")
+install(TARGETS OpenAL RUNTIME DESTINATION "bin" COMPONENT "game")
 
 # Copy all assets to resources file
 install(
 	DIRECTORY "${CMAKE_SOURCE_DIR}/assets/" 
 	DESTINATION "bin/assets"
-	COMPONENT game)
+	COMPONENT "game")
 
 # Copy settings.toml to the game install directory
 install(
 	FILES "${CMAKE_SOURCE_DIR}/settings/DefaultSettings.toml" 
 	DESTINATION "bin"
-	COMPONENT game
+	COMPONENT "game"
 	RENAME "settings.toml")
 
 # PACKAGING ###################################################################
@@ -463,107 +464,107 @@ include(CPack)
 
 # TARGETS FOR GENERATING MULTIPLE INSTALLERS AT ONCE ##########################
 
-if(WIN32 AND MSVC)
+# if(WIN32 AND MSVC)
 
-	ADD_CUSTOM_TARGET(
-	windows_debug_packages
-		COMMAND ${CMAKE_COMMAND} 
-			${CMAKE_SOURCE_DIR} 
-			-G "Visual Studio 16 2019" 
-			-DINCLUDE_DEBUG_UI=ON
-			-DDEBUG_STRING="-debug"
-		COMMAND ${CMAKE_COMMAND} 
-			-E remove_directory ${CMAKE_INSTALL_PREFIX}
-		COMMAND ${CMAKE_COMMAND} 
-			--build ${CMAKE_BINARY_DIR} 
-			--target ALL_BUILD 
-			--config Debug
-		COMMAND ${CMAKE_COMMAND} 
-			-P cmake_install.cmake
-		COMMAND cpack 
-			--config ${CMAKE_BINARY_DIR}/CPackConfig.cmake 
-			-C Debug 
-			-G ZIP
-		COMMAND cpack 
-			--config ${CMAKE_BINARY_DIR}/CPackConfig.cmake 
-			-C Debug 
-			-G WIX
-		COMMAND cpack 
-			--config ${CMAKE_BINARY_DIR}/CPackConfig.cmake 
-			-C Debug 
-			-G NSIS
-	)
+# 	ADD_CUSTOM_TARGET(
+# 	windows_debug_packages
+# 		COMMAND ${CMAKE_COMMAND} 
+# 			${CMAKE_SOURCE_DIR} 
+# 			-G "Visual Studio 16 2019" 
+# 			-DINCLUDE_DEBUG_UI=ON
+# 			-DDEBUG_STRING="-debug"
+# 		# COMMAND ${CMAKE_COMMAND} 
+# 		# 	-E remove_directory ${CMAKE_INSTALL_PREFIX}
+# 		# COMMAND ${CMAKE_COMMAND} 
+# 		# 	--build ${CMAKE_BINARY_DIR} 
+# 		# 	--target ALL_BUILD 
+# 		# 	--config Debug
+# 		# COMMAND ${CMAKE_COMMAND} 
+# 		# 	-P cmake_install.cmake
+# 		COMMAND cpack 
+# 			--config ${CMAKE_BINARY_DIR}/CPackConfig.cmake 
+# 			-C Debug 
+# 			-G ZIP
+# 		COMMAND cpack 
+# 			--config ${CMAKE_BINARY_DIR}/CPackConfig.cmake 
+# 			-C Debug 
+# 			-G WIX
+# 		COMMAND cpack 
+# 			--config ${CMAKE_BINARY_DIR}/CPackConfig.cmake 
+# 			-C Debug 
+# 			-G NSIS
+# 	)
 
-	ADD_CUSTOM_TARGET(
-	windows_release_with_debug_tools_packages
-		COMMAND ${CMAKE_COMMAND} 
-			${CMAKE_SOURCE_DIR} 
-			-G "Visual Studio 16 2019" 
-			-DINCLUDE_DEBUG_UI=ON 
-			-DHIDE_CRT_WIN32_MSVC=OFF
-			-DDEBUG_STRING="-rc" # release candidate
-		COMMAND ${CMAKE_COMMAND} 
-			-E remove_directory ${CMAKE_INSTALL_PREFIX}
-		COMMAND ${CMAKE_COMMAND} 
-			--build ${CMAKE_BINARY_DIR} 
-			--target ALL_BUILD 
-			--config Release
-		COMMAND ${CMAKE_COMMAND} 
-			-P cmake_install.cmake
-		COMMAND cpack 
-			--config ${CMAKE_BINARY_DIR}/CPackConfig.cmake 
-			-C Release 
-			-G ZIP
-		COMMAND cpack 
-			--config ${CMAKE_BINARY_DIR}/CPackConfig.cmake 
-			-C Release 
-			-G WIX
-		COMMAND cpack 
-			--config ${CMAKE_BINARY_DIR}/CPackConfig.cmake 
-			-C Release 
-			-G NSIS
-	)
+# 	ADD_CUSTOM_TARGET(
+# 	windows_release_with_debug_tools_packages
+# 		COMMAND ${CMAKE_COMMAND} 
+# 			${CMAKE_SOURCE_DIR} 
+# 			-G "Visual Studio 16 2019" 
+# 			-DINCLUDE_DEBUG_UI=ON 
+# 			-DHIDE_CRT_WIN32_MSVC=OFF
+# 			-DDEBUG_STRING="-rc" # release candidate
+# 		COMMAND ${CMAKE_COMMAND} 
+# 			-E remove_directory ${CMAKE_INSTALL_PREFIX}
+# 		COMMAND ${CMAKE_COMMAND} 
+# 			--build ${CMAKE_BINARY_DIR} 
+# 			--target ALL_BUILD 
+# 			--config Release
+# 		COMMAND ${CMAKE_COMMAND} 
+# 			-P cmake_install.cmake
+# 		COMMAND cpack 
+# 			--config ${CMAKE_BINARY_DIR}/CPackConfig.cmake 
+# 			-C Release 
+# 			-G ZIP
+# 		COMMAND cpack 
+# 			--config ${CMAKE_BINARY_DIR}/CPackConfig.cmake 
+# 			-C Release 
+# 			-G WIX
+# 		COMMAND cpack 
+# 			--config ${CMAKE_BINARY_DIR}/CPackConfig.cmake 
+# 			-C Release 
+# 			-G NSIS
+# 	)
 
-	ADD_CUSTOM_TARGET(
-	windows_release_packages
-		COMMAND ${CMAKE_COMMAND} 
-			${CMAKE_SOURCE_DIR} 
-			-G "Visual Studio 16 2019" 
-			-DINCLUDE_DEBUG_UI=OFF 
-			-DHIDE_CRT_WIN32_MSVC=ON
-			-DDEBUG_STRING=""
-		COMMAND ${CMAKE_COMMAND} 
-			-E remove_directory ${CMAKE_INSTALL_PREFIX}
-		COMMAND ${CMAKE_COMMAND} 
-			--build ${CMAKE_BINARY_DIR} 
-			--target ALL_BUILD 
-			--config Release
-		COMMAND ${CMAKE_COMMAND} 
-			-P cmake_install.cmake
-		COMMAND cpack 
-			--config ${CMAKE_BINARY_DIR}/CPackConfig.cmake 
-			-C Release 
-			-G ZIP
-		COMMAND cpack 
-			--config ${CMAKE_BINARY_DIR}/CPackConfig.cmake 
-			-C Release 
-			-G WIX
-		COMMAND cpack 
-			--config ${CMAKE_BINARY_DIR}/CPackConfig.cmake 
-			-C Release 
-			-G NSIS
-	)
+# 	ADD_CUSTOM_TARGET(
+# 	windows_release_packages
+# 		COMMAND ${CMAKE_COMMAND} 
+# 			${CMAKE_SOURCE_DIR} 
+# 			-G "Visual Studio 16 2019" 
+# 			-DINCLUDE_DEBUG_UI=OFF 
+# 			-DHIDE_CRT_WIN32_MSVC=ON
+# 			-DDEBUG_STRING=""
+# 		COMMAND ${CMAKE_COMMAND} 
+# 			-E remove_directory ${CMAKE_INSTALL_PREFIX}
+# 		COMMAND ${CMAKE_COMMAND} 
+# 			--build ${CMAKE_BINARY_DIR} 
+# 			--target ALL_BUILD 
+# 			--config Release
+# 		COMMAND ${CMAKE_COMMAND} 
+# 			-P cmake_install.cmake
+# 		COMMAND cpack 
+# 			--config ${CMAKE_BINARY_DIR}/CPackConfig.cmake 
+# 			-C Release 
+# 			-G ZIP
+# 		COMMAND cpack 
+# 			--config ${CMAKE_BINARY_DIR}/CPackConfig.cmake 
+# 			-C Release 
+# 			-G WIX
+# 		COMMAND cpack 
+# 			--config ${CMAKE_BINARY_DIR}/CPackConfig.cmake 
+# 			-C Release 
+# 			-G NSIS
+# 	)
 
-	set_target_properties (windows_debug_packages PROPERTIES
-		FOLDER packages
-	)
+# 	set_target_properties (windows_debug_packages PROPERTIES
+# 		FOLDER packages
+# 	)
 
-	set_target_properties (windows_release_with_debug_tools_packages PROPERTIES
-		FOLDER packages
-	)
+# 	set_target_properties (windows_release_with_debug_tools_packages PROPERTIES
+# 		FOLDER packages
+# 	)
 
-	set_target_properties (windows_release_packages PROPERTIES
-		FOLDER packages
-	)
+# 	set_target_properties (windows_release_packages PROPERTIES
+# 		FOLDER packages
+# 	)
 
-endif(WIN32 AND MSVC)
+# endif(WIN32 AND MSVC)
