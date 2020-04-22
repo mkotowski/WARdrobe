@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Wireframe render option in the debug interface
 - Test of file drop operation
 - Library for handling the Steam Controller input without the Steam SDK
+- Billboarding
 
 ### Changed
 - Improved ImGui interface
