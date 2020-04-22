@@ -7,12 +7,17 @@ class CameraSystem : public System
 public:
 	void Update(float                             dt,
 	            std::shared_ptr<ComponentManager> componentManager) override;
-	void Init();
+	Entity Init();
 };
 
-void
+Entity
 CameraSystem::Init()
-{}
+{
+	for (auto& entity : entities)
+	{
+		return entity;
+	}
+}
 
 void
 CameraSystem::Update(float                             dt,
