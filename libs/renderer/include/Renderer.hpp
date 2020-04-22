@@ -8,15 +8,14 @@ class Renderer
 {
 public:
 	Renderer();
-	Renderer(bool, float[], int, unsigned int[], int);
+	Renderer(unsigned int);
+	Renderer(bool, float[], int, unsigned int[], int, std::string);
 	void
 	     Draw(Shader*, Model*, Camera*, glm::vec3, glm::vec3, glm::vec3, int, int);
-	void Draw(Shader*, Camera*, glm::vec3, glm::vec3, glm::vec3, int, int);
-	// void Draw(Shader *, Model *, unsigned int);
 	void Init();
-	bool IsBillboard();
+
+	unsigned int drawingType;
 
 private:
-	unsigned int VAO, VBO, EBO, texture;
-	bool         billboard;
+
 };

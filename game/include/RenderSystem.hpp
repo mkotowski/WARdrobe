@@ -35,28 +35,18 @@ RenderSystem::Update(float                             dt,
 	for (auto const& entity : entities) {
 
 		auto& renderer = componentManager->GetComponent<Renderer>(entity);
-		auto& shader = componentManager->GetComponent<Shader>(entity);
 		auto& model = componentManager->GetComponent<Model>(entity);
+		auto& shader = componentManager->GetComponent<Shader>(entity);
 		auto& transform = componentManager->GetComponent<Transform>(entity);
 
-		if (!renderer.IsBillboard()) {
-			renderer.Draw(&shader,
-			              &model,
-			              &componentManager->GetComponent<Camera>(cameraEntity),
-			              transform.position,
-			              transform.rotation,
-			              transform.scale,
-			              this->window->GetWindowWidth(),
-			              this->window->GetWindowHeight());
-		} else {
-			renderer.Draw(&shader,
-			              &componentManager->GetComponent<Camera>(cameraEntity),
-			              transform.position,
-			              transform.rotation,
-			              transform.scale,
-			              this->window->GetWindowWidth(),
-			              this->window->GetWindowHeight());
-		}
+		renderer.Draw(&shader,
+		              &model,
+		              &componentManager->GetComponent<Camera>(cameraEntity),
+		              transform.position,
+		              transform.rotation,
+		              transform.scale,
+		              this->window->GetWindowWidth(),
+		              this->window->GetWindowHeight());
 	}
 
 	//std::cout << "Rendering updated\n";
