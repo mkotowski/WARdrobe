@@ -6,6 +6,8 @@
 
 #include <clocale>
 
+#include <nlohmann/json.hpp>
+
 extern "C"
 {
 #include "lauxlib.h"
@@ -153,6 +155,8 @@ main()
 	std::time_t t = std::time(NULL);
 	std::wcsftime(str, 100, L"%A %c", std::localtime(&t));
 	std::wprintf(L"Number: %.2f\nDate: %Ls\n", 3.14, str);*/
+
+	using json = nlohmann::json;
 
 	luaTest();
 
