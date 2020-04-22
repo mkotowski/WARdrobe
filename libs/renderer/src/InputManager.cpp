@@ -195,11 +195,9 @@ void
 InputManager::RemoveGamepadButton(int gamepadId, int gamepadButton)
 {}
 
-InputData
+void
 InputManager::Update(GLFWwindow* window)
 {
-	InputData data;
-
 	/*for (auto& key : trackedKeys) {
 	  int state = glfwGetKey(window, std::get<0>(key));
 	  UpdateKey(std::get<0>(key), state, std::get<1>(key));
@@ -220,6 +218,4 @@ InputManager::Update(GLFWwindow* window)
 	for (auto& gamepad : conectedGamepads) {
 		UpdateGamepad(gamepad);
 	}
-
-	return data;
 }

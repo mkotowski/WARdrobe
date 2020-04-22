@@ -32,7 +32,7 @@ public:
 	void RemoveGamepadAxis(int gamepadId, int gamepadAxis);
 	void RemoveGamepadButton(int gamepadId, int gamepadButton);
 
-	InputData Update(GLFWwindow* window);
+	void Update(GLFWwindow* window);
 
 private:
 	// KEYBOARD //

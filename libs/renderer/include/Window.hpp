@@ -110,7 +110,7 @@ public:
 	DebugUI* GetDebugUI() { return debugUi; }
 #endif // INCLUDE_DEBUG_UI
 
-	InputData ProcessInput();
+	void ProcessInput();
 
 	std::shared_ptr<InputManager> GetInputManager() { return input; }
 
