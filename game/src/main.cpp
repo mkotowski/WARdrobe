@@ -2,6 +2,10 @@
 #include <mutex>
 #include <thread>
 
+//#include <ctime>
+
+#include <clocale>
+
 extern "C"
 {
 #include "lauxlib.h"
@@ -140,6 +144,16 @@ luaTest()
 int
 main()
 {
+	std::setlocale(LC_ALL, "pl_PL");
+	//std::setlocale(LC_ALL, "pl_PL.UTF-8");
+	//std::setlocale(LC_NUMERIC, "de_DE.UTF-8");
+	//std::setlocale(LC_TIME, "ja_JP.UTF-8");
+
+	/*wchar_t     str[100];
+	std::time_t t = std::time(NULL);
+	std::wcsftime(str, 100, L"%A %c", std::localtime(&t));
+	std::wprintf(L"Number: %.2f\nDate: %Ls\n", 3.14, str);*/
+
 	luaTest();
 
 	std::shared_ptr<AssetManager> assetManager = std::make_shared<AssetManager>();

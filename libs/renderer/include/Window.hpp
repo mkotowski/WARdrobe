@@ -8,10 +8,13 @@
 // common ones: gl3w, glew, glad. You may use another loader/header of your
 // choice (glext, glLoadGen, etc.), or chose to manually implement your own.
 
-#include <glad/glad.h> // Initialize with gladLoadGL()
-#include <GLFW/glfw3.h> // Include glfw3.h after our OpenGL definitions
+// Initialize with gladLoadGL()
+#include <glad/glad.h>
+// Include glfw3.h **after** our OpenGL definitions
+#include <GLFW/glfw3.h>
 
 #include "Constants.h"
+#include "InputManager.hpp"
 
 #if INCLUDE_DEBUG_UI // INCLUDE_DEBUG_UI
 #include "DebugUI.hpp"
@@ -60,17 +63,64 @@ public:
 	template<typename Function>
 	void SetErrorCallback(Function glfw_error_callback);
 
+	template<typename Function>
+	void SetKeyCallback(Function key_callback);
+
+	template<typename Function>
+	void SetScrollCallback(Function scroll_callback);
+
+	template<typename Function>
+	void SetJoystickCallback(Function joystick_callback);
+
+	// Default GLFW Callbacks
+	// For accessing the Window instance memebers:
+	// @look https://stackoverflow.com/questions/7676971/
+	// pointing-to-a-function-that-is-a-class-member-glfw-setkeycallback
+
+	static void DefaultKeyCallback(GLFWwindow* window,
+	                               int         key,
+	                               int         scancode,
+	                               int         action,
+	                               int         mods);
+
+	static void DefaultWindowCloseCallback(GLFWwindow* window);
+
+	static void DefaultDropCallback(GLFWwindow*  window,
+	                                int          count,
+	                                const char** paths);
+
+	static void DefaultMouseButtonCallback(GLFWwindow* window,
+	                                       int         button,
+	                                       int         action,
+	                                       int         mods);
+
+	static void DefaultFramebufferSizeCallback(GLFWwindow* window,
+	                                           int         width,
+	                                           int         height);
+
+	static void DefaultMonitorCallback(GLFWmonitor* monitor, int event);
+
+	static void DefaultScrollCallback(GLFWwindow* window,
+	                                  double      xoffset,
+	                                  double      yoffset);
+
+	static void DefaultJoystickCallback(int jid, int event);
+
 #if INCLUDE_DEBUG_UI
-	DebugUI*    GetDebugUI() { return debugUi; }
+	DebugUI* GetDebugUI() { return debugUi; }
 #endif // INCLUDE_DEBUG_UI
 
 	void ProcessInput();
+
+	std::shared_ptr<InputManager> GetInputManager() { return input; }
+
+	static Window* mainWindowPtr;
 
 private:
 	GLFWwindow* window;
 
 #if INCLUDE_DEBUG_UI
-	DebugUI*    debugUi;
+	DebugUI* debugUi;
 #endif // INCLUDE_DEBUG_UI
 
 	std::string windowTitle;
@@ -85,4 +135,6 @@ private:
 	int Setup();
 	int CreateContext();
 	int InitializeOpenGLLoader();
+
+	std::shared_ptr<InputManager> input = nullptr;
 };
