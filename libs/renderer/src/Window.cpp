@@ -11,58 +11,52 @@ glfw_error_callback(int error, const char* description)
 }
 
 void
-key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+Window::DefaultDropCallback(GLFWwindow* window, int count, const char** paths)
 {
-	if (key == GLFW_KEY_E && action == GLFW_PRESS) {
-	}
-
-	std::cout << "The key " << scancode << " : " << scancode << " mods: " << mods
-	          << "\n";
-}
-
-void
-drop_callback(GLFWwindow* window, int count, const char** paths)
-{
-	std::setlocale(LC_ALL, "pl_PL.UTF-8");
-	for (int i = 0; i < count; i++)
-		// handle_dropped_file(paths[i]);
+	for (int i = 0; i < count; i++) {
+		// handle dropped file
 		std::cout << "File dropped: " << paths[i];
+	}
 }
 
 void
 Window::ProcessInput()
 {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-		glfwSetWindowShouldClose(window, true);
+	input->Update(this->window);
+
+	/*if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+	  glfwSetWindowShouldClose(window, true);
 	}
 
 	GLFWgamepadstate state;
 
 	if (glfwGetGamepadState(GLFW_JOYSTICK_1, &state)) {
-		if (state.buttons[GLFW_GAMEPAD_BUTTON_A] == GLFW_PRESS) {
-			std::cout << "Gamepad A\n";
-		}
+	  if (state.buttons[GLFW_GAMEPAD_BUTTON_A] == GLFW_PRESS) {
+	    std::cout << "Gamepad A\n";
+	  }
 
 		if (abs(state.axes[GLFW_GAMEPAD_AXIS_RIGHT_X]) >= 0.01f) {
 			std::cout << "Axis Right X: " << state.axes[GLFW_GAMEPAD_AXIS_RIGHT_X]
 			          << "\n";
 		}
 
-		if (state.buttons[GLFW_GAMEPAD_BUTTON_B] == GLFW_PRESS) {
-			std::cout << "Gamepad B\n";
-		}
-	}
+	  if (state.buttons[GLFW_GAMEPAD_BUTTON_B] == GLFW_PRESS) {
+	    std::cout << "Gamepad B\n";
+	  }
+	}*/
 }
 
 void
-window_close_callback(GLFWwindow* window)
+Window::DefaultWindowCloseCallback(GLFWwindow* window)
 {
 	// if (!time_to_close)
 	glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
 void
-framebuffer_size_callback(GLFWwindow* window, int width, int height)
+Window::DefaultFramebufferSizeCallback(GLFWwindow* window,
+                                       int         width,
+                                       int         height)
 {
 	// make sure the viewport matches the new window dimensions; note that width
 	// and height will be significantly larger than specified on retina displays.
@@ -73,7 +67,15 @@ framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 
 void
-monitor_callback(GLFWmonitor* monitor, int event)
+Window::DefaultScrollCallback(GLFWwindow* window,
+                              double      xoffset,
+                              double      yoffset)
+{
+	std::cout << "Scroll: " << xoffset << " " << yoffset << std::endl;
+}
+
+void
+Window::DefaultMonitorCallback(GLFWmonitor* monitor, int event)
 {
 	if (event == GLFW_CONNECTED) {
 		// The monitor was connected
@@ -83,47 +85,57 @@ monitor_callback(GLFWmonitor* monitor, int event)
 }
 
 void
-joystick_callback(int jid, int event)
+Window::DefaultJoystickCallback(int jid, int event)
 {
-	if (event == GLFW_CONNECTED) {
-		// The joystick was connected
-		std::cout << "Joystick connected: " << glfwGetJoystickGUID(jid) << "\n";
-		if (glfwGetGamepadName(jid)) {
-			std::cout << "Gamepad name: " << glfwGetGamepadName(jid) << "\n";
+	Window* handler = Window::mainWindowPtr;
+
+	glfwSetJoystickUserPointer(jid, mainWindowPtr);
+
+	std::cout << jid << " " << glfwJoystickIsGamepad(jid) << " "
+	          << glfwGetJoystickUserPointer(jid) << std::endl;
+
+	if (handler != NULL) {
+		if (event == GLFW_CONNECTED) {
+			// The joystick was connected
+			handler->input->AddGamepad(jid);
+
+			std::cout << "Joystick connected (" << glfwGetJoystickGUID(jid) << ") ";
+			if (glfwGetGamepadName(jid)) {
+				std::cout << glfwGetGamepadName(jid) << "\n";
+			}
+		} else if (event == GLFW_DISCONNECTED) {
+			// The joystick was disconnected
+			handler->input->RemoveGamepad(jid);
+
+			std::cout << "Joystick disconnected!\n";
 		}
-	} else if (event == GLFW_DISCONNECTED) {
-		// The joystick was disconnected
-		std::cout << "Joystick disconnected\n";
 	}
 }
 
 void
-mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+Window::DefaultMouseButtonCallback(GLFWwindow* window,
+                                   int         button,
+                                   int         action,
+                                   int         mods)
 {
-	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
-	}
+	Window* handler = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
 
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-	}
-
-	if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS) {
-	}
+	handler->input->UpdateButton(button, action, mods);
 
 	// Advanced Buttons
 	// XButton1	4th mouse button. Typically performs the same function as
 	// Browser_Back. XButton2	5th mouse button. Typically performs the same
 	// function as Browser_Forward.
 
-	// GLFW_MOUSE_BACK
-	if (button == GLFW_MOUSE_BUTTON_4 && action == GLFW_PRESS) {
+	if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS) {
 		// SetShouldClose(GLFW_TRUE);
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
 	}
 
-	// GLFW_MOUSE_FORWARD
-	if (button == GLFW_MOUSE_BUTTON_5 && action == GLFW_PRESS) {
+	// GLFW_MOUSE_BACK
+	if (button == GLFW_MOUSE_BUTTON_4 && action == GLFW_PRESS) {
 		// SetShouldClose(GLFW_TRUE);
-		glClearColor(0, 0, 0, 1);
+		glfwSetWindowShouldClose(window, GLFW_TRUE);
 	}
 }
 
@@ -159,14 +171,61 @@ Window::SetMonitorCallback(Function monitor_callback)
 
 template<typename Function>
 void
+Window::SetKeyCallback(Function key_callback)
+{
+	glfwSetKeyCallback(window, key_callback);
+}
+
+template<typename Function>
+void
 Window::SetErrorCallback(Function glfw_error_callback)
 {
 	glfwSetErrorCallback(glfw_error_callback);
 }
 
+template<typename Function>
+void
+Window::SetScrollCallback(Function scroll_callback)
+{
+	glfwSetScrollCallback(window, scroll_callback);
+}
+
+template<typename Function>
+void
+Window::SetJoystickCallback(Function joystick_callback)
+{
+	glfwSetJoystickCallback(joystick_callback);
+}
+
+void
+Window::DefaultKeyCallback(GLFWwindow* window,
+                           int         key,
+                           int         scancode,
+                           int         action,
+                           int         mods)
+{
+	Window* handler = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+
+	handler->input->UpdateKey(key, action, mods);
+}
+
+Window* Window::mainWindowPtr = nullptr;
+
 Window::Window(std::string windowTitle)
   : windowTitle(windowTitle)
 {
+	input = std::make_shared<InputManager>();
+
+	input->AddKey(GLFW_KEY_0, 0);
+	input->AddKey(GLFW_KEY_0, GLFW_MOD_ALT);
+	input->AddKey(GLFW_KEY_ESCAPE, 0);
+
+	input->AddButton(GLFW_MOUSE_BUTTON_LEFT, 0);
+	input->AddButton(GLFW_MOUSE_BUTTON_RIGHT, 0);
+	input->AddButton(GLFW_MOUSE_BUTTON_MIDDLE, 0);
+	input->AddButton(GLFW_MOUSE_BUTTON_4, 0);
+	input->AddButton(GLFW_MOUSE_BUTTON_5, 0);
+
 	int err = Setup();
 
 	if (err == 1) {
@@ -182,20 +241,20 @@ Window::Window(std::string windowTitle)
 			std::cout << "Error while initializing OpenGL loader!\n";
 		}
 
-		// Set GLFW window callbacks
-		SetWindowCloseCallback(window_close_callback);
-		SetDropCallback(drop_callback);
-		SetMouseButtonCallback(mouse_button_callback);
-		SetMonitorCallback(monitor_callback);
-		glfwSetKeyCallback(window, key_callback);
-		glfwSetJoystickCallback(joystick_callback);
+		// mainWindowPtr = reinterpret_cast<void*>(this);
+		mainWindowPtr = this;
 
-		/*const char* pctwinshock =
-		  "03000000790000000600000000000000,G-Shark "
-		  "GS-GP702,a:b2,b:b1,back:b8,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0."
-		  "1,leftshoulder:b4,leftstick:b10,lefttrigger:b6,leftx:a0,lefty:a1,"
-		  "rightshoulder:b5,rightstick:b11,righttrigger:b7,rightx:a2,righty:a4,"
-		  "start:b9,x:b3,y:b0,platform:Windows,";*/
+		// https://discourse.glfw.org/t/what-is-a-possible-use-of-glfwgetwindowuserpointer/1294
+		glfwSetWindowUserPointer(window, reinterpret_cast<void*>(this));
+
+		// Set GLFW window callbacks
+		SetWindowCloseCallback(DefaultWindowCloseCallback);
+		SetDropCallback(DefaultDropCallback);
+		SetMouseButtonCallback(DefaultMouseButtonCallback);
+		SetMonitorCallback(DefaultMonitorCallback);
+		SetKeyCallback(DefaultKeyCallback);
+		SetJoystickCallback(DefaultJoystickCallback);
+		SetScrollCallback(DefaultScrollCallback);
 
 		const char* pctwinshock =
 		  "03000000790000000600000000000000,G-Shark "
@@ -208,19 +267,20 @@ Window::Window(std::string windowTitle)
 			std::cout << "Game mapping updated!\n";
 		}
 
+		for (int jid = 0; jid < GLFW_JOYSTICK_LAST; jid++) {
+			if (glfwJoystickPresent(jid)) {
+				DefaultJoystickCallback(jid, GLFW_CONNECTED);
+			}
+		}
+
 #if INCLUDE_DEBUG_UI
 		debugUi = new DebugUI(window, glslVersion.c_str());
 #endif // INCLUDE_DEBUG_UI
 
 		SetClearColor(0.45f, 0.55f, 0.60f, 0.00f);
-		// SetClearColor(0.00f, 0.00f, 0.00f, 0.00f);
 
 		glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
 		SetViewport(0, 0, framebufferWidth, framebufferHeight);
-
-		char                 version = (char)glGetString(GL_VERSION);
-		const unsigned char* glver = glGetString(GL_VERSION);
-		std::cout << "Detected OpenGL version: " << glver << std::endl;
 	}
 }
 

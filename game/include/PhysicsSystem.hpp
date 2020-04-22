@@ -44,5 +44,5 @@ PhysicsSystem::Update(float                             dt,
 		rigidBody.velocity += gravity.force * dt;
 	}
 
-	std::cout << "Physics updated\n";
+	//std::cout << "Physics updated\n";
 }

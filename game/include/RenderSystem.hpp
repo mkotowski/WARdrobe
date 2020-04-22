@@ -50,7 +50,7 @@ RenderSystem::Update(float                             dt,
 			 	 	
 	}
 
-	std::cout << "Rendering updated\n";
+	//std::cout << "Rendering updated\n";
 }
 
 void
