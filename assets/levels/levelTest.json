@@ -1,4 +1,17 @@
 {
+    "billboard" :
+            
+                {
+                    "Model" : ["assets/models/square.obj", "assets/textures/container.jpg"],
+                    "Shader" : ["assets/shaders/vertex1.glsl", "assets/shaders/fragment.glsl"],
+                    "Transform" : [ 0.0, 0.0, -3.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1 ],
+                    "Rigidbody" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+                    "Gravity" : [ 0.0, 0.0, 0.0 ],
+                    "Renderer" : 1
+                }
+                
+            ,
+
     "rycerzModel" :
             
                 {
@@ -7,8 +20,7 @@
                     "Transform" : [ 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1 ],
                     "Rigidbody" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
                     "Gravity" : [ 0.0, 0.0, 0.0 ],
-                    "Renderer" : ""
-                }
+                    "Renderer" : 0                }
                 
             ,
     "wilkModel" :
@@ -17,7 +29,7 @@
                     "Model" : ["assets/models/Wolf_dae.dae", "assets/textures/stone2.jpg"],
                     "Shader" : ["assets/shaders/vertex.glsl", "assets/shaders/fragment.glsl"],
                     "Transform" : [ 0.0, 0.0, 1.0, 90.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
-                    "Renderer" : ""
+                    "Renderer" : 0
                 }
             ,
     "mainCamera" :
@@ -33,7 +45,7 @@
                     "Model" : ["assets/models/levelPrototype.obj", "assets/textures/levelPrototype.png"],
                     "Shader" : ["assets/shaders/vertex.glsl", "assets/shaders/fragment.glsl"],
                     "Transform" : [ -5.0, -10.0, -5.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
-                    "Renderer" : ""
+                    "Renderer" : 0
                 }
             
 }

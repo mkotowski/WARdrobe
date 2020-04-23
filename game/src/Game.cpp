@@ -173,7 +173,7 @@ void Game::LoadLevel(std::string levelPath)
 				// Render Component
 				gameplayManager->AddComponent(
 											entity, 
-											Renderer());
+											Renderer(it2.value()));
 
 			}
 			else if (it2.key() == "Camera")
