@@ -123,7 +123,7 @@ Game::Loop()
 
 		gameplayManager->AddComponent(entity,
 		                              Transform{ glm::vec3(0.0f, 0.0f, 0.0f),
-		                                         glm::vec3(90.0f, 0.0f, 0.0f),
+		                                         glm::vec3(0.0f, 0.0f, 0.0f),
 		                                         glm::vec3(1.0f, 1.0f, 1.0f) });
 
 		gameplayManager->AddComponent(
@@ -141,9 +141,14 @@ Game::Loop()
 		gameplayManager->AddComponent(
 		  entity,
 		  BoundingBox{ gameplayManager->GetComponent<Transform>(entity).position,
-		               gameplayManager->GetComponent<Transform>(entity).scale }
-		);
+		               gameplayManager->GetComponent<Transform>(entity).scale });
 		gameplayManager->AddComponent(entity, Collidable());
+		std::cout << gameplayManager->GetComponent<BoundingBox>(entity).dimension[0]
+		          << " "
+		          << gameplayManager->GetComponent<BoundingBox>(entity).dimension[1]
+		          << " "
+		          << gameplayManager->GetComponent<BoundingBox>(entity).dimension[2]
+		          << "\n";
 	}
 
 	Entity modelEntity = gameplayManager->CreateEntity();
