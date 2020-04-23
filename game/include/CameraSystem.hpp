@@ -8,11 +8,18 @@ public:
 	void Update(float                             dt,
 	            std::shared_ptr<ComponentManager> componentManager) override;
 	void Init();
+	Entity cameraEntity;
 };
 
 void
 CameraSystem::Init()
-{}
+{
+	for (auto& entity : entities)
+	{
+		// Saves entity with Camera Component, right now it works as last one loaded 
+		this->cameraEntity = entity;
+	}
+}
 
 void
 CameraSystem::Update(float                             dt,

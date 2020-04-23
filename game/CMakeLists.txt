@@ -41,10 +41,11 @@ target_include_directories(game
 		"${CMAKE_CURRENT_SOURCE_DIR}/include/"
 		"${CMAKE_BINARY_DIR}/config/"
 		"${GLM_INCLUDE_DIR}"
+		"${CMAKE_SOURCE_DIR}/thirdparty/json/include/"
 )
 
 target_link_libraries(game 
-	PUBLIC ecs renderer lua audio glm OpenAL assetmanager steam_controller)
+	PUBLIC ecs renderer lua audio glm OpenAL assetmanager steam_controller nlohmann_json)
 
 target_compile_features(game PRIVATE cxx_std_17)
 

@@ -12,6 +12,7 @@
 #include "CameraSystem.hpp"
 
 
+
 Game::Game(std::string windowTitle)
 {
 	gameWindow = new Window(windowTitle);
@@ -24,6 +25,7 @@ Game::~Game() {}
 void
 Game::Loop()
 {
+	
 	// Initialize ECS managers
 	gameplayManager->Init();
 
@@ -67,102 +69,13 @@ Game::Loop()
 	gameplayManager->SetRequiredComponent<RenderSystem>(
 		gameplayManager->GetComponentType<Transform>());
 
-	//Create cameraEntity and add Camera component to it and attach it to the RenderSystem
-	Entity cameraEntity = gameplayManager->CreateEntity();
-	
-	gameplayManager->AddComponent(cameraEntity,
-	                              Transform{ glm::vec3(0.0f, 0.0f, 3.0f),
-	                                         glm::vec3(0.0f, 0.0f, 0.0f),
-	                                         glm::vec3(1.0f, 1.0f, 1.0f) });
-
-	gameplayManager->AddComponent(
-	  	cameraEntity,
-	  	Camera(glm::vec3(0.0f, 0.0f, 0.0f),
-	  	 					glm::vec3(0.0f, 0.0f, -1.0f),
-	  	 					glm::vec3(0.0f, 1.0f, 0.0f),
-	  	 					80.0f)
-		);
-
-	renderSystem->cameraEntity = cameraEntity;
-
-	std::vector<Entity> entities(1);	
-
-	std::default_random_engine            generator;
-	std::uniform_real_distribution<float> randPosition(-100.0f, 100.0f);
-	std::uniform_real_distribution<float> randRotation(0.0f, 3.0f);
-	std::uniform_real_distribution<float> randScale(3.0f, 5.0f);
-	std::uniform_real_distribution<float> randGravity(-10.0f, -1.0f);
-
-	float scale = randScale(generator);
-
-	for (auto& entity : entities) {
-		entity = gameplayManager->CreateEntity();
-
-		gameplayManager->AddComponent(
-		  entity, Gravity{ glm::vec3(0.0f, 0.0f, 0.1f) });
-
-		gameplayManager->AddComponent(
-		  entity,
-		  RigidBody{ glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f) });
-
-		gameplayManager->AddComponent(entity,
-		                              Transform{ glm::vec3(0.0f, 0.0f, 0.0f),
-		                                         glm::vec3(90.0f, 0.0f, 0.0f),
-		                                         glm::vec3(1.0f, 1.0f, 1.0f) });
-
-		gameplayManager->AddComponent(
-			entity, 
-			Model("assets/models/Wolf_dae.dae", "assets/textures/stone2.jpg")
-		);
-		gameplayManager->AddComponent(
-			entity, 
-			Shader("assets/shaders/vertex.glsl", "assets/shaders/fragment.glsl")
-		);
-		gameplayManager->AddComponent(
-			entity, 
-			Renderer(0)
-		);
-	}
-
-	Entity modelEntity = gameplayManager->CreateEntity();
-
-	gameplayManager->AddComponent(modelEntity,
-		                              Transform{ glm::vec3(0.0f, 0.0f, 0.0f),
-		                                         glm::vec3(0.0f, 0.0f, 0.0f),
-		                                         glm::vec3(0.1f, 0.1f, 0.1f) });
-
-	gameplayManager->AddComponent(
-		modelEntity, 
-		Model("assets/models/chr_knight.obj", "assets/textures/chr_knight.png")
-	);
-	gameplayManager->AddComponent(
-		modelEntity, 
-		Shader("assets/shaders/vertex.glsl", "assets/shaders/fragment.glsl")
-	);
-	gameplayManager->AddComponent(
-		modelEntity, 
-		Renderer()
-	);
-
-	Entity billboardEntity = gameplayManager->CreateEntity();
-
-	gameplayManager->AddComponent(billboardEntity,
-	                              Transform{ glm::vec3(0.0f, 0.0f, -3.0f),
-	                                         glm::vec3(30.0f, 30.0f, 0.0f),
-	                                         glm::vec3(1.0f, 1.0f, 1.0f) });
-
-	gameplayManager->AddComponent(
-	  billboardEntity,
-	  Model("assets/models/square.obj", "assets/textures/container.jpg"));
-	gameplayManager->AddComponent(
-	  billboardEntity,
-	  Shader("assets/shaders/vertex1.glsl", "assets/shaders/fragment.glsl"));
-
-	gameplayManager->AddComponent(
-		billboardEntity, Renderer(1));
+	// Load levelData from JSON file
+	LoadLevel("assets/levels/levelTest.json");
 
 	float dt = 0.0f;
 	
+	cameraSystem->Init();
+	renderSystem->cameraEntity = cameraSystem->cameraEntity;
 	renderSystem->Init();
 
 	while (!gameWindow->ShouldClose()) {
@@ -189,4 +102,97 @@ Game::Loop()
 	delete gameWindow;
 
 	gameWindow = nullptr;
+}
+
+void Game::LoadLevel(std::string levelPath)
+{
+	// Read raw data from JSON file
+	std::ifstream rawLevelData(levelPath);
+	// Write that data to JSON object
+	nlohmann::json jsonLevelData;
+	rawLevelData >> jsonLevelData;
+	
+	
+	for (auto& it : jsonLevelData.items())
+	{
+		Entity entity = gameplayManager->CreateEntity();
+
+		for (auto& it2 : it.value().items())
+		{
+			if (it2.key() == "Model")
+			{
+				// 0: model Path
+				// 1: texture Path
+				gameplayManager->AddComponent(
+											entity,
+											Model(it2.value()[0], it2.value()[1]));
+			}
+			else if (it2.key() == "Shader")
+			{
+				// 0: vertex Path
+				// 1: fragment Path
+				std::string vertexShaderPath = it2.value()[0];
+				std::string fragmentShaderPath = it2.value()[1];
+				gameplayManager->AddComponent(
+											entity,
+											Shader(vertexShaderPath.c_str(), fragmentShaderPath.c_str()));
+
+			}
+			else if (it2.key() == "Transform")
+			{
+				// 0 - 2: Position X Y Z
+				// 3 - 5: Rotation X Y Z
+				// 6 - 8: Scale X Y Z
+				gameplayManager->AddComponent(
+											entity,
+		                              		Transform{ glm::vec3(it2.value()[0], it2.value()[1], it2.value()[2]),
+		                                         glm::vec3(it2.value()[3], it2.value()[4], it2.value()[5]),
+		                                         glm::vec3(it2.value()[6], it2.value()[7], it2.value()[8]) });
+			}
+			else if (it2.key() == "Rigidbody")
+			{
+				// 0 - 2: Velocity X Y Z
+				// 3 - 5: Acceleration X Y Z
+				gameplayManager->AddComponent(
+											entity,
+											RigidBody{ 
+												glm::vec3(it2.value()[0], it2.value()[1], it2.value()[2]), 
+												glm::vec3(it2.value()[3], it2.value()[4], it2.value()[5]) });
+
+			}
+			else if (it2.key() == "Gravity")
+			{
+				// 0 - 2: Gravity X Y Z
+				gameplayManager->AddComponent(
+		  									entity, 
+											Gravity{ 
+												glm::vec3(it2.value()[0], it2.value()[1], it2.value()[2]) });
+			}
+			else if (it2.key() == "Renderer")
+			{
+				// Render Component
+				gameplayManager->AddComponent(
+											entity, 
+											Renderer());
+
+			}
+			else if (it2.key() == "Camera")
+			{
+				// 0 - 2: Camera Position
+				// 3 - 5: Camera Front/Target
+				// 6 - 8: Camera Up
+				// 9: Field Of View
+
+				gameplayManager->AddComponent(
+	  										entity,
+											Camera(
+												glm::vec3(it2.value()[0], it2.value()[1], it2.value()[2]),
+												glm::vec3(it2.value()[3], it2.value()[4], it2.value()[5]),
+												glm::vec3(it2.value()[6], it2.value()[7], it2.value()[8]),
+												it2.value()[9]));			
+
+			}	
+		}
+
+	}
 }
