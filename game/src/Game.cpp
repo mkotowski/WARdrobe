@@ -74,7 +74,8 @@ Game::Loop()
 
 	float dt = 0.0f;
 	
-	renderSystem->cameraEntity = cameraSystem->Init();
+	cameraSystem->Init();
+	renderSystem->cameraEntity = cameraSystem->cameraEntity;
 	renderSystem->Init();
 
 	while (!gameWindow->ShouldClose()) {
