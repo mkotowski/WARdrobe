@@ -2,6 +2,7 @@
 
 enum InputSource
 {
+	UNKNOWN = -1,
 	KEY = 0,
 	MOUSE_BUTTON = 1,
 	CURSOR = 2,
