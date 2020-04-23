@@ -53,34 +53,20 @@ void
 ColliderSystem::CheckCollision(
   std::shared_ptr<ComponentManager> componentManager)
 {
-	//if (entitiesToCollide.size() > 1) {
 
-		for (int i = 0; i < entitiesToCollide.size() - 1; i++) {
-			auto& bounds1 =
-			  componentManager->GetComponent<BoundingBox>(entitiesToCollide[i]);
-			auto& bounds2 =
-			  componentManager->GetComponent<BoundingBox>(entitiesToCollide[i + 1]);
+	for (int i = 0; i < entitiesToCollide.size() - 1; i++) {
+		auto& bounds1 =
+		  componentManager->GetComponent<BoundingBox>(entitiesToCollide[i]);
+		auto& bounds2 =
+		  componentManager->GetComponent<BoundingBox>(entitiesToCollide[i + 1]);
 
-			std::cout << bounds1.minX << "   " << bounds1.maxX << "\n";
-		  std::cout << bounds1.minY << "   " << bounds1.maxY << "\n";
-		  std::cout << bounds1.minZ << "   " << bounds1.maxZ << "\n";
-		  std::cout << bounds2.minX << "   " << bounds2.maxX << "\n";
-		  std::cout << bounds2.minY << "   " << bounds2.maxY << "\n";
-		  std::cout << bounds2.minZ << "   " << bounds2.maxZ << "\n"; 
+		if (bounds1.minX < bounds2.maxX && bounds1.maxX > bounds2.minX &&
+		    bounds1.minY < bounds2.maxY && bounds1.maxY > bounds2.minY &&
+		    bounds1.minZ < bounds2.maxZ && bounds1.maxZ > bounds2.minZ) {
 
-			if (bounds1.minX < bounds2.maxX &&
-			    bounds1.maxX > bounds2.minX &&
-		        bounds1.minY < bounds2.maxY && 
-				bounds1.maxY > bounds2.minY &&
-		        bounds1.minZ < bounds2.maxZ && 
-				bounds1.maxZ > bounds2.minZ) {
-			  
-				std::cout << "COLLISION DETECTED!!!!!!!!!\n";
-			} 
-			else	
-			{
-			  std::cout << "Collision Undetected!!!\n";  
-			}
+			std::cout << "COLLISION DETECTED!!!!!!!!!\n";
+		} else {
+			std::cout << "Collision Undetected!!!\n";
 		}
-	//}
+	}
 }
