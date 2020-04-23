@@ -10,6 +10,8 @@
 #include "PhysicsSystem.hpp"
 #include "RenderSystem.hpp"
 #include "CameraSystem.hpp"
+#include "ColliderSystem.hpp"
+
 
 
 Game::Game(std::string windowTitle)
@@ -35,6 +37,8 @@ Game::Loop()
 	gameplayManager->RegisterComponent<Shader>();
 	gameplayManager->RegisterComponent<Renderer>();
 	gameplayManager->RegisterComponent<Camera>();
+	gameplayManager->RegisterComponent<BoundingBox>();
+	gameplayManager->RegisterComponent<Collidable>();
 
 	// Register the systems used during the gameplay
 	auto physicsSystem = gameplayManager->RegisterSystem<PhysicsSystem>();
@@ -42,6 +46,8 @@ Game::Loop()
 	auto cameraSystem = gameplayManager->RegisterSystem<CameraSystem>();
 
 	auto renderSystem = gameplayManager->RegisterSystem<RenderSystem>();
+
+	auto colliderSystem = gameplayManager->RegisterSystem<ColliderSystem>();
 	// Add reference to a window
 	renderSystem->window = this->gameWindow;
 
@@ -54,6 +60,10 @@ Game::Loop()
 	  gameplayManager->GetComponentType<RigidBody>());
 	gameplayManager->SetRequiredComponent<PhysicsSystem>(
 	  gameplayManager->GetComponentType<Transform>());
+	gameplayManager->SetRequiredComponent<PhysicsSystem>(
+	  gameplayManager->GetComponentType<BoundingBox>());
+	gameplayManager->SetRequiredComponent<PhysicsSystem>(
+	  gameplayManager->GetComponentType<Collidable>());
 	  
 	//CameraSystem
 	gameplayManager->SetRequiredComponent<CameraSystem>(
@@ -66,6 +76,12 @@ Game::Loop()
 		gameplayManager->GetComponentType<Renderer>());
 	gameplayManager->SetRequiredComponent<RenderSystem>(
 		gameplayManager->GetComponentType<Transform>());
+
+	//ColliderSystem
+	gameplayManager->SetRequiredComponent<ColliderSystem>(
+	  gameplayManager->GetComponentType<BoundingBox>());
+	gameplayManager->SetRequiredComponent<ColliderSystem>(
+	  gameplayManager->GetComponentType<Collidable>());
 
 	//Create cameraEntity and add Camera component to it and attach it to the RenderSystem
 	Entity cameraEntity = gameplayManager->CreateEntity();
@@ -122,6 +138,12 @@ Game::Loop()
 			entity, 
 			Renderer()
 		);
+		gameplayManager->AddComponent(
+		  entity,
+		  BoundingBox{ gameplayManager->GetComponent<Transform>(entity).position,
+		               gameplayManager->GetComponent<Transform>(entity).scale }
+		);
+		gameplayManager->AddComponent(entity, Collidable());
 	}
 
 	Entity modelEntity = gameplayManager->CreateEntity();
@@ -143,6 +165,12 @@ Game::Loop()
 		modelEntity, 
 		Renderer()
 	);
+	gameplayManager->AddComponent(
+	  modelEntity,
+	  BoundingBox{ gameplayManager->GetComponent<Transform>(modelEntity).position,
+	               gameplayManager->GetComponent<Transform>(modelEntity).scale }
+	);
+	gameplayManager->AddComponent(modelEntity, Collidable());
 
 	float dt = 0.0f;
 	
