@@ -1,0 +1,20 @@
+#pragma once
+
+enum InputSource
+{
+	KEY = 0,
+	MOUSE_BUTTON = 1,
+	CURSOR = 2,
+	SCROLL = 3,
+	GAMEPAD_BUTTON = 4,
+	GAMEPAD_AXIS = 5
+};
+
+enum InputState
+{
+	IDLE = -1,
+	RELEASED = 0,
+	PRESSED = 1,
+	REPEAT = 2,
+	VALUE = 3
+};
