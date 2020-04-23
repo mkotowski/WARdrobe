@@ -214,11 +214,14 @@ Window* Window::mainWindowPtr = nullptr;
 class Tmp
 {
 public:
-	int  beforeState = -1;
-	void execute()
+	double  beforeState = -1;
+	double    currentState = 0;
+	void execute(double data)
 	{
 		std::cout << "Call from TMP"
 		          << "\n";
+		beforeState = currentState;
+		currentState = data;
 	}
 };
 
@@ -238,7 +241,7 @@ Window::Window(std::string windowTitle)
 	input->AddButton(GLFW_MOUSE_BUTTON_5, GLFW_PRESS, 0);*/
 
 	Tmp             a;
-	Callback        callback = std::bind(&Tmp::execute, a);
+	Callback        callback = std::bind(&Tmp::execute, a, std::placeholders::_1);
 	CallbackPointer ptr = std::make_shared<Callback>(callback);
 
 	input->BindAction(

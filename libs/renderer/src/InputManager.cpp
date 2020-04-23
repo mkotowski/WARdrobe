@@ -309,7 +309,7 @@ InputManager::Call()
 		if (it != bindings.end()) {
 			//std::cout << "Activate callback binded to input " << (&input)->id
 			//          << " from source " << (&input)->source << "!\n";
-			(*it->second)();
+			(*it->second)(input.state);
 		}
 	}
 }

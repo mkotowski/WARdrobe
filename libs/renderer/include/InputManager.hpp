@@ -11,7 +11,7 @@
 #include "Enums.h"
 #include "Input.hpp"
 
-typedef std::function<void()>     Callback;
+typedef std::function<void(double)>     Callback;
 typedef std::shared_ptr<Callback> CallbackPointer;
 
 class InputManager
