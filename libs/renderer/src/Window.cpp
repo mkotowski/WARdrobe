@@ -35,10 +35,10 @@ Window::ProcessInput()
 	    std::cout << "Gamepad A\n";
 	  }
 
-		if (abs(state.axes[GLFW_GAMEPAD_AXIS_RIGHT_X]) >= 0.01f) {
-			std::cout << "Axis Right X: " << state.axes[GLFW_GAMEPAD_AXIS_RIGHT_X]
-			          << "\n";
-		}
+	  if (abs(state.axes[GLFW_GAMEPAD_AXIS_RIGHT_X]) >= 0.01f) {
+	    std::cout << "Axis Right X: " << state.axes[GLFW_GAMEPAD_AXIS_RIGHT_X]
+	              << "\n";
+	  }
 
 	  if (state.buttons[GLFW_GAMEPAD_BUTTON_B] == GLFW_PRESS) {
 	    std::cout << "Gamepad B\n";
@@ -214,7 +214,12 @@ Window* Window::mainWindowPtr = nullptr;
 class Tmp
 {
 public:
-	void execute() { std::cout << "Call from TMP" << "\n"; }
+	int  beforeState = -1;
+	void execute()
+	{
+		std::cout << "Call from TMP"
+		          << "\n";
+	}
 };
 
 Window::Window(std::string windowTitle)
@@ -232,13 +237,18 @@ Window::Window(std::string windowTitle)
 	input->AddButton(GLFW_MOUSE_BUTTON_4, GLFW_PRESS, 0);
 	input->AddButton(GLFW_MOUSE_BUTTON_5, GLFW_PRESS, 0);*/
 
-
-	Tmp          a;
+	Tmp             a;
 	Callback        callback = std::bind(&Tmp::execute, a);
 	CallbackPointer ptr = std::make_shared<Callback>(callback);
 
 	input->BindAction(
 	  GLFW_MOUSE_BUTTON_LEFT, InputSource::MOUSE_BUTTON, GLFW_PRESS, 0, ptr);
+	input->BindAction(
+	  GLFW_MOUSE_BUTTON_RIGHT, InputSource::MOUSE_BUTTON, GLFW_PRESS, 0, ptr);
+	input->BindAction(
+	  GLFW_MOUSE_BUTTON_MIDDLE, InputSource::MOUSE_BUTTON, GLFW_PRESS, 0, ptr);
+	input->BindAction(
+	  GLFW_MOUSE_BUTTON_4, InputSource::MOUSE_BUTTON, GLFW_PRESS, 0, ptr);
 
 	int err = Setup();
 

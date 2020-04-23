@@ -238,7 +238,7 @@ InputManager::Update(GLFWwindow* window)
 		UpdateGamepad(gamepad);
 	}
 
-	//Call();
+	Call();
 }
 
 void
@@ -283,26 +283,18 @@ InputManager::UpdateInput(int id, int source, int state, int mods)
 	Input searchedInput;
 	searchedInput.id = id;
 	searchedInput.source = source;
-	searchedInput.state = -1;
+	searchedInput.state = state;
 	searchedInput.mods = mods;
 
-	// std::list<Input>::iterator it = std::find_if(
-	//  inputs.begin(), inputs.end(), Input::input_type_compare(searchedInput, ));
-
 	// std::list<Input>::iterator
-	std::cout
-	  << "Update INPUT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
-	auto it =
-	  std::find_if(inputs.begin(), inputs.end(), [searchedInput](const Input& i) {
-		  return (searchedInput.id == i.id) && (searchedInput.source == i.source) &&
-		         (searchedInput.mods == i.mods);
+	auto it = std::find_if(
+	  inputs.begin(), inputs.end(), [id, source, state, mods](const Input& i) {
+		  return (id == i.id) && (source == i.source) && (mods == i.mods);
 		  // Input::input_type_compare(i, searchedInput)
 	  });
 
 	if (it != inputs.end()) {
-		/*if (*it != searchedInput) {
-			it->state = state;
-		}*/
+		it->state = state;
 		std::cout << "Input " << it->id << " from " << it->source
 		          << " updated to state " << it->state << "!\n";
 	}
@@ -315,8 +307,8 @@ InputManager::Call()
 		auto it = bindings.find(input);
 
 		if (it != bindings.end()) {
-			std::cout << "Callback binded to input " << (&input)->id
-			          << " from source " << (&input)->source << " called!\n";
+			//std::cout << "Activate callback binded to input " << (&input)->id
+			//          << " from source " << (&input)->source << "!\n";
 			(*it->second)();
 		}
 	}
