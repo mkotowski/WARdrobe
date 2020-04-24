@@ -165,6 +165,11 @@ configure_file (
 	"${PROJECT_BINARY_DIR}/config/Constants.h"
 )
 
+configure_file (
+	"${PROJECT_SOURCE_DIR}/config/Enums.h.in"
+	"${PROJECT_BINARY_DIR}/config/Enums.h"
+)
+
 file(GLOB 
 	COFIGURED_HEADERS 
 	CONFIGURE_DEPENDS 

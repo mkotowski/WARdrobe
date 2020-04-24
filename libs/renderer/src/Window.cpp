@@ -35,10 +35,10 @@ Window::ProcessInput()
 	    std::cout << "Gamepad A\n";
 	  }
 
-		if (abs(state.axes[GLFW_GAMEPAD_AXIS_RIGHT_X]) >= 0.01f) {
-			std::cout << "Axis Right X: " << state.axes[GLFW_GAMEPAD_AXIS_RIGHT_X]
-			          << "\n";
-		}
+	  if (abs(state.axes[GLFW_GAMEPAD_AXIS_RIGHT_X]) >= 0.01f) {
+	    std::cout << "Axis Right X: " << state.axes[GLFW_GAMEPAD_AXIS_RIGHT_X]
+	              << "\n";
+	  }
 
 	  if (state.buttons[GLFW_GAMEPAD_BUTTON_B] == GLFW_PRESS) {
 	    std::cout << "Gamepad B\n";
@@ -211,20 +211,47 @@ Window::DefaultKeyCallback(GLFWwindow* window,
 
 Window* Window::mainWindowPtr = nullptr;
 
+class Tmp
+{
+public:
+	double  beforeState = -1;
+	double    currentState = 0;
+	void execute(double data)
+	{
+		std::cout << "Call from TMP"
+		          << "\n";
+		beforeState = currentState;
+		currentState = data;
+	}
+};
+
 Window::Window(std::string windowTitle)
   : windowTitle(windowTitle)
 {
 	input = std::make_shared<InputManager>();
 
-	input->AddKey(GLFW_KEY_0, 0);
-	input->AddKey(GLFW_KEY_0, GLFW_MOD_ALT);
-	input->AddKey(GLFW_KEY_ESCAPE, 0);
+	/*input->AddKey(GLFW_KEY_0, GLFW_PRESS, 0);
+	input->AddKey(GLFW_KEY_0, GLFW_PRESS, GLFW_MOD_ALT);
+	input->AddKey(GLFW_KEY_ESCAPE, GLFW_PRESS, 0);
 
-	input->AddButton(GLFW_MOUSE_BUTTON_LEFT, 0);
-	input->AddButton(GLFW_MOUSE_BUTTON_RIGHT, 0);
-	input->AddButton(GLFW_MOUSE_BUTTON_MIDDLE, 0);
-	input->AddButton(GLFW_MOUSE_BUTTON_4, 0);
-	input->AddButton(GLFW_MOUSE_BUTTON_5, 0);
+	input->AddButton(GLFW_MOUSE_BUTTON_LEFT, GLFW_PRESS, 0);
+	input->AddButton(GLFW_MOUSE_BUTTON_RIGHT, GLFW_PRESS, 0);
+	input->AddButton(GLFW_MOUSE_BUTTON_MIDDLE, GLFW_PRESS, 0);
+	input->AddButton(GLFW_MOUSE_BUTTON_4, GLFW_PRESS, 0);
+	input->AddButton(GLFW_MOUSE_BUTTON_5, GLFW_PRESS, 0);*/
+
+	/*Tmp             a;
+	Callback        callback = std::bind(&Tmp::execute, a, std::placeholders::_1);
+	CallbackPointer ptr = std::make_shared<Callback>(callback);*/
+
+	/*input->BindAction(
+	  GLFW_MOUSE_BUTTON_LEFT, InputSource::MOUSE_BUTTON, GLFW_PRESS, 0, ptr);
+	input->BindAction(
+	  GLFW_MOUSE_BUTTON_RIGHT, InputSource::MOUSE_BUTTON, GLFW_PRESS, 0, ptr);
+	input->BindAction(
+	  GLFW_MOUSE_BUTTON_MIDDLE, InputSource::MOUSE_BUTTON, GLFW_PRESS, 0, ptr);
+	input->BindAction(
+	  GLFW_MOUSE_BUTTON_4, InputSource::MOUSE_BUTTON, GLFW_PRESS, 0, ptr);*/
 
 	int err = Setup();
 
