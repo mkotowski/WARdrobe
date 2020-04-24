@@ -240,18 +240,18 @@ Window::Window(std::string windowTitle)
 	input->AddButton(GLFW_MOUSE_BUTTON_4, GLFW_PRESS, 0);
 	input->AddButton(GLFW_MOUSE_BUTTON_5, GLFW_PRESS, 0);*/
 
-	Tmp             a;
+	/*Tmp             a;
 	Callback        callback = std::bind(&Tmp::execute, a, std::placeholders::_1);
-	CallbackPointer ptr = std::make_shared<Callback>(callback);
+	CallbackPointer ptr = std::make_shared<Callback>(callback);*/
 
-	input->BindAction(
+	/*input->BindAction(
 	  GLFW_MOUSE_BUTTON_LEFT, InputSource::MOUSE_BUTTON, GLFW_PRESS, 0, ptr);
 	input->BindAction(
 	  GLFW_MOUSE_BUTTON_RIGHT, InputSource::MOUSE_BUTTON, GLFW_PRESS, 0, ptr);
 	input->BindAction(
 	  GLFW_MOUSE_BUTTON_MIDDLE, InputSource::MOUSE_BUTTON, GLFW_PRESS, 0, ptr);
 	input->BindAction(
-	  GLFW_MOUSE_BUTTON_4, InputSource::MOUSE_BUTTON, GLFW_PRESS, 0, ptr);
+	  GLFW_MOUSE_BUTTON_4, InputSource::MOUSE_BUTTON, GLFW_PRESS, 0, ptr);*/
 
 	int err = Setup();
 

@@ -30,7 +30,7 @@ void
 CameraSystem::Update(float                             dt,
                      std::shared_ptr<ComponentManager> componentManager)
 {
-	const float cameraSpeed = 0.05f;
+	const float cameraSpeed = 1.5f;
 
 	for (auto& entity : entities) {
 		auto& camera = componentManager->GetComponent<Camera>(entity);
@@ -44,19 +44,27 @@ CameraSystem::Update(float                             dt,
 		                   glm::vec3(0.0, 0.0, 0.0),
 		                   glm::vec3(0.0, 1.0, 0.0));*/
 
-		auto actionHorizontalMove =
-		  ActionManager::GetInstance().GetAction("CameraHorizontalMovement");
-		auto actionVerticalMove =
-		  ActionManager::GetInstance().GetAction("CameraVerticalMovement");
+		auto actionForwardMove =
+		  ActionManager::GetInstance().GetAction("CameraForward");
 
-		float camX = 0;
-		float camZ = 0;
+		auto actionBackMove =
+		  ActionManager::GetInstance().GetAction("CameraBack");
 
-		if (actionHorizontalMove != nullptr) {
-			camX = static_cast<float>(actionHorizontalMove->GetValue());
+		auto actionRightMove =
+		  ActionManager::GetInstance().GetAction("CameraRight");
+
+		auto actionLeftMove =
+		  ActionManager::GetInstance().GetAction("CameraLeft");
+
+		float camX = 1;
+		float camZ = 1;
+
+		if (actionForwardMove != nullptr) {
+			camX = actionForwardMove->GetValue();
+			std::cout << "FORWARD CAMERA VALUE: " << camX << "\n";
 		}
-		if (actionVerticalMove != nullptr) {
-			camZ = static_cast<float>(actionVerticalMove->GetValue());
+		if (actionRightMove != nullptr) {
+			camZ = static_cast<float>(actionRightMove->GetValue());
 		}
 
 		// transform.position = glm::vec3(camX / 8, transform.position[1], camZ /

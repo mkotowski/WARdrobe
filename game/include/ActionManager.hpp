@@ -21,7 +21,7 @@ public:
 	}
 	std::shared_ptr<Action> GetAction(const char* label)
 	{
-		auto it = actions.find(label);
+		auto it = actions.find(std::string(label));
 
 		if (it == actions.end()) {
 			return nullptr;
@@ -31,8 +31,9 @@ public:
 
 	std::shared_ptr<Action> AddAction(const char* label, ActionType type)
 	{
-		actions.insert(std::make_pair(label, Action(label, type)));
-		auto it = actions.find(label);
+		std::string searchLabel = std::string(label);
+		actions.insert(std::make_pair(searchLabel, Action(label, type)));
+		auto it = actions.find(searchLabel);
 		return std::make_shared<Action>(it->second);
 	}
 
@@ -46,5 +47,5 @@ private:
 	ActionManager(ActionManager&&) = delete;
 	ActionManager& operator=(ActionManager&&) = delete;
 
-	std::unordered_map<const char*, Action> actions;
+	std::unordered_map<std::string, Action> actions;
 };

@@ -28,12 +28,38 @@ Game::Loop()
 	auto cameraForwardAction =
 	  ActionManager::GetInstance().AddAction("CameraForward", ActionType::Range);
 
-	Callback callback =
-	  std::bind(&Action::execute, cameraForwardAction, std::placeholders::_1);
-	CallbackPointer ptr = std::make_shared<Callback>(callback);
+	auto cameraBackAction =
+	  ActionManager::GetInstance().AddAction("CameraBack", ActionType::Range);
+
+	auto cameraRightAction =
+	  ActionManager::GetInstance().AddAction("CameraRight", ActionType::Range);
+
+	auto cameraLeftAction =
+	  ActionManager::GetInstance().AddAction("CameraLeft", ActionType::Range);
+
+	CallbackPointer forwardPtr = std::make_shared<Callback>(
+	  std::bind(&Action::execute, cameraForwardAction, std::placeholders::_1));
+
+	CallbackPointer backPtr = std::make_shared<Callback>(
+	  std::bind(&Action::execute, cameraBackAction, std::placeholders::_1));
+
+	CallbackPointer rightPtr = std::make_shared<Callback>(
+	  std::bind(&Action::execute, cameraRightAction, std::placeholders::_1));
+
+	CallbackPointer leftPtr = std::make_shared<Callback>(
+	  std::bind(&Action::execute, cameraLeftAction, std::placeholders::_1));
 
 	gameWindow->GetInputManager()->BindAction(
-	  GLFW_KEY_W, InputSource::KEY, GLFW_PRESS, 0, ptr);
+	  GLFW_KEY_W, InputSource::KEY, GLFW_PRESS, 0, forwardPtr);
+
+	gameWindow->GetInputManager()->BindAction(
+	  GLFW_KEY_S, InputSource::KEY, GLFW_PRESS, 0, backPtr);
+
+	gameWindow->GetInputManager()->BindAction(
+	  GLFW_KEY_A, InputSource::KEY, GLFW_PRESS, 0, leftPtr);
+
+	gameWindow->GetInputManager()->BindAction(
+	  GLFW_KEY_D, InputSource::KEY, GLFW_PRESS, 0, rightPtr);
 
 	// Initialize ECS managers
 	gameplayManager->Init();
@@ -91,6 +117,7 @@ Game::Loop()
 		auto startTime = std::chrono::high_resolution_clock::now();
 		gameWindow->PollEvents();
 		gameWindow->ProcessInput();
+		gameWindow->GetInputManager()->Call();
 		gameWindow->UpdateViewport();
 		gameWindow->ClearScreen();
 

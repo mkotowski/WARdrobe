@@ -22,10 +22,10 @@ public:
 
 	~Action() = default;
 	const char* GetLabel() { return label; }
-	void      execute(double rawInput)
+	void        execute(double rawInput)
 	{
-		std::cout << label << " action executed!\n";
 		rawValue = rawInput;
+		std::cout << label << " action executed! Value: " << rawValue << "\n";
 	}
 	double     GetValue() { return rawValue; }
 	ActionType GetType() { return type; }
