@@ -8,6 +8,13 @@
 // TODO: extract Component structs to separate headers
 #include "PhysicsSystem.hpp"
 
+#include "Constants.h"
+
+#include <glm/gtc/matrix_transform.hpp>
+
+float forwardInput = 0.0f;
+float rightInput = 0.0f;
+
 class CameraSystem : public System
 {
 public:
@@ -20,6 +27,7 @@ public:
 void
 CameraSystem::Init()
 {
+
 	for (auto& entity : entities) {
 		// Saves entity with Camera Component, right now it works as last one loaded
 		this->cameraEntity = entity;
@@ -30,7 +38,7 @@ void
 CameraSystem::Update(float                             dt,
                      std::shared_ptr<ComponentManager> componentManager)
 {
-	const float cameraSpeed = 1.5f;
+	const float cameraSpeed = 1.0f;
 
 	for (auto& entity : entities) {
 		auto& camera = componentManager->GetComponent<Camera>(entity);
@@ -61,7 +69,8 @@ CameraSystem::Update(float                             dt,
 
 		if (actionForwardMove != nullptr) {
 			camX = actionForwardMove->GetValue();
-			std::cout << "FORWARD CAMERA VALUE: " << camX << "\n";
+			std::cout << "FORWARD CAMERA VALUE: " << actionForwardMove->rawValue
+			          << "\n";
 		}
 		if (actionRightMove != nullptr) {
 			camZ = static_cast<float>(actionRightMove->GetValue());
@@ -72,7 +81,43 @@ CameraSystem::Update(float                             dt,
 		/*camera.cameraFront =
 		  glm::vec3(-camX / 8, -transform.position[1], -camZ / 8);*/
 
+		//std::cout << "Camera system forward: " << forwardInput << std::endl;
+
+		/*camera.cameraFront += glm::vec3(rightInput,0,0);
+		camera.cameraFront = glm::normalize(camera.cameraFront);
+		rightInput = 0.0f;*/
+
+		//epilepsy
+		/*glm::mat4 rotate(1.0f);
+		glm::vec3 cross = glm::cross(camera.cameraPos - camera.cameraFront,
+		                             camera.cameraUp - camera.cameraFront);
+
+		rotate = glm::rotate(rotate, 0.5f, cross);
+
+		camera.cameraPos = glm::vec3(rotate * glm::vec4(camera.cameraPos, 1.0f));
+		camera.cameraUp = glm::vec3(rotate * glm::vec4(camera.cameraUp, 1.0f));*/
+
+		//float camX = sin(glfwGetTime());
+		//float camZ = cos(glfwGetTime());
+
 		camera.cameraPos = transform.position;
-		camera.cameraPos += camZ * cameraSpeed * camera.cameraFront;
+
+		/*glm::mat4 rotate(1.0f);
+		float     yaw = rightInput;
+		rotate =
+		  glm::rotate(rotate, yaw, glm::vec3(camera.cameraUp - camera.cameraFront));
+
+		camera.cameraPos = glm::vec3(rotate * glm::vec4(camera.cameraPos, 1.0f));
+		camera.cameraUp = glm::vec3(rotate * glm::vec4(camera.cameraUp, 1.0f));*/
+
+		camera.cameraPos += forwardInput * cameraSpeed * camera.cameraFront;
+		camera.cameraPos = glm::vec3(camera.cameraPos[0] + rightInput,
+		                             camera.cameraPos[1],
+		                             camera.cameraPos[2]); // camZ
+		/*camera.cameraPos += 
+		  glm::normalize(glm::cross(camera.cameraFront, camera.cameraUp)) *
+		  cameraSpeed;*/
+		//forwardInput = 0;
+		//rightInput = 0;
 	}
 }

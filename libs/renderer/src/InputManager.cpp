@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "Constants.h"
+
 InputManager::InputManager() {}
 
 InputManager::~InputManager() {}
@@ -279,6 +281,21 @@ InputManager::BindAction(int             id,
 void
 InputManager::UpdateInput(int id, int source, int state, int mods)
 {
+	if (id == GLFW_KEY_W && source == InputSource::KEY) {
+		forwardInput += 0.1f;
+	}
+
+	if (id == GLFW_KEY_S && source == InputSource::KEY) {
+		forwardInput -= 0.1f;
+	}
+
+	if (id == GLFW_KEY_D && source == InputSource::KEY) {
+		rightInput += 0.1f;
+	}
+
+	if (id == GLFW_KEY_A && source == InputSource::KEY) {
+		rightInput -= 0.1f;
+	}
 
 	Input searchedInput;
 	searchedInput.id = id;
@@ -309,7 +326,7 @@ InputManager::Call()
 		if (it != bindings.end()) {
 			//std::cout << "Activate callback binded to input " << (&input)->id
 			//          << " from source " << (&input)->source << "!\n";
-			(*it->second)(input.state);
+			(*(it->second))(input.state);
 		}
 	}
 }

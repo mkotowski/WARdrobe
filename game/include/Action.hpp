@@ -29,10 +29,11 @@ public:
 	}
 	double     GetValue() { return rawValue; }
 	ActionType GetType() { return type; }
+	double     rawValue;
 
 private:
 	const char* label;
-	double      rawValue;
+	
 	bool        isRawValueSet;
 	ActionType  type;
 };

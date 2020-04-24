@@ -25,17 +25,17 @@ Game::~Game() {}
 void
 Game::Loop()
 {
-	auto cameraForwardAction =
-	  ActionManager::GetInstance().AddAction("CameraForward", ActionType::Range);
+	/*auto cameraForwardAction =
+	  ActionManager::GetInstance().AddAction("CameraForward", ActionType::State);
 
 	auto cameraBackAction =
-	  ActionManager::GetInstance().AddAction("CameraBack", ActionType::Range);
+	  ActionManager::GetInstance().AddAction("CameraBack", ActionType::State);
 
 	auto cameraRightAction =
-	  ActionManager::GetInstance().AddAction("CameraRight", ActionType::Range);
+	  ActionManager::GetInstance().AddAction("CameraRight", ActionType::State);
 
 	auto cameraLeftAction =
-	  ActionManager::GetInstance().AddAction("CameraLeft", ActionType::Range);
+	  ActionManager::GetInstance().AddAction("CameraLeft", ActionType::State);
 
 	CallbackPointer forwardPtr = std::make_shared<Callback>(
 	  std::bind(&Action::execute, cameraForwardAction, std::placeholders::_1));
@@ -59,7 +59,7 @@ Game::Loop()
 	  GLFW_KEY_A, InputSource::KEY, GLFW_PRESS, 0, leftPtr);
 
 	gameWindow->GetInputManager()->BindAction(
-	  GLFW_KEY_D, InputSource::KEY, GLFW_PRESS, 0, rightPtr);
+	  GLFW_KEY_D, InputSource::KEY, GLFW_PRESS, 0, rightPtr);*/
 
 	// Initialize ECS managers
 	gameplayManager->Init();
