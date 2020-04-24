@@ -2,21 +2,22 @@
 
 #include "ecs.hpp"
 
+#include "ActionManager.hpp"
+
 class CameraSystem : public System
 {
 public:
-	void Update(float                             dt,
-	            std::shared_ptr<ComponentManager> componentManager) override;
-	void Init();
+	void   Update(float                             dt,
+	              std::shared_ptr<ComponentManager> componentManager) override;
+	void   Init();
 	Entity cameraEntity;
 };
 
 void
 CameraSystem::Init()
 {
-	for (auto& entity : entities)
-	{
-		// Saves entity with Camera Component, right now it works as last one loaded 
+	for (auto& entity : entities) {
+		// Saves entity with Camera Component, right now it works as last one loaded
 		this->cameraEntity = entity;
 	}
 }
@@ -36,15 +37,21 @@ CameraSystem::Update(float                             dt,
 		view = glm::lookAt(glm::vec3(camX, 0.0, camZ),
 		                   glm::vec3(0.0, 0.0, 0.0),
 		                   glm::vec3(0.0, 1.0, 0.0));
+
+		auto actionHorizontalMove =
+		  ActionManager::GetInstance().GetAction("CameraHorizontalMovement");
+		auto actionVerticalMove =
+		  ActionManager::GetInstance().GetAction("CameraVerticalMovement");
+
 		// transform.position += 0.01;
-		//transform.position = glm::vec3(camX, transform.position[1], camZ);
+		// transform.position = glm::vec3(camX, transform.position[1], camZ);
 		// transform.scale += 1;
 		transform.position = glm::vec3(camX / 8, transform.position[1], camZ / 8);
-		//transform.rotation =
+		// transform.rotation =
 		//  glm::vec3(camX / 8, transform.rotation[1], transform.rotation[2]);
 		camera.cameraFront =
 		  glm::vec3(-camX / 8, -transform.position[1], -camZ / 8);
-		//camera.cameraFront = glm::vec3(
+		// camera.cameraFront = glm::vec3(
 		//  camera.cameraFront[0], camera.cameraFront[1], camera.cameraFront[2]);
 		//
 		camera.cameraPos = transform.position;
