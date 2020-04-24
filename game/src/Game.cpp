@@ -6,12 +6,12 @@
 
 #include "Game.hpp"
 
-#include "ecs.hpp"
+#include "CameraSystem.hpp"
 #include "PhysicsSystem.hpp"
 #include "RenderSystem.hpp"
-#include "CameraSystem.hpp"
+#include "ecs.hpp"
 
-
+#include "ActionManager.hpp"
 
 Game::Game(std::string windowTitle)
 {
@@ -25,7 +25,16 @@ Game::~Game() {}
 void
 Game::Loop()
 {
-	
+	auto cameraForwardAction =
+	  ActionManager::GetInstance().AddAction("CameraForward", ActionType::Range);
+
+	Callback callback =
+	  std::bind(&Action::execute, cameraForwardAction, std::placeholders::_1);
+	CallbackPointer ptr = std::make_shared<Callback>(callback);
+
+	gameWindow->GetInputManager()->BindAction(
+	  GLFW_KEY_W, InputSource::KEY, GLFW_PRESS, 0, ptr);
+
 	// Initialize ECS managers
 	gameplayManager->Init();
 
@@ -48,32 +57,32 @@ Game::Loop()
 	renderSystem->window = this->gameWindow;
 
 	// Set the components required by a system
-	
-	//PhysicsSystem
+
+	// PhysicsSystem
 	gameplayManager->SetRequiredComponent<PhysicsSystem>(
 	  gameplayManager->GetComponentType<Gravity>());
 	gameplayManager->SetRequiredComponent<PhysicsSystem>(
 	  gameplayManager->GetComponentType<RigidBody>());
 	gameplayManager->SetRequiredComponent<PhysicsSystem>(
 	  gameplayManager->GetComponentType<Transform>());
-	  
-	//CameraSystem
+
+	// CameraSystem
 	gameplayManager->SetRequiredComponent<CameraSystem>(
-	 	gameplayManager->GetComponentType<Camera>());
+	  gameplayManager->GetComponentType<Camera>());
 	gameplayManager->SetRequiredComponent<CameraSystem>(
-		gameplayManager->GetComponentType<Transform>());
-	
-	//RenderSystem
+	  gameplayManager->GetComponentType<Transform>());
+
+	// RenderSystem
 	gameplayManager->SetRequiredComponent<RenderSystem>(
-		gameplayManager->GetComponentType<Renderer>());
+	  gameplayManager->GetComponentType<Renderer>());
 	gameplayManager->SetRequiredComponent<RenderSystem>(
-		gameplayManager->GetComponentType<Transform>());
+	  gameplayManager->GetComponentType<Transform>());
 
 	// Load levelData from JSON file
 	LoadLevel("assets/levels/levelTest.json");
 
 	float dt = 0.0f;
-	
+
 	cameraSystem->Init();
 	renderSystem->cameraEntity = cameraSystem->cameraEntity;
 	renderSystem->Init();
@@ -104,95 +113,73 @@ Game::Loop()
 	gameWindow = nullptr;
 }
 
-void Game::LoadLevel(std::string levelPath)
+void
+Game::LoadLevel(std::string levelPath)
 {
 	// Read raw data from JSON file
 	std::ifstream rawLevelData(levelPath);
 	// Write that data to JSON object
 	nlohmann::json jsonLevelData;
 	rawLevelData >> jsonLevelData;
-	
-	
-	for (auto& it : jsonLevelData.items())
-	{
+
+	for (auto& it : jsonLevelData.items()) {
 		Entity entity = gameplayManager->CreateEntity();
 
-		for (auto& it2 : it.value().items())
-		{
-			if (it2.key() == "Model")
-			{
+		for (auto& it2 : it.value().items()) {
+			if (it2.key() == "Model") {
 				// 0: model Path
 				// 1: texture Path
-				gameplayManager->AddComponent(
-											entity,
-											Model(it2.value()[0], it2.value()[1]));
-			}
-			else if (it2.key() == "Shader")
-			{
+				gameplayManager->AddComponent(entity,
+				                              Model(it2.value()[0], it2.value()[1]));
+			} else if (it2.key() == "Shader") {
 				// 0: vertex Path
 				// 1: fragment Path
 				std::string vertexShaderPath = it2.value()[0];
 				std::string fragmentShaderPath = it2.value()[1];
 				gameplayManager->AddComponent(
-											entity,
-											Shader(vertexShaderPath.c_str(), fragmentShaderPath.c_str()));
+				  entity, Shader(vertexShaderPath.c_str(), fragmentShaderPath.c_str()));
 
-			}
-			else if (it2.key() == "Transform")
-			{
+			} else if (it2.key() == "Transform") {
 				// 0 - 2: Position X Y Z
 				// 3 - 5: Rotation X Y Z
 				// 6 - 8: Scale X Y Z
 				gameplayManager->AddComponent(
-											entity,
-		                              		Transform{ glm::vec3(it2.value()[0], it2.value()[1], it2.value()[2]),
-		                                         glm::vec3(it2.value()[3], it2.value()[4], it2.value()[5]),
-		                                         glm::vec3(it2.value()[6], it2.value()[7], it2.value()[8]) });
-			}
-			else if (it2.key() == "Rigidbody")
-			{
+				  entity,
+				  Transform{
+				    glm::vec3(it2.value()[0], it2.value()[1], it2.value()[2]),
+				    glm::vec3(it2.value()[3], it2.value()[4], it2.value()[5]),
+				    glm::vec3(it2.value()[6], it2.value()[7], it2.value()[8]) });
+			} else if (it2.key() == "Rigidbody") {
 				// 0 - 2: Velocity X Y Z
 				// 3 - 5: Acceleration X Y Z
 				gameplayManager->AddComponent(
-											entity,
-											RigidBody{ 
-												glm::vec3(it2.value()[0], it2.value()[1], it2.value()[2]), 
-												glm::vec3(it2.value()[3], it2.value()[4], it2.value()[5]) });
+				  entity,
+				  RigidBody{
+				    glm::vec3(it2.value()[0], it2.value()[1], it2.value()[2]),
+				    glm::vec3(it2.value()[3], it2.value()[4], it2.value()[5]) });
 
-			}
-			else if (it2.key() == "Gravity")
-			{
+			} else if (it2.key() == "Gravity") {
 				// 0 - 2: Gravity X Y Z
 				gameplayManager->AddComponent(
-		  									entity, 
-											Gravity{ 
-												glm::vec3(it2.value()[0], it2.value()[1], it2.value()[2]) });
-			}
-			else if (it2.key() == "Renderer")
-			{
+				  entity,
+				  Gravity{ glm::vec3(it2.value()[0], it2.value()[1], it2.value()[2]) });
+			} else if (it2.key() == "Renderer") {
 				// Render Component
-				gameplayManager->AddComponent(
-											entity, 
-											Renderer(it2.value()));
+				gameplayManager->AddComponent(entity, Renderer(it2.value()));
 
-			}
-			else if (it2.key() == "Camera")
-			{
+			} else if (it2.key() == "Camera") {
 				// 0 - 2: Camera Position
 				// 3 - 5: Camera Front/Target
 				// 6 - 8: Camera Up
 				// 9: Field Of View
 
 				gameplayManager->AddComponent(
-	  										entity,
-											Camera(
-												glm::vec3(it2.value()[0], it2.value()[1], it2.value()[2]),
-												glm::vec3(it2.value()[3], it2.value()[4], it2.value()[5]),
-												glm::vec3(it2.value()[6], it2.value()[7], it2.value()[8]),
-												it2.value()[9]));			
-
-			}	
+				  entity,
+				  Camera(glm::vec3(it2.value()[0], it2.value()[1], it2.value()[2]),
+				         glm::vec3(it2.value()[3], it2.value()[4], it2.value()[5]),
+				         glm::vec3(it2.value()[6], it2.value()[7], it2.value()[8]),
+				         it2.value()[9]));
+			}
 		}
-
 	}
 }

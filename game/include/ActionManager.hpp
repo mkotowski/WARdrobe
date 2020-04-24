@@ -29,9 +29,9 @@ public:
 		return std::make_shared<Action>(it->second);
 	}
 
-	std::shared_ptr<Action> AddAction(const char* label)
+	std::shared_ptr<Action> AddAction(const char* label, ActionType type)
 	{
-		actions.insert(std::make_pair(label, Action(label)));
+		actions.insert(std::make_pair(label, Action(label, type)));
 		auto it = actions.find(label);
 		return std::make_shared<Action>(it->second);
 	}
@@ -46,6 +46,5 @@ private:
 	ActionManager(ActionManager&&) = delete;
 	ActionManager& operator=(ActionManager&&) = delete;
 
-	const char*                                              label;
 	std::unordered_map<const char*, Action> actions;
 };
