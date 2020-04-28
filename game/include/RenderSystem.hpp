@@ -23,6 +23,7 @@ public:
 	void    Draw();
 	Entity  cameraEntity;
 	Window* window;
+	std::map <std::string, Entity> shaders;
 };
 
 void
@@ -36,7 +37,15 @@ RenderSystem::Update(float                             dt,
 
 		auto& renderer = componentManager->GetComponent<Renderer>(entity);
 		auto& model = componentManager->GetComponent<Model>(entity);
-		auto& shader = componentManager->GetComponent<Shader>(entity);
+		auto& shader = Shader();
+		if (renderer.drawingType == 0)
+		{
+			shader = componentManager->GetComponent<Shader>(shaders["modelShader"]);
+		}
+		else if (renderer.drawingType == 1)
+		{
+			shader = componentManager->GetComponent<Shader>(shaders["billboardShader"]);
+		}		
 		auto& transform = componentManager->GetComponent<Transform>(entity);
 
 		renderer.Draw(&shader,

@@ -10,6 +10,7 @@
 #include "PhysicsSystem.hpp"
 #include "RenderSystem.hpp"
 #include "CameraSystem.hpp"
+#include "ShaderSystem.hpp"
 
 
 
@@ -43,6 +44,8 @@ Game::Loop()
 
 	auto cameraSystem = gameplayManager->RegisterSystem<CameraSystem>();
 
+	auto shaderSystem = gameplayManager->RegisterSystem<ShaderSystem>();
+
 	auto renderSystem = gameplayManager->RegisterSystem<RenderSystem>();
 	// Add reference to a window
 	renderSystem->window = this->gameWindow;
@@ -62,6 +65,10 @@ Game::Loop()
 	 	gameplayManager->GetComponentType<Camera>());
 	gameplayManager->SetRequiredComponent<CameraSystem>(
 		gameplayManager->GetComponentType<Transform>());
+
+	//ShaderSystem
+	gameplayManager->SetRequiredComponent<ShaderSystem>(
+	 	gameplayManager->GetComponentType<Shader>());
 	
 	//RenderSystem
 	gameplayManager->SetRequiredComponent<RenderSystem>(
@@ -74,8 +81,14 @@ Game::Loop()
 
 	float dt = 0.0f;
 	
+	// Initialize CameraSystem and bound mainCamera to RenderSystem
 	cameraSystem->Init();
 	renderSystem->cameraEntity = cameraSystem->cameraEntity;
+
+	// Initialize ShaderSystem and bound map of shaders to RenderSystem
+	shaderSystem->Init(gameplayManager->GetComponentManager());
+	renderSystem->shaders = shaderSystem->shaders;
+
 	renderSystem->Init();
 
 	while (!gameWindow->ShouldClose()) {
@@ -131,12 +144,13 @@ void Game::LoadLevel(std::string levelPath)
 			{
 				// 0: vertex Path
 				// 1: fragment Path
+				// 2. shader type
 				std::string vertexShaderPath = it2.value()[0];
 				std::string fragmentShaderPath = it2.value()[1];
+				std::string shaderType = it2.value()[2];
 				gameplayManager->AddComponent(
 											entity,
-											Shader(vertexShaderPath.c_str(), fragmentShaderPath.c_str()));
-
+											Shader(vertexShaderPath.c_str(), fragmentShaderPath.c_str(), shaderType));
 			}
 			else if (it2.key() == "Transform")
 			{
