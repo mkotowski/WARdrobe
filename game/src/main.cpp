@@ -163,20 +163,28 @@ main()
 	std::shared_ptr<AssetManager> assetManager = std::make_shared<AssetManager>();
 	std::shared_ptr<ConfigManager> configManager = std::make_shared<ConfigManager>("settings.toml");
 
-	std::thread t1(call_from_thread, std::ref(assetManager));
+	/*std::thread t1(call_from_thread, std::ref(assetManager));
 	std::thread t2(call_render);
-	std::thread t3(thread_function);
+	std::thread t3(thread_function);*/
 
-	for (int i = 100; i > 0; i--) {
+	/*for (int i = 100; i > 0; i--) {
 		shared_cout("main thread", i);
-	}
+	}*/
 
-	if (t1.joinable())
+	/*if (t1.joinable())
 		t1.join();
 	if (t2.joinable())
 		t2.join();
 	if (t3.joinable())
-		t3.join();
+		t3.join();*/
+
+	
+
+	Game* game = new Game("WARdrobe");
+	game->Loop();
+
+	//AudioManager* a = new AudioManager(assetManager);
+	//a->demo();
 
 	return 0;
 }

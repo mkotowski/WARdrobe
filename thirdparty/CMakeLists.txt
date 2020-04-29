@@ -9,7 +9,7 @@ msg(STATUS "[CONFIGURE EXTERNAL PROJECTS - START]")
 
 msg(HEADER "[ltjax/steam_controller - support without Steam Input API]")
 
-add_subdirectory(steam_controller)
+#add_subdirectory(steam_controller)
 
 set(STEAM_CONTROLLER_DIR "${THIRDPARTY_DIR}/steam_controller")
 set(STEAM_CONTROLLER_LIBRARY "steam_controller")
@@ -20,13 +20,13 @@ set_property(GLOBAL PROPERTY
 set_property(GLOBAL PROPERTY 
 	STEAM_CONTROLLER_INCLUDE_DIR "${STEAM_CONTROLLER_DIR}/include")
 
-set_target_properties (steam_controller PROPERTIES
-	FOLDER thirdparty/steam_controller
-)
+#set_target_properties (steam_controller PROPERTIES
+#	FOLDER thirdparty/steam_controller
+#)
 
-set_target_properties (demo PROPERTIES
-	FOLDER thirdparty/steam_controller
-)
+#set_target_properties (demo PROPERTIES
+#	FOLDER thirdparty/steam_controller
+#)
 
 # GLAD ########################################################################
 
@@ -82,9 +82,11 @@ set_target_properties (assimp PROPERTIES
 	FOLDER thirdparty/assimp
 )
 
+if(ASSIMP_BUILD_ASSIMP_TOOLS)
 set_target_properties (assimp_cmd PROPERTIES
 	FOLDER thirdparty/assimp
 )
+endif()
 
 set_target_properties (IrrXML PROPERTIES
 	FOLDER thirdparty/assimp
