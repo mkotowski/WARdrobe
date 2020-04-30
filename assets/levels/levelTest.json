@@ -47,12 +47,63 @@
     "billboardShader" :
 
                 {
-                    "Shader" : ["assets/shaders/vertex1.glsl", "assets/shaders/fragment.glsl", "billboardShader"]
+                    "Shader" : ["assets/shaders/vertex1.glsl", "assets/shaders/fragment1.glsl", "billboardShader"]
                 }
             ,
     "modelShader" :
                 {
                     "Shader" : ["assets/shaders/vertex.glsl", "assets/shaders/fragment.glsl", "modelShader"]
                 }
+            ,
+    "directionalLight" :
+                {
+                    "Light" : ["directionalLight",
+                                0.0, 0.0, 0.0,
+                                0.3, 0.3, 0.3,
+                                1.0, 1.0, 1.0,
+                                0.1, 0.1, 0.1]
+                }
+            ,
+    "pointLight" :
+                {
+                    "Light" : ["pointLight",
+                                0.0, 30.0, 0.0,
+                                1.0,
+                                0.2,
+                                0.032,
+                                0.9, 0.9, 0.9,
+                                0.0, 0.0, 1.0,
+                                0.1, 0.1, 0.1]
+                }
+            ,
+    "spotLight1" :
+                {
+                    "Light" : ["spotLight",
+                                2.0, 0.0, 2.0,
+                                1.0, 0.0, 0.0,
+                                1.0,
+                                0.2,
+                                0.032,
+                                0.1, 0.1, 0.1,
+                                1.0, 1.0, 1.0,
+                                0.1, 0.1, 0.1,
+                                12.5,
+                                15.0]
+                }
+            ,
+    "spotLight2" :
+            {
+                "Light" : ["spotLight",
+                            -2.0, 0.0, 2.0,
+                            -1.0, 0.0, 0.0,
+                            1.0,
+                            0.2,
+                            0.032,
+                            0.1, 0.1, 0.1,
+                            1.0, 1.0, 1.0,
+                            0.1, 0.1, 0.1,
+                            12.5,
+                            15.0]
+            }
             
 }

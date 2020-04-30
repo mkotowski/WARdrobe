@@ -28,7 +28,6 @@ Renderer::Draw(Shader*   ourShader,
 	              sceneCamera->cameraPos + sceneCamera->cameraFront,
 	              sceneCamera->cameraUp);
 
-	glm::vec4 newColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	glm::mat4 model = glm::mat4(1.0f);
 
@@ -46,15 +45,10 @@ Renderer::Draw(Shader*   ourShader,
 	ourShader->setMat4("projection", projection);
 	ourShader->setMat4("view", view);
 	ourShader->setMat4("model", model);
-	ourShader->setVec4("newColor", newColor);
-
 	if (drawingType == 1) {
 		glm::mat4 mv = view * model;
 
 		ourShader->setMat4("ModelViewMatrix", mv);
 	}
-
-	// ourShader->setInt("texture1", ourModel->textureID);
-
 	ourModel->Draw(ourShader->ID);
 }

@@ -30,8 +30,5 @@ void
 ShaderSystem::Update(float                             dt,
                      std::shared_ptr<ComponentManager> componentManager)
 {
-    for (auto& entity : entities)
-    {
-        
-    }
+   
 }

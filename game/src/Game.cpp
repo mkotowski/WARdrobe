@@ -12,6 +12,7 @@
 
 #include "CameraSystem.hpp"
 #include "ShaderSystem.hpp"
+#include "LightningSystem.hpp"
 
 #include "ecs.hpp"
 
@@ -77,6 +78,7 @@ Game::Loop()
 	gameplayManager->RegisterComponent<Shader>();
 	gameplayManager->RegisterComponent<Renderer>();
 	gameplayManager->RegisterComponent<Camera>();
+	gameplayManager->RegisterComponent<Light>();
 
 	// Register the systems used during the gameplay
 	auto physicsSystem = gameplayManager->RegisterSystem<PhysicsSystem>();
@@ -85,7 +87,12 @@ Game::Loop()
 
 	auto shaderSystem = gameplayManager->RegisterSystem<ShaderSystem>();
 
+	auto lightningSystem = gameplayManager->RegisterSystem<LightningSystem>();
+
 	auto renderSystem = gameplayManager->RegisterSystem<RenderSystem>();
+
+	
+
 	// Add reference to a window
 	renderSystem->window = this->gameWindow;
 
@@ -115,6 +122,10 @@ Game::Loop()
 	gameplayManager->SetRequiredComponent<RenderSystem>(
 	  gameplayManager->GetComponentType<Transform>());
 
+	// LightningSystem
+	gameplayManager->SetRequiredComponent<LightningSystem>(
+	  gameplayManager->GetComponentType<Light>());
+
 	// Load levelData from JSON file
 	LoadLevel("assets/levels/levelTest.json");
 
@@ -124,9 +135,15 @@ Game::Loop()
 	cameraSystem->Init();
 	renderSystem->cameraEntity = cameraSystem->cameraEntity;
 
-	// Initialize ShaderSystem and bound map of shaders to RenderSystem
+	// Initialize LightningSystem
+	lightningSystem->Init();
+
+	// Initialize ShaderSystem and bound map of shaders to RenderSystem and LightningSystem
 	shaderSystem->Init(gameplayManager->GetComponentManager());
-	renderSystem->shaders = shaderSystem->shaders;
+	renderSystem->shaders = &shaderSystem->shaders;
+	lightningSystem->shaders = &shaderSystem->shaders;
+
+
 
 	renderSystem->Init();
 
@@ -169,13 +186,17 @@ Game::LoadLevel(std::string levelPath)
 	for (auto& it : jsonLevelData.items()) {
 		Entity entity = gameplayManager->CreateEntity();
 
-		for (auto& it2 : it.value().items()) {
-			if (it2.key() == "Model") {
+		for (auto& it2 : it.value().items()) 
+		{
+			if (it2.key() == "Model") 
+			{
 				// 0: model Path
 				// 1: texture Path
 				gameplayManager->AddComponent(entity,
 				                              Model(it2.value()[0], it2.value()[1]));
-			} else if (it2.key() == "Shader") {
+			} 
+			else if (it2.key() == "Shader") 
+			{
 				// 0: vertex Path
 				// 1: fragment Path
 				// 2. shader type
@@ -197,7 +218,9 @@ Game::LoadLevel(std::string levelPath)
 				    glm::vec3(it2.value()[0], it2.value()[1], it2.value()[2]),
 				    glm::vec3(it2.value()[3], it2.value()[4], it2.value()[5]),
 				    glm::vec3(it2.value()[6], it2.value()[7], it2.value()[8]) });
-			} else if (it2.key() == "Rigidbody") {
+			} 
+			else if (it2.key() == "Rigidbody") 
+			{
 				// 0 - 2: Velocity X Y Z
 				// 3 - 5: Acceleration X Y Z
 				gameplayManager->AddComponent(
@@ -206,16 +229,22 @@ Game::LoadLevel(std::string levelPath)
 				    glm::vec3(it2.value()[0], it2.value()[1], it2.value()[2]),
 				    glm::vec3(it2.value()[3], it2.value()[4], it2.value()[5]) });
 
-			} else if (it2.key() == "Gravity") {
+			} 
+			else if (it2.key() == "Gravity") 
+			{
 				// 0 - 2: Gravity X Y Z
 				gameplayManager->AddComponent(
 				  entity,
 				  Gravity{ glm::vec3(it2.value()[0], it2.value()[1], it2.value()[2]) });
-			} else if (it2.key() == "Renderer") {
+			} 
+			else if (it2.key() == "Renderer") 
+			{
 				// Render Component
 				gameplayManager->AddComponent(entity, Renderer(it2.value()));
 
-			} else if (it2.key() == "Camera") {
+			} 
+			else if (it2.key() == "Camera") 
+			{
 				// 0 - 2: Camera Position
 				// 3 - 5: Camera Front/Target
 				// 6 - 8: Camera Up
@@ -227,6 +256,71 @@ Game::LoadLevel(std::string levelPath)
 				         glm::vec3(it2.value()[3], it2.value()[4], it2.value()[5]),
 				         glm::vec3(it2.value()[6], it2.value()[7], it2.value()[8]),
 				         it2.value()[9]));
+			}
+			else if (it2.key() == "Light")
+			{
+				// 0 - type of the light
+				// Directional Light
+				if (it2.value()[0] == "directionalLight")
+				{
+					// 1  - 3:  - direction
+					// 4  - 6:  - ambient
+					// 7  - 9:  - diffuse
+					// 10 - 12: - specular
+					gameplayManager->AddComponent(
+						entity,
+						Light(glm::vec3(it2.value()[1], it2.value()[2], it2.value()[3]),
+							  glm::vec3(it2.value()[4], it2.value()[5], it2.value()[6]),
+							  glm::vec3(it2.value()[7], it2.value()[8], it2.value()[9]),
+							  glm::vec3(it2.value()[10], it2.value()[11], it2.value()[12]))
+					);
+				}
+				else if(it2.value()[0] == "pointLight")
+				{
+					// 1  - 3:  - position
+					// 4 		- constant
+					// 5 		- linear
+					// 6 		- quadratic
+					// 7  - 9:  - ambient
+					// 10 - 12: - diffuse
+					// 13 - 15: - specular
+					gameplayManager->AddComponent(
+						entity,
+						Light(glm::vec3(it2.value()[1], it2.value()[2], it2.value()[3]),
+							  it2.value()[4],
+							  it2.value()[5],
+							  it2.value()[6],
+							  glm::vec3(it2.value()[7], it2.value()[8], it2.value()[9]),
+							  glm::vec3(it2.value()[10], it2.value()[11], it2.value()[12]),
+							  glm::vec3(it2.value()[13], it2.value()[14], it2.value()[15]))
+					);
+				}
+				else if (it2.value()[0] == "spotLight")
+				{
+					// 1  - 3:  - direction
+					// 4  - 6:  - position
+					// 7 		- constant
+					// 8 		- linear
+					// 9 		- quadratic
+					// 10 - 12:  - ambient
+					// 13 - 15: - diffuse
+					// 16 - 18: - specular
+					// 19 		- cutOff
+					// 20 		- outerCutOff
+					gameplayManager->AddComponent(
+						entity,
+						Light(glm::vec3(it2.value()[1], it2.value()[2], it2.value()[3]),
+							  glm::vec3(it2.value()[4], it2.value()[5], it2.value()[6]),
+							  it2.value()[7],
+							  it2.value()[8],
+							  it2.value()[9],
+							  glm::vec3(it2.value()[10], it2.value()[11], it2.value()[12]),
+							  glm::vec3(it2.value()[13], it2.value()[14], it2.value()[15]),
+							  glm::vec3(it2.value()[16], it2.value()[17], it2.value()[18]),
+							  it2.value()[19],
+							  it2.value()[20])
+					);
+				}			
 			}
 		}
 	}
