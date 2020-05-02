@@ -6,7 +6,9 @@
                     "Transform" : [ 0.0, 0.0, -3.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1 ],
                     "Rigidbody" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
                     "Gravity" : [ 0.0, 0.0, 0.0 ],
-                    "Renderer" : 1
+                    "Renderer" : 1,
+                    "Character" : [100.0],
+                    "Scripts" : ["characterMovement.lua"]
                 }
                 
             ,

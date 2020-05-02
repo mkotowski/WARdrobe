@@ -117,8 +117,6 @@ prepFunctionForCharacterMovement(
   Entity                            entity,
   std::shared_ptr<ComponentManager> componentManager)
 {
-	std::cout << "Preparation of CharacterMovement.lua" << std::endl;
-
 	lua_pushcfunction(L, l_cppCharacterMove);
 	lua_setglobal(L, "CharacterMove");
 
