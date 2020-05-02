@@ -9,6 +9,7 @@
 #include "CameraSystem.hpp"
 #include "PhysicsSystem.hpp"
 #include "RenderSystem.hpp"
+#include "ScriptsSystem.hpp"
 
 #include "CameraSystem.hpp"
 #include "ShaderSystem.hpp"
@@ -17,6 +18,8 @@
 
 
 #include "ActionManager.hpp"
+
+#include "Character.hpp"
 
 Game::Game(std::string windowTitle)
 {
@@ -77,6 +80,8 @@ Game::Loop()
 	gameplayManager->RegisterComponent<Shader>();
 	gameplayManager->RegisterComponent<Renderer>();
 	gameplayManager->RegisterComponent<Camera>();
+	gameplayManager->RegisterComponent<Scripts>();
+	gameplayManager->RegisterComponent<Character>();
 
 	// Register the systems used during the gameplay
 	auto physicsSystem = gameplayManager->RegisterSystem<PhysicsSystem>();
@@ -86,6 +91,9 @@ Game::Loop()
 	auto shaderSystem = gameplayManager->RegisterSystem<ShaderSystem>();
 
 	auto renderSystem = gameplayManager->RegisterSystem<RenderSystem>();
+
+	auto scriptsSystem = gameplayManager->RegisterSystem<ScriptsSystem>();
+
 	// Add reference to a window
 	renderSystem->window = this->gameWindow;
 
@@ -115,6 +123,10 @@ Game::Loop()
 	gameplayManager->SetRequiredComponent<RenderSystem>(
 	  gameplayManager->GetComponentType<Transform>());
 
+	// RenderSystem
+	gameplayManager->SetRequiredComponent<ScriptsSystem>(
+	  gameplayManager->GetComponentType<Scripts>());
+
 	// Load levelData from JSON file
 	LoadLevel("assets/levels/levelTest.json");
 
@@ -129,6 +141,8 @@ Game::Loop()
 	renderSystem->shaders = shaderSystem->shaders;
 
 	renderSystem->Init();
+
+	scriptsSystem->Init();
 
 	while (!gameWindow->ShouldClose()) {
 		auto startTime = std::chrono::high_resolution_clock::now();
@@ -227,6 +241,19 @@ Game::LoadLevel(std::string levelPath)
 				         glm::vec3(it2.value()[3], it2.value()[4], it2.value()[5]),
 				         glm::vec3(it2.value()[6], it2.value()[7], it2.value()[8]),
 				         it2.value()[9]));
+			} else if (it2.key() == "Scripts") {
+				std::list<std::string> scripts;
+
+				for (auto script : it2.value()) {
+					scripts.push_back(script);
+				}
+
+				gameplayManager->AddComponent(entity, Scripts{ scripts });
+			} else if (it2.key() == "Character") {
+				// 0 - hp
+				gameplayManager->AddComponent(
+				  entity,
+				  Character{ it2.value()[0] });
 			}
 		}
 	}

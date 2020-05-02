@@ -39,9 +39,9 @@ PhysicsSystem::Update(float                             dt,
 		auto&       transform = componentManager->GetComponent<Transform>(entity);
 		auto const& gravity = componentManager->GetComponent<Gravity>(entity);
 
-		transform.position += rigidBody.velocity * dt;
-
 		rigidBody.velocity += gravity.force * dt;
+
+		transform.position += rigidBody.velocity * dt;
 	}
 
 	//std::cout << "Physics updated\n";
