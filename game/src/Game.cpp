@@ -123,7 +123,7 @@ Game::Loop()
 	gameplayManager->SetRequiredComponent<RenderSystem>(
 	  gameplayManager->GetComponentType<Transform>());
 
-	// RenderSystem
+	// ScriptsSystem
 	gameplayManager->SetRequiredComponent<ScriptsSystem>(
 	  gameplayManager->GetComponentType<Scripts>());
 

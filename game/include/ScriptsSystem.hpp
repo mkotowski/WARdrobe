@@ -3,7 +3,6 @@
 #include <iostream>
 #include <map>
 
-#include "AssetManager.hpp"
 #include "ecs.hpp"
 
 extern "C"
