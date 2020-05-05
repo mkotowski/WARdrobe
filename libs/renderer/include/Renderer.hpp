@@ -3,6 +3,7 @@
 #include "Camera.hpp"
 #include "Model.hpp"
 #include "Shader.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 class Renderer
 {
@@ -12,10 +13,10 @@ public:
 	Renderer(bool, float[], int, unsigned int[], int, std::string);
 	void
 	     Draw(Shader*, Model*, Camera*, glm::vec3, glm::vec3, glm::vec3, int, int);
+	void Draw(Shader *);
 	void Init();
 
 	unsigned int drawingType;
 
 private:
-
 };

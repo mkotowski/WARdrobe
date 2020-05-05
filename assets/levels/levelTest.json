@@ -15,7 +15,7 @@
             
                 {
                     "Model" : ["assets/models/chr_knight.obj", "assets/textures/chr_knight.png"],
-                    "Transform" : [ 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1 ],
+                    "Transform" : [ 0.0, -4.0, 1.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1 ],
                     "Rigidbody" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
                     "Gravity" : [ 0.0, 0.0, 0.0 ],
                     "Renderer" : 0                }
@@ -25,7 +25,7 @@
             
                 {
                     "Model" : ["assets/models/Wolf_dae.dae", "assets/textures/stone2.jpg"],
-                    "Transform" : [ 0.0, 0.0, 1.0, 90.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
+                    "Transform" : [ 1.0, -4.0, 1.0, 270.0, 0.0, 0.0, 2.0, 2.0, 2.0 ],
                     "Renderer" : 0
                 }
             ,
@@ -55,12 +55,23 @@
                     "Shader" : ["assets/shaders/vertex.glsl", "assets/shaders/fragment.glsl", "modelShader"]
                 }
             ,
+    "modelShadowShader" :
+                {
+                    "Shader" : ["assets/shaders/directionalDepthVertex.glsl", "assets/shaders/directionalDepthFragment.glsl", "modelShadowShader"]
+                }
+            ,
+    "debugQuadShader" :
+            {
+                "Shader" : ["assets/shaders/debugQuadVertex.glsl", "assets/shaders/debugQuadFragment.glsl", "debugQuadShader"]
+            }
+        ,
     "directionalLight" :
                 {
                     "Light" : ["directionalLight",
-                                0.0, 0.0, 0.0,
-                                0.3, 0.3, 0.3,
-                                1.0, 1.0, 1.0,
+                                0.0, 0.0, 0.0,  
+                                0.0, -10.0, 0.0,                             
+                                0.1, 0.1, 0.1,
+                                0.8, 0.0, 0.0,
                                 0.1, 0.1, 0.1]
                 }
             ,
@@ -71,36 +82,36 @@
                                 1.0,
                                 0.2,
                                 0.032,
-                                0.9, 0.9, 0.9,
-                                0.0, 0.0, 1.0,
+                                0.3, 0.3, 0.3,
+                                0.0, 0.0, 0.0,
                                 0.1, 0.1, 0.1]
                 }
             ,
     "spotLight1" :
                 {
                     "Light" : ["spotLight",
-                                2.0, 0.0, 2.0,
-                                1.0, 0.0, 0.0,
+                                10.0, 0.0, -5.0,
+                                10.0, 0.0, 2.0,
                                 1.0,
-                                0.2,
+                                0.09,
                                 0.032,
                                 0.1, 0.1, 0.1,
-                                1.0, 1.0, 1.0,
-                                0.1, 0.1, 0.1,
-                                12.5,
-                                15.0]
+                                0.1, 1.0, 0.1,
+                                0.3, 0.3, 1.3,
+                                20.5,
+                                17.5]
                 }
             ,
     "spotLight2" :
             {
                 "Light" : ["spotLight",
-                            -2.0, 0.0, 2.0,
-                            -1.0, 0.0, 0.0,
+                            -20.0, 0.0, 2.0,
+                            -10.0, 0.0, 0.0,
                             1.0,
-                            0.2,
+                            0.09,
                             0.032,
                             0.1, 0.1, 0.1,
-                            1.0, 1.0, 1.0,
+                            0.0, 0.0, 1.0,
                             0.1, 0.1, 0.1,
                             12.5,
                             15.0]

@@ -10,7 +10,7 @@ public:
 
     // Different constructors for each type of the light
     // Directional
-    Light(glm::vec3, glm::vec3 , glm::vec3, glm::vec3);
+    Light(glm::vec3, glm::vec3, glm::vec3 , glm::vec3, glm::vec3);
     // PointLight
     Light(glm::vec3 position, float constant, float linear, float quadratic, 
             glm::vec3 ambientColor, glm::vec3 diffuseColor, glm::vec3 specularColor);

@@ -128,15 +128,17 @@ Game::Loop()
 
 	// Load levelData from JSON file
 	LoadLevel("assets/levels/levelTest.json");
-
+	std::cout << "Level has been loaded" << std::endl;
 	float dt = 0.0f;
 	
 	// Initialize CameraSystem and bound mainCamera to RenderSystem
 	cameraSystem->Init();
 	renderSystem->cameraEntity = cameraSystem->cameraEntity;
+	std::cout << "CameraSystem has been initialized" << std::endl;
 
 	// Initialize LightningSystem
-	lightningSystem->Init();
+	lightningSystem->Init(gameplayManager->GetComponentManager());
+	std::cout << "LightningSystem has been initialized" << std::endl;
 
 	// Initialize ShaderSystem and bound map of shaders to RenderSystem and LightningSystem
 	shaderSystem->Init(gameplayManager->GetComponentManager());
@@ -144,8 +146,8 @@ Game::Loop()
 	lightningSystem->shaders = &shaderSystem->shaders;
 
 
-
 	renderSystem->Init();
+	std::cout << "RenderSystem has been initialized" << std::endl;
 
 	while (!gameWindow->ShouldClose()) {
 		auto startTime = std::chrono::high_resolution_clock::now();
@@ -272,7 +274,8 @@ Game::LoadLevel(std::string levelPath)
 						Light(glm::vec3(it2.value()[1], it2.value()[2], it2.value()[3]),
 							  glm::vec3(it2.value()[4], it2.value()[5], it2.value()[6]),
 							  glm::vec3(it2.value()[7], it2.value()[8], it2.value()[9]),
-							  glm::vec3(it2.value()[10], it2.value()[11], it2.value()[12]))
+							  glm::vec3(it2.value()[10], it2.value()[11], it2.value()[12]),
+							  glm::vec3(it2.value()[13], it2.value()[14], it2.value()[15]))
 					);
 				}
 				else if(it2.value()[0] == "pointLight")

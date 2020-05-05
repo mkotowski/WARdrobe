@@ -8,8 +8,9 @@ Light::Light()
 
 
 // Directional Light
-Light::Light(glm::vec3 direction, glm::vec3 ambientColor, glm::vec3 diffuseColor, glm::vec3 specularColor)
+Light::Light(glm::vec3 position, glm::vec3 direction, glm::vec3 ambientColor, glm::vec3 diffuseColor, glm::vec3 specularColor)
 {
+    this->position = position;
     this->direction = direction;
     this->ambientColor = ambientColor;
     this->diffuseColor = diffuseColor;

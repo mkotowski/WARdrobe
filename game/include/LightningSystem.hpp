@@ -11,15 +11,16 @@ class LightningSystem : public System
 public:
     void Update(float                             dt,
 	            std::shared_ptr<ComponentManager> componentManager) override;
-	void Init();
+	void Init(std::shared_ptr<ComponentManager> componentManager);
     std::map<std::string, Entity> *shaders;
 };
 
 void
-LightningSystem::Init()
+LightningSystem::Init(std::shared_ptr<ComponentManager> componentManager)
 {
     
 }
+
 
 void
 LightningSystem::Update(float                             dt,
@@ -36,7 +37,7 @@ LightningSystem::Update(float                             dt,
                 auto& value = componentManager->GetComponent<Shader>(it->second);
                 if (value.shaderType == "modelShader")
                 {
-                     value.setVec3("dirLight.direction",
+                    value.setVec3("dirLight.direction",
                              componentManager->GetComponent<Light>(entity).direction);
                     value.setVec3("dirLight.ambient",
                                 componentManager->GetComponent<Light>(entity).ambientColor);
@@ -47,6 +48,7 @@ LightningSystem::Update(float                             dt,
                 }
                
             }
+            
         }
         else if (componentManager->GetComponent<Light>(entity).typeOfTheLight == "pointLight")
         {

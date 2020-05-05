@@ -17,16 +17,17 @@ Renderer::Draw(Shader*   ourShader,
                int       height)
 {
 	ourShader->use();
-
+	
+	
 	glm::mat4 projection =
-	  glm::perspective(glm::radians(sceneCamera->fieldOfView),
-	                   (float)width / (float)height,
-	                   0.1f,
-	                   100.0f);
+	glm::perspective(glm::radians(sceneCamera->fieldOfView),
+					(float)width / (float)height,
+					0.1f,
+					100.0f);
 	glm::mat4 view =
-	  glm::lookAt(sceneCamera->cameraPos,
-	              sceneCamera->cameraPos + sceneCamera->cameraFront,
-	              sceneCamera->cameraUp);
+	glm::lookAt(sceneCamera->cameraPos,
+				sceneCamera->cameraPos + sceneCamera->cameraFront,
+				sceneCamera->cameraUp);
 
 
 	glm::mat4 model = glm::mat4(1.0f);
@@ -34,11 +35,11 @@ Renderer::Draw(Shader*   ourShader,
 	model = glm::translate(model, position);
 
 	model = glm::rotate(
-	  model, glm::radians(rotation[0]), glm::vec3(1.0f, 0.0f, 0.0f)); // X axis
+	model, glm::radians(rotation[0]), glm::vec3(1.0f, 0.0f, 0.0f)); // X axis
 	model = glm::rotate(
-	  model, glm::radians(rotation[1]), glm::vec3(0.0f, 1.0f, 0.0f)); // Y axis
+	model, glm::radians(rotation[1]), glm::vec3(0.0f, 1.0f, 0.0f)); // Y axis
 	model = glm::rotate(
-	  model, glm::radians(rotation[2]), glm::vec3(0.0f, 0.0f, 1.0f)); // Z axis
+	model, glm::radians(rotation[2]), glm::vec3(0.0f, 0.0f, 1.0f)); // Z axis
 
 	model = glm::scale(model, scale);
 
@@ -50,5 +51,8 @@ Renderer::Draw(Shader*   ourShader,
 
 		ourShader->setMat4("ModelViewMatrix", mv);
 	}
+
 	ourModel->Draw(ourShader->ID);
+	
+	
 }
