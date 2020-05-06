@@ -9,7 +9,9 @@ struct BoundingBox
 	
 	glm::vec3 origin;
 	vector<Mesh> meshes;
+	glm::vec3      scale;
 	vector<Vertex> vertices;
+	int    indexes[6];
 	glm::vec3 dimension;
 	bool           isVerticesAssign = false;
 	float     minX, maxX, minY, maxY, minZ, maxZ;
@@ -17,31 +19,35 @@ struct BoundingBox
 	{ 
 		if (!isVerticesAssign) {
 			GetVertices();
+			GetDimensions();
 			isVerticesAssign = true;
 		}
+		meshes = componentManager->GetComponent<Model>(e).meshes;
 		origin = componentManager->GetComponent<Transform>(e).position;
-		minX = origin[0];
-		maxX = origin[0] + dimension[0];
-		minY = origin[1];
-		maxY = origin[1] + dimension[1];
-		minZ = origin[2];
-		maxZ = origin[2] + dimension[2];
-		cout << "Pozycja figury:\n " << minX << ", " << maxX << ", \n" << minY << ", "
-		     << maxY << ", \n" << minZ << ", " << maxZ << "\n";
-		cout << "Rozmiary " << dimension[0] << ", " << dimension[1] << ", "
-		     << dimension[2] << "\n";
- 	}
+		GetVertices();
+		minX = vertices[indexes[0]].Position.x + origin[0] * scale[0];
+		maxX = vertices[indexes[1]].Position.x + origin[0] * scale[0];
+		minY = vertices[indexes[2]].Position.y + origin[1] * scale[1];
+		maxY = vertices[indexes[3]].Position.y + origin[1] * scale[1];
+		minZ = vertices[indexes[4]].Position.z + origin[2] * scale[2];
+		maxZ = vertices[indexes[5]].Position.z + origin[2] * scale[2];
+		/*cout << minX << ", " << maxX << ", " 
+			 << minY << ", " << maxY << ", " 
+			 << minZ << ", " << maxZ << "\n"
+			 << origin[0] << ", " << origin[1] << ", " << origin[2] << "\n";*/
+	}
 
 	void GetVertices()
 	{
-		cout << "Vertices assigned";
+		vertices.clear();
 		//for (int j = 0; j < meshes.size(); j++)
 			//{
 				for (int i = 0; i < meshes[0].vertices.size(); i++) {
 					vertices.push_back(meshes[0].vertices[i]);		
 				}
 			//}
-		GetDimensions();
+		    
+		    //cout << "Vertices assigned";
 	}
 
 	void GetDimensions() {
@@ -51,19 +57,58 @@ struct BoundingBox
 				if (i != j) {
 					if (maxX < Distance(vertices[i], vertices[j], 'x')) {
 						maxX = Distance(vertices[i], vertices[j], 'x');
+						indexes[0] = WhichIsSmaller(vertices[i], vertices[j], 'x', i, j);
+						indexes[1] = WhichIsBigger(vertices[i], vertices[j], 'x', i, j);
 					}
 
 					if (maxY < Distance(vertices[i], vertices[j], 'y')) {
 						maxY = Distance(vertices[i], vertices[j], 'y');
+						indexes[2] = WhichIsSmaller(vertices[i], vertices[j], 'y', i, j);
+						indexes[3] = WhichIsBigger(vertices[i], vertices[j], 'y', i, j);
 					}
 
 					if (maxZ < Distance(vertices[i], vertices[j], 'z')) {
 						maxZ = Distance(vertices[i], vertices[j], 'z');
+						indexes[4] = WhichIsSmaller(vertices[i], vertices[j], 'z', i, j);
+						indexes[5] = WhichIsBigger(vertices[i], vertices[j], 'z', i, j);
 					}
 				}
 			}
 		}
-		dimension = glm::vec3(maxX, maxY, maxZ);
+	}
+
+	int WhichIsBigger(Vertex a, Vertex b, char symbol, int aI, int bI) { 
+		switch (symbol) {
+			case 'x':
+				if (a.Position.x < b.Position.x) { return bI; } 
+				else { return aI; }
+				//dD
+			case 'y': 
+				if (a.Position.y < b.Position.y) { return bI; }
+				else { return aI; }
+			case 'z':
+				if (a.Position.z < b.Position.z) { return bI; } 
+				else { return aI; }
+			default:
+				break;
+		}
+	}
+
+	int WhichIsSmaller(Vertex a, Vertex b, char symbol, int aI, int bI) {
+		switch (symbol) {
+			case 'x':
+				if (a.Position.x > b.Position.x) { return bI; } 
+				else { return aI; }
+				// dD
+			case 'y':
+				if (a.Position.y > b.Position.y) { return bI; } 
+				else { return aI; }
+			case 'z':
+				if (a.Position.z > b.Position.z) { return bI; } 
+				else { return aI; }
+			default:
+				break;
+		}
 	}
 
 	float Distance(Vertex a, Vertex b, char option) {
