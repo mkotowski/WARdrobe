@@ -1,6 +1,8 @@
 #ifndef MESH_H
 #define MESH_H
 
+#define NUM_BONES_PER_VERTEX 4
+
 #include <glad/glad.h> // holds all OpenGL type declarations
 
 #include <glm/glm.hpp>
@@ -13,7 +15,11 @@
 #include <sstream>
 #include <iostream>
 #include <vector>
+#include <map>
+
 using namespace std;
+
+void ZeroMat(aiMatrix4x4 *);
 
 struct Vertex {
     // position
@@ -28,27 +34,57 @@ struct Vertex {
     glm::vec3 Bitangent;
 };
 
+struct BoneInfo
+{
+    aiMatrix4x4 BoneOffset;
+    aiMatrix4x4 FinalTransformation;
+
+    BoneInfo()
+    {
+        ZeroMat(&BoneOffset);
+        ZeroMat(&FinalTransformation);
+    }
+
+};
+
+struct VertexBoneData
+{
+    unsigned int IDs[NUM_BONES_PER_VERTEX];
+    float Weights[NUM_BONES_PER_VERTEX];
+};
+
 struct Texture {
     unsigned int id;
     string type;
     string path;
 };
 
-class Mesh {
+class Mesh 
+{
 public:
     /*  Mesh Data  */
     vector<Vertex> vertices;
     vector<unsigned int> indices;
     vector<Texture> textures;
+
+    unsigned int numBones;
+    map<string, unsigned int> boneMapping;
+    VertexBoneData bones;
+    vector<BoneInfo> boneInfo;
+    aiMatrix4x4 globalInverseTransform;
     unsigned int VAO;
 
     /*  Functions  */
     // constructor
-    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures)
+    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures, VertexBoneData bones, vector<BoneInfo> boneInfo, map<string, unsigned int> boneMapping, unsigned int numBones)
     {
         this->vertices = vertices;
         this->indices = indices;
         this->textures = textures;
+        this->bones = bones;
+        this->boneInfo = boneInfo;
+        this->boneMapping = boneMapping;
+        this->numBones = numBones;
 
         // now that we have all the required data, set the vertex buffers and its attribute pointers.
         setupMesh();
@@ -132,8 +168,55 @@ private:
         // vertex bitangent
         glEnableVertexAttribArray(4);
         glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Bitangent));
+        // bone ids
+        glEnableVertexAttribArray(5);
+        glVertexAttribIPointer(5, 4, GL_INT, sizeof(VertexBoneData), (void*)offsetof(VertexBoneData, IDs));
+        // bone weights
+        glEnableVertexAttribArray(6);
+        glVertexAttribIPointer(6, 4, GL_INT, sizeof(VertexBoneData), (void*)offsetof(VertexBoneData, Weights));
+
 
         glBindVertexArray(0);
     }
+};
+
+void ZeroMat(aiMatrix4x4 * mat)
+{
+    mat->a1 = 0.0f; mat->a2 = 0.0f; mat->a3 = 0.0f; mat->a4 = 0.0f;
+    mat->b1 = 0.0f; mat->b2 = 0.0f; mat->b3 = 0.0f; mat->b4 = 0.0f;
+    mat->c1 = 0.0f; mat->c2 = 0.0f; mat->c3 = 0.0f; mat->c4 = 0.0f;
+    mat->d1 = 0.0f; mat->d2 = 0.0f; mat->d3 = 0.0f; mat->d4 = 0.0f;    
+};
+
+void InitMat(aiMatrix4x4 * mat)
+{
+    mat->a1 = 1.0f; mat->a2 = 0.0f; mat->a3 = 0.0f; mat->a4 = 0.0f;
+    mat->b1 = 0.0f; mat->b2 = 1.0f; mat->b3 = 0.0f; mat->b4 = 0.0f;
+    mat->c1 = 0.0f; mat->c2 = 0.0f; mat->c3 = 1.0f; mat->c4 = 0.0f;
+    mat->d1 = 0.0f; mat->d2 = 0.0f; mat->d3 = 0.0f; mat->d4 = 1.0f;
+};
+
+void InitScaleTransform(aiMatrix4x4 * mat, float scaleX, float scaleY, float scaleZ)
+{
+    mat->a1 = scaleX;   mat->a2 = 0.0f;     mat->a3 = 0.0f;     mat->a4 = 0.0f;
+    mat->b1 = 0.0f;     mat->b2 =scaleX;    mat->b3 = 0.0f;     mat->b4 = 0.0f;
+    mat->c1 = 0.0f;     mat->c2 = 0.0f;     mat->c3 = scaleZ;   mat->c4 = 0.0f;
+    mat->d1 = 0.0f;     mat->d2 = 0.0f;     mat->d3 = 0.0f;     mat->d4 = 1.0f;
+};
+
+void InitTranslationTransform(aiMatrix4x4 * mat, float x, float y, float z)
+{
+    mat->a1 = 1.0f; mat->a2 = 0.0f; mat->a3 = 0.0f; mat->a4 = x;
+    mat->b1 = 0.0f; mat->b2 = 1.0f; mat->b3 = 0.0f; mat->b4 = y;
+    mat->c1 = 0.0f; mat->c2 = 0.0f; mat->c3 = 1.0f; mat->c4 = z;
+    mat->d1 = 0.0f; mat->d2 = 0.0f; mat->d3 = 0.0f; mat->d4 = 1.0f;
+};
+
+void Mat3x3To4x4(aiMatrix4x4 * mat, aiMatrix3x3 mat2)
+{
+    mat->a1 = mat2.a1; mat->a2 =mat2.a2; mat->a3 = mat2.a3; mat->a4 = 0.0f;
+    mat->b1 = mat2.b1; mat->b2 =mat2.b2; mat->b3 = mat2.b3; mat->b4 = 0.0f;
+    mat->c1 = mat2.c1; mat->c2 =mat2.c2; mat->c3 = mat2.c3; mat->c4 = 0.0f;
+    mat->d1 = 0.0f; mat->d2 = 0.0f; mat->d3 = 0.0f; mat->d4 =1.0f;
 };
 #endif

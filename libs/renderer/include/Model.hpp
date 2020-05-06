@@ -21,6 +21,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <assert.h>
 using namespace std;
 
 
@@ -140,6 +141,12 @@ private:
         vector<Vertex> vertices;
         vector<unsigned int> indices;
         vector<Texture> textures;
+        
+        unsigned int numBones;
+        map<string, unsigned int> boneMapping;
+        VertexBoneData bones;
+        vector<BoneInfo> boneInfo;
+        aiMatrix4x4 globalInverseTransform;
 
         // Walk through each of the mesh's vertices
         for(unsigned int i = 0; i < mesh->mNumVertices; i++)
@@ -221,51 +228,267 @@ private:
         textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
         */
 
+        // Process animation
+
+        if(mesh->HasBones())
+        {
+            LoadBones(vertices, mesh, bones, boneInfo, boneMapping, numBones);
+        }
+        
+
         // return a mesh object created from the extracted mesh data
-        return Mesh(vertices, indices, textures);
+        return Mesh(vertices, indices, textures, bones, boneInfo, boneMapping, numBones);
     }
 
     // checks all material textures of a given type and loads the textures if they're not loaded yet.
     // the required info is returned as a Texture struct.
     vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, string typeName)
     {
-        /*
-        vector<Texture> textures;
+        
+    }
 
-        Texture texture;
-        texture.id = TextureFromFile()
-        */
-        /*
-        for(unsigned int i = 0; i < mat->GetTextureCount(type); i++)
+    void LoadBones(vector<Vertex> &vertices, aiMesh *mesh, VertexBoneData &bones, vector<BoneInfo> &boneInfo, map<string, unsigned int> &boneMapping, unsigned int &numBones)
+    {
+        
+        for (unsigned int i = 0; i < mesh->mNumBones; i++)
         {
-            aiString str;
-            mat->GetTexture(type, i, &str);
-            // check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
-            bool skip = false;
-            for(unsigned int j = 0; j < textures_loaded.size(); j++)
+            unsigned int BoneIndex = 0;
+            string BoneName(mesh->mBones[i]->mName.data);
+
+            if (boneMapping.find(BoneName) == boneMapping.end())
             {
-                if(std::strcmp(textures_loaded[j].path.data(), str.C_Str()) == 0)
+                BoneIndex = numBones;
+                numBones++;
+                BoneInfo bi;
+                boneInfo.push_back(bi);
+            }
+            else
+            {
+                BoneIndex = boneMapping[BoneName];
+            }
+            
+            boneMapping[BoneName] = BoneIndex;
+            boneInfo[BoneIndex].BoneOffset = mesh->mBones[i]->mOffsetMatrix;
+
+            for (unsigned int j = 0; j < mesh->mBones[i]->mNumWeights; j++)
+            {
+                unsigned int VertexID = mesh->mBones[i]->mWeights[j].mVertexId;
+                float Weight = mesh->mBones[i]->mWeights[j].mWeight;
+                
+                for (unsigned int k = 0 ; k < NUM_BONES_PER_VERTEX; k++) 
                 {
-                    textures.push_back(textures_loaded[j]);
-                    skip = true; // a texture with the same filepath has already been loaded, continue to next one. (optimization)
-                    break;
+                    if (bones.Weights[k] == 0.0f) 
+                    {
+                        bones.IDs[k] = BoneIndex;
+                        bones.Weights[k] = Weight;
+                        break;
+                    }        
                 }
             }
-            if(!skip)
-            {   // if texture hasn't been loaded already, load it
-                
-                Texture texture;
-                texture.id = TextureFromFile(str.C_Str());
-                texture.type = typeName;
-                texture.path = str.C_Str();
-                textures.push_back(texture);
-                textures_loaded.push_back(texture);  // store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.
+
+
+        }
+    }
+
+    aiMatrix4x4 BoneTransform(float TimeInSeconds, vector<aiMatrix4x4> &Transforms, aiScene *scene, unsigned int numBones, vector<BoneInfo> *boneInfo)
+    {
+        aiMatrix4x4 identity;
+        InitMat(&identity);
+
+        float TicksPerSecond = scene->mAnimations[0]->mTicksPerSecond != 0 ? scene->mAnimations[0]->mTicksPerSecond : 25.0f;
+        float TimeInTicks = TimeInSeconds * TicksPerSecond;
+        float AnimationTIme = fmod(TimeInTicks, scene->mAnimations[0]->mDuration);
+
+        ReadNodeHierarchy
+
+        Transforms.resize(numBones);
+
+        for (unsigned int i = 0; i < numBones; i++)
+        {
+            Transforms[i] = boneInfo->at(i).FinalTransformation;
+        }
+
+    }
+
+    const aiNodeAnim* FindNodeAnim(const aiAnimation *pAnimation, const string nodeName)
+    {
+        for (unsigned int i = 0; i < pAnimation->mNumChannels; i++)
+        {
+            const aiNodeAnim *pNodeAnim = pAnimation->mChannels[i];
+
+            if (string(pNodeAnim->mNodeName.data) == nodeName)
+            {
+                return pNodeAnim;
+            }
+
+            return NULL;
+        }
+    }
+
+    unsigned int FindRotation(float AnimationTime, const aiNodeAnim *pNodeAnim)
+    {
+        assert(pNodeAnim->mNumRotationKeys > 0);
+
+        for (unsigned int i= 0; i < pNodeAnim->mNumRotationKeys - 1; i++)
+        {
+            if (AnimationTime < (float)pNodeAnim->mRotationKeys[i+1].mTime)
+            {
+                return 1;
             }
         }
-        */
-        //return textures;
+
+        assert(0);
+    }
+
+    unsigned int FindScaling(float AnimationTime, const aiNodeAnim* pNodeAnim)
+    {
+        assert(pNodeAnim->mNumScalingKeys > 0);
+        
+        for (unsigned int i = 0 ; i < pNodeAnim->mNumScalingKeys - 1 ; i++) 
+        {
+            if (AnimationTime < (float)pNodeAnim->mScalingKeys[i + 1].mTime) 
+            {
+                return i;
+            }
+        }
+    
+        assert(0);
+
+        return 0;
+    }
+
+    unsigned int FindPosition(float AnimationTime, const aiNodeAnim* pNodeAnim)
+    {    
+        for (unsigned int i = 0 ; i < pNodeAnim->mNumPositionKeys - 1 ; i++) 
+        {
+            if (AnimationTime < (float)pNodeAnim->mPositionKeys[i + 1].mTime) 
+            {
+                return i;
+            }   
+        }
+    
+        assert(0);
+
+        return 0;
+    }
+
+    void CalcInterpolatedScaling(aiVector3D& out, float AnimationTime, const aiNodeAnim *pNodeAnim)
+    {
+        if (pNodeAnim->mNumScalingKeys == 1) 
+        {
+            out = pNodeAnim->mScalingKeys[0].mValue;
+            return;
+        }
+
+        unsigned int ScalingIndex = FindScaling(AnimationTime, pNodeAnim);
+        unsigned int NextScalingIndex = (ScalingIndex + 1);
+        assert(NextScalingIndex < pNodeAnim->mNumScalingKeys);
+        float DeltaTime = (float)(pNodeAnim->mScalingKeys[NextScalingIndex].mTime - pNodeAnim->mScalingKeys[ScalingIndex].mTime);
+        float Factor = (AnimationTime - (float)pNodeAnim->mScalingKeys[ScalingIndex].mTime) / DeltaTime;
+        assert(Factor >= 0.0f && Factor <= 1.0f);
+        const aiVector3D& Start = pNodeAnim->mScalingKeys[ScalingIndex].mValue;
+        const aiVector3D& End   = pNodeAnim->mScalingKeys[NextScalingIndex].mValue;
+        aiVector3D Delta = End - Start;
+        out = Start + Factor * Delta;
+    }
+
+
+    void CalcInterpolatedRotation(aiQuaternion& out, float AnimationTime, const aiNodeAnim *pNodeAnim)
+    {
+        if (pNodeAnim->mNumRotationKeys == 1)
+        {
+            out = pNodeAnim->mRotationKeys[0].mValue;
+            return;
+        }
+
+        unsigned int rotationIndex = FindRotation(AnimationTime, pNodeAnim);
+        unsigned int nextRotationIndex = (rotationIndex + 1);
+        assert(nextRotationIndex < pNodeAnim->mNumRotationKeys);
+        float deltaTime = pNodeAnim->mRotationKeys[nextRotationIndex].mTime - pNodeAnim->mRotationKeys[rotationIndex].mTime;
+        float factor = (AnimationTime - (float)pNodeAnim->mRotationKeys[rotationIndex].mTime) / deltaTime;
+        assert(factor >= 0.0f && factor <= 1.0f);
+        const aiQuaternion& StartRotationQ = pNodeAnim->mRotationKeys[rotationIndex].mValue;
+        const aiQuaternion& EndRotationQ = pNodeAnim->mRotationKeys[nextRotationIndex].mValue;
+        aiQuaternion::Interpolate(out, StartRotationQ, EndRotationQ, factor);
+        out = out.Normalize();
+    }
+
+    void CalcInterpolatedPosition(aiVector3D& Out, float AnimationTime, const aiNodeAnim* pNodeAnim)
+    {
+        if (pNodeAnim->mNumPositionKeys == 1) {
+            Out = pNodeAnim->mPositionKeys[0].mValue;
+            return;
+        }
+                
+        unsigned int PositionIndex = FindPosition(AnimationTime, pNodeAnim);
+        unsigned int NextPositionIndex = (PositionIndex + 1);
+        assert(NextPositionIndex < pNodeAnim->mNumPositionKeys);
+        float DeltaTime = (float)(pNodeAnim->mPositionKeys[NextPositionIndex].mTime - pNodeAnim->mPositionKeys[PositionIndex].mTime);
+        float Factor = (AnimationTime - (float)pNodeAnim->mPositionKeys[PositionIndex].mTime) / DeltaTime;
+        assert(Factor >= 0.0f && Factor <= 1.0f);
+        const aiVector3D& Start = pNodeAnim->mPositionKeys[PositionIndex].mValue;
+        const aiVector3D& End = pNodeAnim->mPositionKeys[NextPositionIndex].mValue;
+        aiVector3D Delta = End - Start;
+        Out = Start + Factor * Delta;
+}
+
+
+    void ReadNodeHierarchy(float AnimationTime, const aiNode *pNode, const aiMatrix4x4 ParentTransform, aiScene *scene, map<string, unsigned int> *boneMapping, vector<BoneInfo> *boneInfo, aiMatrix4x4 globalInverseTransform)
+    {
+        string nodeName(pNode->mName.data);
+
+        const aiAnimation *pAnimation = scene->mAnimations[0];
+
+        aiMatrix4x4 NodeTransformation(pNode->mTransformation);
+
+        const aiNodeAnim *pNodeAnim = FindNodeAnim(pAnimation, nodeName);
+
+        if (pNodeAnim)
+        {
+            // Interpolate scaling and generate scaling transformation matrix
+            aiVector3D scaling;
+            CalcInterpolatedScaling(scaling, AnimationTime, pNodeAnim);
+            aiMatrix4x4 scalingM;
+            InitScaleTransform(&scalingM, scaling.x, scaling.y, scaling.z);
+
+            aiQuaternion rotationQ;
+            CalcInterpolatedRotation(rotationQ, AnimationTime, pNodeAnim);
+            aiMatrix4x4 rotationM;
+            Mat3x3To4x4(&rotationM, rotationQ.GetMatrix());
+
+            aiVector3D translation;
+            CalcInterpolatedPosition(translation, AnimationTime, pNodeAnim);
+            aiMatrix4x4 translationM;
+            InitTranslationTransform(&translationM, translation.x, translation.y, translation.z);
+        
+            NodeTransformation = translationM * rotationM * scalingM;
+        }
+
+        aiMatrix4x4 GlobalTransformation = ParentTransform * NodeTransformation;
+
+        if (boneMapping->find(nodeName) != boneMapping->end())
+        {
+            unsigned int BoneIndex = boneMapping->at(nodeName);
+            boneInfo->at(BoneIndex).FinalTransformation = globalInverseTransform * GlobalTransformation * boneInfo->at(BoneIndex).BoneOffset;
+        }
+
+        for (unsigned int i = 0; i < pNode->mNumChildren; i++)
+        {
+            ReadNodeHierarchy(AnimationTime, pNode->mChildren[i], GlobalTransformation, scene, boneMapping, boneInfo, globalInverseTransform);
+        }
+    }    
+
+    void RunAnimation(float runningTime)
+    {
+        vector<aiMatrix4x4> transforms;
+        for (auto& mesh : meshes)
+        {
+            this->BoneTransform(runningTime, transforms, , mesh.numBones, &mesh.boneInfo);
+        }
     }
 };
+
+
 
 
 

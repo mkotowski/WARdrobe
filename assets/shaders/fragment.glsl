@@ -65,10 +65,6 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 lightDir);
 
 void main()
 {
-
-	
-	// linearly interpolate between both textures (80% container, 20% awesomeface)
-	
 	vec3 norm = normalize(Normal);
 	vec3 viewDir = normalize(viewPos - FragPos);
 	FragColor = texture(texture1, TexCoord);
