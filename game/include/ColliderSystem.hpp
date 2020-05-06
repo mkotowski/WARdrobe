@@ -3,13 +3,16 @@
 #include <iostream>
 #include <vector>
 #include "ecs.hpp"
+#include "Window.hpp"
 
 struct BoundingBox 
 {
-	
+	float width;
+	float height;
+	float depth;
 	glm::vec3 origin;
+	
 	vector<Mesh> meshes;
-	glm::vec3      scale;
 	vector<Vertex> vertices;
 	int    indexes[6];
 	glm::vec3 dimension;
@@ -17,20 +20,20 @@ struct BoundingBox
 	float     minX, maxX, minY, maxY, minZ, maxZ;
 	void      Assign(Entity e, std::shared_ptr<ComponentManager> componentManager)
 	{ 
-		if (!isVerticesAssign) {
-			GetVertices();
-			GetDimensions();
-			isVerticesAssign = true;
-		}
-		meshes = componentManager->GetComponent<Model>(e).meshes;
+		// if (!isVerticesAssign) {
+		// 	GetVertices();
+		// 	GetDimensions();
+		// 	isVerticesAssign = true;
+		// }
+		// meshes = componentManager->GetComponent<Model>(e).meshes;
 		origin = componentManager->GetComponent<Transform>(e).position;
-		GetVertices();
-		minX = vertices[indexes[0]].Position.x + origin[0] * scale[0];
-		maxX = vertices[indexes[1]].Position.x + origin[0] * scale[0];
-		minY = vertices[indexes[2]].Position.y + origin[1] * scale[1];
-		maxY = vertices[indexes[3]].Position.y + origin[1] * scale[1];
-		minZ = vertices[indexes[4]].Position.z + origin[2] * scale[2];
-		maxZ = vertices[indexes[5]].Position.z + origin[2] * scale[2];
+		// GetVertices();
+		// minX = vertices[indexes[0]].Position.x + origin[0] * scale[0];
+		// maxX = vertices[indexes[1]].Position.x + origin[0] * scale[0];
+		// minY = vertices[indexes[2]].Position.y + origin[1] * scale[1];
+		// maxY = vertices[indexes[3]].Position.y + origin[1] * scale[1];
+		// minZ = vertices[indexes[4]].Position.z + origin[2] * scale[2];
+		// maxZ = vertices[indexes[5]].Position.z + origin[2] * scale[2];
 		/*cout << minX << ", " << maxX << ", " 
 			 << minY << ", " << maxY << ", " 
 			 << minZ << ", " << maxZ << "\n"
@@ -134,23 +137,30 @@ class ColliderSystem : public System
 {
 public:
 	std::vector<Entity> entitiesToCollide;
-	
+	Shader *ourShader;
+	Window *window;
+	Camera *camera;
+
 	void Update(float                             dt,
 	            std::shared_ptr<ComponentManager> componentManager) override;
 	void CheckCollision(std::shared_ptr<ComponentManager> componentManager);
 	void Initiate(std::shared_ptr<ComponentManager> componentManager);
+	void DrawBoundingBox(BoundingBox box);
 };
 
 void
 ColliderSystem::Update(float                             dt,
                        std::shared_ptr<ComponentManager> componentManager)
 {
-	entitiesToCollide.clear();
+	//entitiesToCollide.clear();
 	for (auto const& entity : entities) {
 		componentManager->GetComponent<BoundingBox>(entity).Assign(entity, componentManager);
-		entitiesToCollide.push_back(entity);
+		//entitiesToCollide.push_back(entity);
+		componentManager->GetComponent<BoundingBox>(entity).origin = 
+			componentManager->GetComponent<Transform>(entity).position;
+		DrawBoundingBox(componentManager->GetComponent<BoundingBox>(entity));
 	}
-	CheckCollision(componentManager);
+	//CheckCollision(componentManager);
 }
 
 void
@@ -178,7 +188,88 @@ ColliderSystem::CheckCollision(
 void
 ColliderSystem::Initiate(std::shared_ptr<ComponentManager> componentManager)
 {
-	for (auto const& entity : entities) {
-		componentManager->GetComponent<BoundingBox>(entity).GetVertices();
-	}
+
+}
+
+void
+ColliderSystem::DrawBoundingBox(BoundingBox box)
+{	
+	float vertices[] = 
+	{
+		(-box.width / 2.0f), -box.height,  (-box.depth / 2.0f),  0.0f, 0.0f,
+        (box.width / 2.0f),	  -box.height, (-box.depth / 2.0f),  1.0f, 0.0f,
+        (box.width / 2.0f),	  0.0f,  (-box.depth / 2.0f),  1.0f, 1.0f,
+        (box.width / 2.0f),	  0.0f,  (-box.depth / 2.0f),  1.0f, 1.0f,
+        (-box.width / 2.0f),  0.0f,  (-box.depth / 2.0f),  0.0f, 1.0f,
+       	(-box.width / 2.0f), -box.height, (-box.depth / 2.0f),  0.0f, 0.0f,
+
+        (-box.width / 2.0f),  -box.height,  (box.depth / 2.0f),  0.0f, 0.0f,
+        (box.width / 2.0f),	  -box.height,  (box.depth / 2.0f),  1.0f, 0.0f,
+        (box.width / 2.0f),	  0.0f,  (box.depth / 2.0f),  1.0f, 1.0f,
+        (box.width / 2.0f),	  0.0f,  (box.depth / 2.0f),  1.0f, 1.0f,
+        (-box.width / 2.0f),  0.0f,  (box.depth / 2.0f),  0.0f, 1.0f,
+        (-box.width / 2.0f),  -box.height,  (box.depth / 2.0f),  0.0f, 0.0f,
+
+        (-box.width / 2.0f),  0.0f,  (box.depth / 2.0f),  1.0f, 0.0f,
+        (-box.width / 2.0f),  0.0f,  (-box.depth / 2.0f),  1.0f, 1.0f,
+        (-box.width / 2.0f),  -box.height, (-box.depth / 2.0f),  0.0f, 1.0f,
+        (-box.width / 2.0f),  -box.height, (-box.depth / 2.0f),  0.0f, 1.0f,
+        (-box.width / 2.0f),  -box.height, (box.depth / 2.0f),  0.0f, 0.0f,
+        (-box.width / 2.0f),  0.0f,  (box.depth / 2.0f),  1.0f, 0.0f,
+
+        (box.width / 2.0f),	  0.0f,  (box.depth / 2.0f),  1.0f, 0.0f,
+        (box.width / 2.0f),	  0.0f,  (-box.depth / 2.0f),  1.0f, 1.0f,
+        (box.width / 2.0f),	  -box.height, (-box.depth / 2.0f),  0.0f, 1.0f,
+        (box.width / 2.0f),	  -box.height, (-box.depth / 2.0f),  0.0f, 1.0f,
+        (box.width / 2.0f),	  -box.height, (box.depth / 2.0f),  0.0f, 0.0f,
+        (box.width / 2.0f),	  0.0f,  (box.depth / 2.0f),  1.0f, 0.0f,
+
+        (-box.width / 2.0f),  -box.height, (-box.depth / 2.0f),  0.0f, 1.0f,
+        (box.width / 2.0f),	  -box.height, (-box.depth / 2.0f),  1.0f, 1.0f,
+        (box.width / 2.0f),	  -box.height, (box.depth / 2.0f),  1.0f, 0.0f,
+        (box.width / 2.0f),	  -box.height, (box.depth / 2.0f),  1.0f, 0.0f,
+        (-box.width / 2.0f),  -box.height, (box.depth / 2.0f),  0.0f, 0.0f,
+        (-box.width / 2.0f),  -box.height , (-box.depth / 2.0f),  0.0f, 1.0f,
+
+        (-box.width / 2.0f),  0.0f, (-box.depth / 2.0f),  0.0f, 1.0f,
+        (box.width / 2.0f),	  0.0f, (-box.depth / 2.0f),  1.0f, 1.0f,
+        (box.width / 2.0f),	  0.0f, (box.depth / 2.0f),  1.0f, 0.0f,
+        (box.width / 2.0f),	  0.0f, (box.depth / 2.0f),  1.0f, 0.0f,
+        (-box.width / 2.0f),  0.0f, (box.depth / 2.0f),  0.0f, 0.0f,
+        (-box.width / 2.0f),  0.0f, (-box.depth / 2.0f),  0.0f, 1.0f
+	};
+
+	unsigned int VBO, VAO;
+
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+
+	glBindVertexArray(VAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+	// miejsce na shader
+	ourShader->use();
+
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(-box.origin.x, box.origin.y, box.origin.z));
+	
+	glm::mat4 view = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+    glm::mat4 projection = glm::mat4(1.0f);
+    projection = glm::perspective(camera->fieldOfView, (float)window->GetWindowWidth() / (float)window->GetWindowHeight(), 0.1f, 100.0f);
+    view = glm::lookAt(camera->cameraPos,
+	              camera->cameraPos + camera->cameraFront,
+	              camera->cameraUp);
+    // pass transformation matrices to the shader
+    ourShader->setMat4("projection", projection); // note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
+    ourShader->setMat4("view", view);
+	ourShader->setMat4("model", model);
+	glBindVertexArray(VAO);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
 }

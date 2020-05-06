@@ -18,15 +18,18 @@
                     "Transform" : [ 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1 ],
                     "Rigidbody" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
                     "Gravity" : [ 0.0, 0.0, 0.0 ],
-                    "Renderer" : 0                }
+                    "Renderer" : 0,
+                    "BoundingBox" : [1.0, 2.0, 1.5]
+                }
                 
             ,
     "wilkModel" :
             
                 {
                     "Model" : ["assets/models/Wolf_dae.dae", "assets/textures/stone2.jpg"],
-                    "Transform" : [ 0.0, 0.0, 1.0, 90.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
+                    "Transform" : [ 0.0, -5.0, 1.0, 90.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
                     "Renderer" : 0
+                    
                 }
             ,
     "mainCamera" :
@@ -54,5 +57,9 @@
                 {
                     "Shader" : ["assets/shaders/vertex.glsl", "assets/shaders/fragment.glsl", "modelShader"]
                 }
-            
+            ,
+    "boundingBoxShader" :
+                {
+                    "Shader" : ["assets/shaders/boxVertex.glsl", "assets/shaders/boxFragment.glsl", "boxShader"]
+                }
 }

@@ -111,6 +111,8 @@ Game::Loop()
 	// ColliderSystem
 	gameplayManager->SetRequiredComponent<ColliderSystem>(
 	  gameplayManager->GetComponentType<BoundingBox>());
+	gameplayManager->SetRequiredComponent<ColliderSystem>(
+	  gameplayManager->GetComponentType<Transform>());
 
 	// CameraSystem
 	gameplayManager->SetRequiredComponent<CameraSystem>(
@@ -130,7 +132,7 @@ Game::Loop()
 
 	// Load levelData from JSON file
 	LoadLevel("assets/levels/levelTest.json");
-
+	
 	/*
 		gameplayManager->AddComponent(
 		modelEntity,
@@ -150,13 +152,15 @@ Game::Loop()
 	renderSystem->shaders = shaderSystem->shaders;
 
 	colliderSystem->Initiate(gameplayManager->GetComponentManager());
+	
 	colliderSystem->window = this->gameWindow;
 	colliderSystem->camera = &gameplayManager->GetComponentManager()->GetComponent<Camera>(cameraSystem->cameraEntity);
 
 	colliderSystem->ourShader = &gameplayManager->GetComponentManager()->GetComponent<Shader>(shaderSystem->shaders.at("boxShader"));
 
-	renderSystem->Init();
 
+	renderSystem->Init();
+	
 	while (!gameWindow->ShouldClose()) {
 		auto startTime = std::chrono::high_resolution_clock::now();
 		gameWindow->PollEvents();
@@ -257,11 +261,13 @@ Game::LoadLevel(std::string levelPath)
 			}
 			else if (it2.key() == "BoundingBox") 
 			{
+				// 0 - width
+				// 1 - height
+				// 2 - depth
 				gameplayManager->AddComponent(
 					entity,
-					BoundingBox{ 
-					gameplayManager->GetComponent<Transform>(entity).position,
-					gameplayManager->GetComponent<Model>(entity).meshes});
+					BoundingBox{ it2.value()[0], it2.value()[1], it2.value()[2]});
+			
 			}
 		}
 	}
