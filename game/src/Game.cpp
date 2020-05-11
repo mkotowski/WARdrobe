@@ -79,7 +79,6 @@ Game::Loop()
 	gameplayManager->RegisterComponent<Renderer>();
 	gameplayManager->RegisterComponent<Camera>();
 	gameplayManager->RegisterComponent<BoundingBox>();
-	gameplayManager->RegisterComponent<Collidable>();
 
 	// Register the systems used during the gameplay
 	auto physicsSystem = gameplayManager->RegisterSystem<PhysicsSystem>();
@@ -105,8 +104,6 @@ Game::Loop()
 	  gameplayManager->GetComponentType<Transform>());
 	gameplayManager->SetRequiredComponent<PhysicsSystem>(
 	  gameplayManager->GetComponentType<BoundingBox>());
-	gameplayManager->SetRequiredComponent<PhysicsSystem>(
-	  gameplayManager->GetComponentType<Collidable>());
 	  
 	// ColliderSystem
 	gameplayManager->SetRequiredComponent<ColliderSystem>(
@@ -151,13 +148,12 @@ Game::Loop()
 	shaderSystem->Init(gameplayManager->GetComponentManager());
 	renderSystem->shaders = shaderSystem->shaders;
 
-	colliderSystem->Initiate(gameplayManager->GetComponentManager());
-	
 	colliderSystem->window = this->gameWindow;
 	colliderSystem->camera = &gameplayManager->GetComponentManager()->GetComponent<Camera>(cameraSystem->cameraEntity);
 
 	colliderSystem->ourShader = &gameplayManager->GetComponentManager()->GetComponent<Shader>(shaderSystem->shaders.at("boxShader"));
 
+	colliderSystem->Initiate(gameplayManager->GetComponentManager());
 
 	renderSystem->Init();
 	

@@ -11,6 +11,8 @@ struct BoundingBox
 	float height;
 	float depth;
 	glm::vec3 origin;
+	glm::vec3 rotation;
+	glm::vec3 scale;
 	
 	vector<Mesh> meshes;
 	vector<Vertex> vertices;
@@ -18,6 +20,32 @@ struct BoundingBox
 	glm::vec3 dimension;
 	bool           isVerticesAssign = false;
 	float     minX, maxX, minY, maxY, minZ, maxZ;
+	float     minXLoc, maxXLoc, minYLoc, maxYLoc, minZLoc, maxZLoc;
+	glm::vec4      AABBVertices[8];
+	glm::vec3      prevRotation;
+
+	void StartAABB() {
+		minXLoc = -width / 2.0f;
+		maxXLoc = width / 2.0f;
+		minYLoc = -height;
+		maxYLoc = 0.0f;
+		minZLoc = -depth / 2.0f;
+		maxZLoc = depth / 2.0f;
+
+		AABBVertices[0] = glm::vec4(maxXLoc, maxYLoc, minZLoc, 0.0f);
+		AABBVertices[1] = glm::vec4(minXLoc, maxYLoc, minZLoc, 0.0f);
+		AABBVertices[2] = glm::vec4(minXLoc, minYLoc, minZLoc, 0.0f);
+		AABBVertices[3] = glm::vec4(maxXLoc, minYLoc, minZLoc, 0.0f);
+		AABBVertices[4] = glm::vec4(maxXLoc, minYLoc, maxZLoc, 0.0f);
+		AABBVertices[5] = glm::vec4(maxXLoc, maxYLoc, maxZLoc, 0.0f);
+		AABBVertices[6] = glm::vec4(minXLoc, maxYLoc, maxZLoc, 0.0f);
+		AABBVertices[7] = glm::vec4(minXLoc, minYLoc, maxZLoc, 0.0f);
+
+			/*cout << "LOCAL: minX " << minXLoc << ", maxX " << maxXLoc << ", minY " << minYLoc
+		     << ", maxY " << maxYLoc << ", minZ " << minZLoc << ", maxZ " << maxZLoc
+		     << "\n";*/
+	}
+
 	void      Assign(Entity e, std::shared_ptr<ComponentManager> componentManager)
 	{ 
 		// if (!isVerticesAssign) {
@@ -27,36 +55,116 @@ struct BoundingBox
 		// }
 		// meshes = componentManager->GetComponent<Model>(e).meshes;
 		origin = componentManager->GetComponent<Transform>(e).position;
-		// GetVertices();
-		// minX = vertices[indexes[0]].Position.x + origin[0] * scale[0];
-		// maxX = vertices[indexes[1]].Position.x + origin[0] * scale[0];
-		// minY = vertices[indexes[2]].Position.y + origin[1] * scale[1];
-		// maxY = vertices[indexes[3]].Position.y + origin[1] * scale[1];
-		// minZ = vertices[indexes[4]].Position.z + origin[2] * scale[2];
-		// maxZ = vertices[indexes[5]].Position.z + origin[2] * scale[2];
-		/*cout << minX << ", " << maxX << ", " 
-			 << minY << ", " << maxY << ", " 
-			 << minZ << ", " << maxZ << "\n"
-			 << origin[0] << ", " << origin[1] << ", " << origin[2] << "\n";*/
+		rotation = componentManager->GetComponent<Transform>(e).rotation;
+		scale = componentManager->GetComponent<Transform>(e).scale;
+		
+		//meshes = componentManager->GetComponent<Model>(e).meshes;
+		//GetVertices();
+		//GetDimensions(minX, maxX, minY, maxY, minZ, maxZ);
+
+		 /*minX = vertices[indexes[0]].Position.x + origin[0] * scale[0];
+		 maxX = vertices[indexes[1]].Position.x + origin[0] * scale[0];
+		 minY = vertices[indexes[2]].Position.y + origin[1] * scale[1];
+		 maxY = vertices[indexes[3]].Position.y + origin[1] * scale[1];
+		 minZ = vertices[indexes[4]].Position.z + origin[2] * scale[2];
+		 maxZ = vertices[indexes[5]].Position.z + origin[2] * scale[2];*/
+
+		glm::mat4 model = glm::mat4(1.0f);
+
+		model = glm::rotate(model,
+		                    glm::radians(rotation[0] - prevRotation[0]),
+		                    glm::vec3(1.0f, 0.0f, 0.0f)); // X axis
+		model = glm::rotate(model,
+		                    glm::radians(rotation[1] - prevRotation[1]),
+		                    glm::vec3(0.0f, 1.0f, 0.0f)); // Y axis
+		model = glm::rotate(model,
+		                    glm::radians(rotation[2] - prevRotation[2]),
+		                    glm::vec3(0.0f, 0.0f, 1.0f)); // Z axis
+
+		prevRotation = rotation;
+
+		for (int i = 0; i < 8; i++) {
+			AABBVertices[i] = AABBVertices[i] * model;
+		}
+
+		SetNewBounds();
+
+		minX = minXLoc + origin.x;
+		maxX = maxXLoc + origin.x;
+		minY = minYLoc + origin.y;
+		maxY = maxYLoc + origin.y;
+		minZ = minZLoc + origin.z;
+		maxZ = maxZLoc + origin.z;
+
+		/*if (e == 6)
+		{
+			cout << "minX " << minX << ", maxX " << maxX << ", minY " << minY
+			     << ", maxY " << maxY << ", minZ " << minZ << ", maxZ " << maxZ
+			     << "\n"
+			     << origin[0] << ", " << origin[1] << ", " << origin[2] << "\n";
+		}*/
+	}
+
+	void SetNewBounds() {
+		for (int i = 0; i < 8; i++) {
+
+			if (i == 0) {
+				minXLoc = AABBVertices[i].x;
+				maxXLoc = AABBVertices[i].x;
+				minYLoc = AABBVertices[i].y;
+				maxYLoc = AABBVertices[i].y;
+				minZLoc = AABBVertices[i].z;
+				maxZLoc = AABBVertices[i].z;
+				continue;
+			}
+
+			if (AABBVertices[i].x < minXLoc) {
+				minXLoc = AABBVertices[i].x;
+			}
+
+			if (AABBVertices[i].x > maxXLoc) {
+				maxXLoc = AABBVertices[i].x;
+			}
+
+			if (AABBVertices[i].y < minYLoc) {
+				minYLoc = AABBVertices[i].y;
+			}
+
+			if (AABBVertices[i].y > maxYLoc) {
+				maxYLoc = AABBVertices[i].y;
+			}
+
+			if (AABBVertices[i].z < minZLoc) {
+				minZLoc = AABBVertices[i].z;
+			}
+
+			if (AABBVertices[i].z > maxZLoc) {
+				maxZLoc = AABBVertices[i].z;
+			}
+		}
 	}
 
 	void GetVertices()
 	{
 		vertices.clear();
-		//for (int j = 0; j < meshes.size(); j++)
-			//{
-				for (int i = 0; i < meshes[0].vertices.size(); i++) {
-					vertices.push_back(meshes[0].vertices[i]);		
-				}
-			//}
+		for (int j = 0; j < meshes.size(); j++) {
+			for (int i = 0; i < meshes[j].vertices.size(); i++) {
+				vertices.push_back(meshes[j].vertices[i]);
+			}
+		}
 		    
 		    //cout << "Vertices assigned";
 	}
 
-	void GetDimensions() {
-		float maxX = 0, maxY = 0, maxZ = 0;
-		for (int i = 0; i < vertices.size(); i++) {
-			for (int j = 0; j < vertices.size(); j++) {
+	void GetDimensions(float& minX,
+	                   float& maxX,
+	                   float& minY,
+	                   float& maxY,
+	                   float& minZ,
+	                   float& maxZ)
+	{
+		/*for (int i = 0; i < vertices.size() + 1; i++) {
+			for (int j = i + 1; j < vertices.size(); j++) {
 				if (i != j) {
 					if (maxX < Distance(vertices[i], vertices[j], 'x')) {
 						maxX = Distance(vertices[i], vertices[j], 'x');
@@ -77,6 +185,44 @@ struct BoundingBox
 					}
 				}
 			}
+		}*/
+
+		for (int i = 0; i < vertices.size(); i++) {
+
+			if (i == 0) {
+				minX = vertices[i].Position.x;
+				maxX = vertices[i].Position.x;
+				minY = vertices[i].Position.y;
+				maxY = vertices[i].Position.y;
+				minZ = vertices[i].Position.z;
+				maxZ = vertices[i].Position.z;
+				continue;
+			}
+
+			if (vertices[i].Position.x < minX) {
+				minX = vertices[i].Position.x;
+			}
+
+			if (vertices[i].Position.x > maxX) {
+				maxX = vertices[i].Position.x;
+			}
+
+			if (vertices[i].Position.y < minY) {
+				minY = vertices[i].Position.y;
+			}
+
+			if (vertices[i].Position.y > maxY) {
+				maxY = vertices[i].Position.y;
+			}
+
+			if (vertices[i].Position.z < minZ) {
+				minZ = vertices[i].Position.z;
+			}
+
+			if (vertices[i].Position.z > maxZ) {
+				maxZ = vertices[i].Position.z;
+			}
+
 		}
 	}
 
@@ -128,11 +274,6 @@ struct BoundingBox
 	}
 };
 
-struct Collidable
-{
-	bool canCollide = true;
-};
-
 class ColliderSystem : public System
 {
 public:
@@ -155,12 +296,13 @@ ColliderSystem::Update(float                             dt,
 	//entitiesToCollide.clear();
 	for (auto const& entity : entities) {
 		componentManager->GetComponent<BoundingBox>(entity).Assign(entity, componentManager);
-		//entitiesToCollide.push_back(entity);
+		entitiesToCollide.push_back(entity);
 		componentManager->GetComponent<BoundingBox>(entity).origin = 
 			componentManager->GetComponent<Transform>(entity).position;
 		DrawBoundingBox(componentManager->GetComponent<BoundingBox>(entity));
 	}
-	//CheckCollision(componentManager);
+	CheckCollision(componentManager);
+	entitiesToCollide.clear();
 }
 
 void
@@ -171,16 +313,18 @@ ColliderSystem::CheckCollision(
 	for (int i = 0; i < entitiesToCollide.size() - 1; i++) {
 		auto& bounds1 =
 		  componentManager->GetComponent<BoundingBox>(entitiesToCollide[i]);
-		auto& bounds2 =
-		  componentManager->GetComponent<BoundingBox>(entitiesToCollide[i + 1]);
 
-		if (bounds1.minX < bounds2.maxX && bounds1.maxX > bounds2.minX &&
-		    bounds1.minY < bounds2.maxY && bounds1.maxY > bounds2.minY &&
-		    bounds1.minZ < bounds2.maxZ && bounds1.maxZ > bounds2.minZ) {
+		for (int j = i + 1; j < entitiesToCollide.size(); j++)
+		{
+			auto& bounds2 =
+			  componentManager->GetComponent<BoundingBox>(entitiesToCollide[j]);
 
-			std::cout << "COLLISION DETECTED!!!!!!!!!\n";
-		} else {
-			std::cout << "Collision Undetected!!!\n";
+			if (bounds1.minX < bounds2.maxX && bounds1.maxX > bounds2.minX &&
+			    bounds1.minY < bounds2.maxY && bounds1.maxY > bounds2.minY &&
+			    bounds1.minZ < bounds2.maxZ && bounds1.maxZ > bounds2.minZ) {
+
+				std::cout << "COLLISION DETECTED!!!!!!!!!\n";
+			}
 		}
 	}
 }
@@ -188,7 +332,9 @@ ColliderSystem::CheckCollision(
 void
 ColliderSystem::Initiate(std::shared_ptr<ComponentManager> componentManager)
 {
-
+	for (auto const& entity : entities) {
+		componentManager->GetComponent<BoundingBox>(entity).StartAABB();
+	}
 }
 
 void
@@ -196,40 +342,40 @@ ColliderSystem::DrawBoundingBox(BoundingBox box)
 {	
 	float vertices[] = 
 	{
-		(-box.width / 2.0f), -box.height,  (-box.depth / 2.0f),  0.0f, 0.0f,
-        (box.width / 2.0f),	  -box.height, (-box.depth / 2.0f),  1.0f, 0.0f,
+		(-box.width / 2.0f), box.height,  (-box.depth / 2.0f),  0.0f, 0.0f,
+        (box.width / 2.0f),	  box.height, (-box.depth / 2.0f),  1.0f, 0.0f,
         (box.width / 2.0f),	  0.0f,  (-box.depth / 2.0f),  1.0f, 1.0f,
         (box.width / 2.0f),	  0.0f,  (-box.depth / 2.0f),  1.0f, 1.0f,
         (-box.width / 2.0f),  0.0f,  (-box.depth / 2.0f),  0.0f, 1.0f,
-       	(-box.width / 2.0f), -box.height, (-box.depth / 2.0f),  0.0f, 0.0f,
+       	(-box.width / 2.0f), box.height, (-box.depth / 2.0f),  0.0f, 0.0f,
 
-        (-box.width / 2.0f),  -box.height,  (box.depth / 2.0f),  0.0f, 0.0f,
-        (box.width / 2.0f),	  -box.height,  (box.depth / 2.0f),  1.0f, 0.0f,
+        (-box.width / 2.0f),  box.height,  (box.depth / 2.0f),  0.0f, 0.0f,
+        (box.width / 2.0f),	  box.height,  (box.depth / 2.0f),  1.0f, 0.0f,
         (box.width / 2.0f),	  0.0f,  (box.depth / 2.0f),  1.0f, 1.0f,
         (box.width / 2.0f),	  0.0f,  (box.depth / 2.0f),  1.0f, 1.0f,
         (-box.width / 2.0f),  0.0f,  (box.depth / 2.0f),  0.0f, 1.0f,
-        (-box.width / 2.0f),  -box.height,  (box.depth / 2.0f),  0.0f, 0.0f,
+        (-box.width / 2.0f),  box.height,  (box.depth / 2.0f),  0.0f, 0.0f,
 
         (-box.width / 2.0f),  0.0f,  (box.depth / 2.0f),  1.0f, 0.0f,
         (-box.width / 2.0f),  0.0f,  (-box.depth / 2.0f),  1.0f, 1.0f,
-        (-box.width / 2.0f),  -box.height, (-box.depth / 2.0f),  0.0f, 1.0f,
-        (-box.width / 2.0f),  -box.height, (-box.depth / 2.0f),  0.0f, 1.0f,
-        (-box.width / 2.0f),  -box.height, (box.depth / 2.0f),  0.0f, 0.0f,
+        (-box.width / 2.0f),  box.height, (-box.depth / 2.0f),  0.0f, 1.0f,
+        (-box.width / 2.0f),  box.height, (-box.depth / 2.0f),  0.0f, 1.0f,
+        (-box.width / 2.0f),  box.height, (box.depth / 2.0f),  0.0f, 0.0f,
         (-box.width / 2.0f),  0.0f,  (box.depth / 2.0f),  1.0f, 0.0f,
 
         (box.width / 2.0f),	  0.0f,  (box.depth / 2.0f),  1.0f, 0.0f,
         (box.width / 2.0f),	  0.0f,  (-box.depth / 2.0f),  1.0f, 1.0f,
-        (box.width / 2.0f),	  -box.height, (-box.depth / 2.0f),  0.0f, 1.0f,
-        (box.width / 2.0f),	  -box.height, (-box.depth / 2.0f),  0.0f, 1.0f,
-        (box.width / 2.0f),	  -box.height, (box.depth / 2.0f),  0.0f, 0.0f,
+        (box.width / 2.0f),	  box.height, (-box.depth / 2.0f),  0.0f, 1.0f,
+        (box.width / 2.0f),	  box.height, (-box.depth / 2.0f),  0.0f, 1.0f,
+        (box.width / 2.0f),	  box.height, (box.depth / 2.0f),  0.0f, 0.0f,
         (box.width / 2.0f),	  0.0f,  (box.depth / 2.0f),  1.0f, 0.0f,
 
-        (-box.width / 2.0f),  -box.height, (-box.depth / 2.0f),  0.0f, 1.0f,
-        (box.width / 2.0f),	  -box.height, (-box.depth / 2.0f),  1.0f, 1.0f,
-        (box.width / 2.0f),	  -box.height, (box.depth / 2.0f),  1.0f, 0.0f,
-        (box.width / 2.0f),	  -box.height, (box.depth / 2.0f),  1.0f, 0.0f,
-        (-box.width / 2.0f),  -box.height, (box.depth / 2.0f),  0.0f, 0.0f,
-        (-box.width / 2.0f),  -box.height , (-box.depth / 2.0f),  0.0f, 1.0f,
+        (-box.width / 2.0f),  box.height, (-box.depth / 2.0f),  0.0f, 1.0f,
+        (box.width / 2.0f),	  box.height, (-box.depth / 2.0f),  1.0f, 1.0f,
+        (box.width / 2.0f),	  box.height, (box.depth / 2.0f),  1.0f, 0.0f,
+        (box.width / 2.0f),	  box.height, (box.depth / 2.0f),  1.0f, 0.0f,
+        (-box.width / 2.0f),  box.height, (box.depth / 2.0f),  0.0f, 0.0f,
+        (-box.width / 2.0f),  box.height , (-box.depth / 2.0f),  0.0f, 1.0f,
 
         (-box.width / 2.0f),  0.0f, (-box.depth / 2.0f),  0.0f, 1.0f,
         (box.width / 2.0f),	  0.0f, (-box.depth / 2.0f),  1.0f, 1.0f,
@@ -257,11 +403,24 @@ ColliderSystem::DrawBoundingBox(BoundingBox box)
 	ourShader->use();
 
 	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(-box.origin.x, box.origin.y, box.origin.z));
+	model = glm::translate(model, glm::vec3(box.origin.x, box.origin.y, box.origin.z));
+	
+	model = glm::rotate(
+	  model, glm::radians(box.rotation[0]), glm::vec3(1.0f, 0.0f, 0.0f)); // X axis
+	model = glm::rotate(
+	  model, glm::radians(box.rotation[1]), glm::vec3(0.0f, 1.0f, 0.0f)); // Y axis
+	model = glm::rotate(
+	  model, glm::radians(box.rotation[2]), glm::vec3(0.0f, 0.0f, 1.0f)); // Z axis
+
+	//model = glm::scale(model, box.scale);
 	
 	glm::mat4 view = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
     glm::mat4 projection = glm::mat4(1.0f);
-    projection = glm::perspective(camera->fieldOfView, (float)window->GetWindowWidth() / (float)window->GetWindowHeight(), 0.1f, 100.0f);
+	projection = glm::perspective(glm::radians(camera->fieldOfView),
+	                              (float)window->GetWindowWidth() /
+	                                (float)window->GetWindowHeight(),
+	                              0.1f,
+	                              100.0f);
     view = glm::lookAt(camera->cameraPos,
 	              camera->cameraPos + camera->cameraFront,
 	              camera->cameraUp);

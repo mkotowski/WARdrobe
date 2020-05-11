@@ -15,11 +15,11 @@
             
                 {
                     "Model" : ["assets/models/chr_knight.obj", "assets/textures/chr_knight.png"],
-                    "Transform" : [ 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1 ],
+                    "Transform" : [ 1.2, 0.0, 1.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1 ],
                     "Rigidbody" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
                     "Gravity" : [ 0.0, 0.0, 0.0 ],
                     "Renderer" : 0,
-                    "BoundingBox" : [1.0, 2.0, 1.5]
+                    "BoundingBox" : [1.0, 1.0, 0.7]
                 }
                 
             ,
@@ -27,9 +27,9 @@
             
                 {
                     "Model" : ["assets/models/Wolf_dae.dae", "assets/textures/stone2.jpg"],
-                    "Transform" : [ 0.0, -5.0, 1.0, 90.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
-                    "Renderer" : 0
-                    
+                    "Transform" : [ 2.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
+                    "Renderer" : 0,
+                    "BoundingBox" : [1.0, 1.0, 1.0]
                 }
             ,
     "mainCamera" :
