@@ -9,17 +9,16 @@
 #include "CameraSystem.hpp"
 #include "PhysicsSystem.hpp"
 #include "RenderSystem.hpp"
-#include "ScriptsSystem.hpp"
 
 #include "CameraSystem.hpp"
+#include "ColliderSystem.hpp"
 #include "ShaderSystem.hpp"
+#include "ScriptsSystem.hpp"
 
 #include "ecs.hpp"
 
 
 #include "ActionManager.hpp"
-
-#include "Character.hpp"
 
 Game::Game(std::string windowTitle)
 {
@@ -80,8 +79,8 @@ Game::Loop()
 	gameplayManager->RegisterComponent<Shader>();
 	gameplayManager->RegisterComponent<Renderer>();
 	gameplayManager->RegisterComponent<Camera>();
+	gameplayManager->RegisterComponent<BoundingBox>();
 	gameplayManager->RegisterComponent<Scripts>();
-	gameplayManager->RegisterComponent<Character>();
 
 	// Register the systems used during the gameplay
 	auto physicsSystem = gameplayManager->RegisterSystem<PhysicsSystem>();
@@ -92,8 +91,9 @@ Game::Loop()
 
 	auto renderSystem = gameplayManager->RegisterSystem<RenderSystem>();
 
-	auto scriptsSystem = gameplayManager->RegisterSystem<ScriptsSystem>();
+	auto colliderSystem = gameplayManager->RegisterSystem<ColliderSystem>();
 
+	auto scriptsSystem = gameplayManager->RegisterSystem<ScriptsSystem>();
 	// Add reference to a window
 	renderSystem->window = this->gameWindow;
 
@@ -105,6 +105,14 @@ Game::Loop()
 	gameplayManager->SetRequiredComponent<PhysicsSystem>(
 	  gameplayManager->GetComponentType<RigidBody>());
 	gameplayManager->SetRequiredComponent<PhysicsSystem>(
+	  gameplayManager->GetComponentType<Transform>());
+	gameplayManager->SetRequiredComponent<PhysicsSystem>(
+	  gameplayManager->GetComponentType<BoundingBox>());
+	  
+	// ColliderSystem
+	gameplayManager->SetRequiredComponent<ColliderSystem>(
+	  gameplayManager->GetComponentType<BoundingBox>());
+	gameplayManager->SetRequiredComponent<ColliderSystem>(
 	  gameplayManager->GetComponentType<Transform>());
 
 	// CameraSystem
@@ -129,7 +137,15 @@ Game::Loop()
 
 	// Load levelData from JSON file
 	LoadLevel("assets/levels/levelTest.json");
-
+	
+	/*
+		gameplayManager->AddComponent(
+		modelEntity,
+		BoundingBox{ gameplayManager->GetComponent<Transform>(modelEntity).position,
+					gameplayManager->GetComponent<Model>(modelEntity).meshes}
+		);
+		gameplayManager->AddComponent(modelEntity, Collidable());
+	*/
 	float dt = 0.0f;
 	
 	// Initialize CameraSystem and bound mainCamera to RenderSystem
@@ -140,10 +156,17 @@ Game::Loop()
 	shaderSystem->Init(gameplayManager->GetComponentManager());
 	renderSystem->shaders = shaderSystem->shaders;
 
+	colliderSystem->window = this->gameWindow;
+	colliderSystem->camera = &gameplayManager->GetComponentManager()->GetComponent<Camera>(cameraSystem->cameraEntity);
+
+	colliderSystem->ourShader = &gameplayManager->GetComponentManager()->GetComponent<Shader>(shaderSystem->shaders.at("boxShader"));
+
+	colliderSystem->Initiate(gameplayManager->GetComponentManager());
+
 	renderSystem->Init();
 
 	scriptsSystem->Init();
-
+	
 	while (!gameWindow->ShouldClose()) {
 		auto startTime = std::chrono::high_resolution_clock::now();
 		gameWindow->PollEvents();
@@ -241,6 +264,14 @@ Game::LoadLevel(std::string levelPath)
 				         glm::vec3(it2.value()[3], it2.value()[4], it2.value()[5]),
 				         glm::vec3(it2.value()[6], it2.value()[7], it2.value()[8]),
 				         it2.value()[9]));
+			} else if (it2.key() == "BoundingBox") {
+				// 0 - width
+				// 1 - height
+				// 2 - depth
+				gameplayManager->AddComponent(
+					entity,
+					BoundingBox{ it2.value()[0], it2.value()[1], it2.value()[2]});
+			
 			} else if (it2.key() == "Scripts") {
 				std::list<std::string> scripts;
 
@@ -249,11 +280,6 @@ Game::LoadLevel(std::string levelPath)
 				}
 
 				gameplayManager->AddComponent(entity, Scripts{ scripts });
-			} else if (it2.key() == "Character") {
-				// 0 - hp
-				gameplayManager->AddComponent(
-				  entity,
-				  Character{ it2.value()[0] });
 			}
 		}
 	}

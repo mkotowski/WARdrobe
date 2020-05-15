@@ -43,11 +43,11 @@ prepFunctionForCharacterMovement(lua_State*,
 void
 ScriptsSystem::Init()
 {
-	scriptPreparationFunctions.insert(
+	/*scriptPreparationFunctions.insert(
 	  { "characterMovement.lua",
 	    std::make_unique<void (*)(
 	      lua_State*, Entity, std::shared_ptr<ComponentManager>)>(
-	      &prepFunctionForCharacterMovement) });
+	      &prepFunctionForCharacterMovement) });*/
 }
 
 void
@@ -57,14 +57,14 @@ ScriptsSystem::Update(float                             dt,
 	for (auto const& entity : entities) {
 		auto& scripts = componentManager->GetComponent<Scripts>(entity);
 
-		for (auto script : scripts.names) {
+		/*for (auto script : scripts.names) {
 			if (scriptPreparationFunctions.find(script) !=
 			    scriptPreparationFunctions.end()) {
 				ExecuteLuaScript(script, entity, componentManager);
 			} else {
 				std::cout << "Script with name " + script << " not found!" << std::endl;
 			}
-		}
+		}*/
 	}
 }
 

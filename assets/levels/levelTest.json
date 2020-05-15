@@ -7,8 +7,7 @@
                     "Rigidbody" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
                     "Gravity" : [ 0.0, 0.0, 0.0 ],
                     "Renderer" : 1,
-                    "Character" : [100.0],
-                    "Scripts" : ["characterMovement.lua"]
+                    "Scripts" : ["character.lua"]
                 }
                 
             ,
@@ -17,18 +16,21 @@
             
                 {
                     "Model" : ["assets/models/chr_knight.obj", "assets/textures/chr_knight.png"],
-                    "Transform" : [ 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1 ],
+                    "Transform" : [ 1.2, 0.0, 1.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1 ],
                     "Rigidbody" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
                     "Gravity" : [ 0.0, 0.0, 0.0 ],
-                    "Renderer" : 0                }
+                    "Renderer" : 0,
+                    "BoundingBox" : [1.0, 1.0, 0.7]
+                }
                 
             ,
     "wilkModel" :
             
                 {
                     "Model" : ["assets/models/Wolf_dae.dae", "assets/textures/stone2.jpg"],
-                    "Transform" : [ 0.0, 0.0, 1.0, 90.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
-                    "Renderer" : 0
+                    "Transform" : [ 2.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
+                    "Renderer" : 0,
+                    "BoundingBox" : [1.0, 1.0, 1.0]
                 }
             ,
     "mainCamera" :
@@ -56,5 +58,9 @@
                 {
                     "Shader" : ["assets/shaders/vertex.glsl", "assets/shaders/fragment.glsl", "modelShader"]
                 }
-            
+            ,
+    "boundingBoxShader" :
+                {
+                    "Shader" : ["assets/shaders/boxVertex.glsl", "assets/shaders/boxFragment.glsl", "boxShader"]
+                }
 }
