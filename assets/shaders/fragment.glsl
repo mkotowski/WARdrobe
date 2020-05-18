@@ -3,7 +3,10 @@
 in vec2 TexCoord;
 in vec3 Normal;
 in vec3 FragPos;
-in vec4 FragPosLightSpace;
+in vec4 Weights;
+in vec4 BoneIDs;
+
+//in vec4 FragPosLightSpace;
 
 out vec4 FragColor;
 
@@ -66,9 +69,7 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 lightDir);
 void main()
 {
 
-	
-	// linearly interpolate between both textures (80% container, 20% awesomeface)
-	
+	/*
 	vec3 norm = normalize(Normal);
 	vec3 viewDir = normalize(viewPos - FragPos);
 	FragColor = texture(texture1, TexCoord);
@@ -80,8 +81,9 @@ void main()
 		result += ResultSpotLight(spotLights[i], norm, FragPos, viewDir);
 	
 	result += ResultDirLight(dirLight, norm, viewDir);
-
-	FragColor = vec4(result, 1.0);
+	*/
+	vec4 weightsColor = Weights;
+	FragColor = weightsColor;
 	
 }
 

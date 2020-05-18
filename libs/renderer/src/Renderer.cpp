@@ -14,10 +14,10 @@ Renderer::Draw(Shader*   ourShader,
                glm::vec3 rotation,
                glm::vec3 scale,
                int       width,
-               int       height)
+               int       height,
+			   float 	 dt)
 {
-	ourShader->use();
-	
+	ourShader->use();	
 	
 	glm::mat4 projection =
 	glm::perspective(glm::radians(sceneCamera->fieldOfView),
@@ -51,8 +51,8 @@ Renderer::Draw(Shader*   ourShader,
 
 		ourShader->setMat4("ModelViewMatrix", mv);
 	}
-
-	ourModel->Draw(ourShader->ID);
+	
+	ourModel->Draw(ourShader->ID, dt);
 	
 	
 }

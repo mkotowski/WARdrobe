@@ -1,49 +1,18 @@
 {
-    "billboard" :
-            
-                {
-                    "Model" : ["assets/models/square.obj", "assets/textures/container.jpg"],
-                    "Transform" : [ 0.0, 0.0, -3.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1 ],
-                    "Rigidbody" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
-                    "Gravity" : [ 0.0, 0.0, 0.0 ],
-                    "Renderer" : 1
-                }
-                
-            ,
-
-    "rycerzModel" :
-            
-                {
-                    "Model" : ["assets/models/chr_knight.obj", "assets/textures/chr_knight.png"],
-                    "Transform" : [ 0.0, -4.0, 1.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1 ],
-                    "Rigidbody" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
-                    "Gravity" : [ 0.0, 0.0, 0.0 ],
-                    "Renderer" : 0                }
-                
-            ,
-    "wilkModel" :
-            
-                {
-                    "Model" : ["assets/models/Wolf_dae.dae", "assets/textures/stone2.jpg"],
-                    "Transform" : [ 1.0, -4.0, 1.0, 270.0, 0.0, 0.0, 2.0, 2.0, 2.0 ],
-                    "Renderer" : 0
-                }
-            ,
-    "mainCamera" :
-            
+    "mainCamera" :            
                 {
                     "Transform" : [0.0, 0.0, 3.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
                     "Camera" : [0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 1.0, 0.0, 80.0]
                 }
             ,
-    "levelModel" :
-
-                {
-                    "Model" : ["assets/models/levelPrototype.obj", "assets/textures/levelPrototype.png"],
-                    "Transform" : [ -5.0, -10.0, -5.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
-                    "Renderer" : 0
-                }
-            ,
+    "testAnimationModel" :            
+            {
+                "Model" : ["assets/models/model_tutorial.dae", "assets/textures/stone2.jpg"],
+                "Transform" : [ 0.0, -2.0, -4.0, 270.0, 0.0, -90.0, 1.0, 1.0, 1.0 ],
+                "Animator" : [],
+                "Renderer" : 0
+            }
+        ,
     "billboardShader" :
 
                 {

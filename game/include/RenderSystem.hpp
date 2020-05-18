@@ -59,7 +59,8 @@ RenderSystem::Update(float                             dt,
 					transform.rotation,
 					transform.scale,
 					this->window->GetWindowWidth(),
-					this->window->GetWindowHeight());
+					this->window->GetWindowHeight(),
+					dt);
 		}
 
 

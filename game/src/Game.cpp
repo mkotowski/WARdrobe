@@ -13,6 +13,7 @@
 #include "CameraSystem.hpp"
 #include "ShaderSystem.hpp"
 #include "LightningSystem.hpp"
+#include "AnimationSystem.hpp"
 
 #include "ecs.hpp"
 
@@ -79,6 +80,7 @@ Game::Loop()
 	gameplayManager->RegisterComponent<Renderer>();
 	gameplayManager->RegisterComponent<Camera>();
 	gameplayManager->RegisterComponent<Light>();
+	gameplayManager->RegisterComponent<Animator>();
 
 	// Register the systems used during the gameplay
 	auto physicsSystem = gameplayManager->RegisterSystem<PhysicsSystem>();
@@ -90,6 +92,8 @@ Game::Loop()
 	auto lightningSystem = gameplayManager->RegisterSystem<LightningSystem>();
 
 	auto renderSystem = gameplayManager->RegisterSystem<RenderSystem>();
+
+	auto animationSystem = gameplayManager->RegisterSystem<AnimationSystem>();
 
 	
 
@@ -126,6 +130,12 @@ Game::Loop()
 	gameplayManager->SetRequiredComponent<LightningSystem>(
 	  gameplayManager->GetComponentType<Light>());
 
+	// AnimationSystem
+	gameplayManager->SetRequiredComponent<AnimationSystem>(
+	   gameplayManager->GetComponentType<Model>());
+	gameplayManager->SetRequiredComponent<AnimationSystem>(
+	   gameplayManager->GetComponentType<Animator>());
+
 	// Load levelData from JSON file
 	LoadLevel("assets/levels/levelTest.json");
 	std::cout << "Level has been loaded" << std::endl;
@@ -144,7 +154,8 @@ Game::Loop()
 	shaderSystem->Init(gameplayManager->GetComponentManager());
 	renderSystem->shaders = &shaderSystem->shaders;
 	lightningSystem->shaders = &shaderSystem->shaders;
-
+	
+	animationSystem->Init(gameplayManager->GetComponentManager());
 
 	renderSystem->Init();
 	std::cout << "RenderSystem has been initialized" << std::endl;
@@ -156,8 +167,8 @@ Game::Loop()
 		gameWindow->GetInputManager()->Call();
 		gameWindow->UpdateViewport();
 		gameWindow->ClearScreen();
-
 		gameplayManager->Update(dt);
+	
 
 #if INCLUDE_DEBUG_UI
 		gameWindow->RenderDebugUI();
@@ -165,8 +176,8 @@ Game::Loop()
 
 		auto stopTime = std::chrono::high_resolution_clock::now();
 		dt = std::chrono::duration<float, std::chrono::seconds::period>(stopTime -
-		                                                                startTime)
-		       .count();
+		                                                                 startTime)
+		        .count();
 
 		gameWindow->SwapBuffers();
 	}
@@ -323,7 +334,14 @@ Game::LoadLevel(std::string levelPath)
 							  it2.value()[19],
 							  it2.value()[20])
 					);
-				}			
+				}		
+				
+			}
+			else if (it2.key() == "Animator")	
+			{
+				
+				gameplayManager->AddComponent(entity,
+							Animator());
 			}
 		}
 	}

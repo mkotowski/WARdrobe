@@ -12,7 +12,7 @@ public:
 	Renderer(unsigned int);
 	Renderer(bool, float[], int, unsigned int[], int, std::string);
 	void
-	     Draw(Shader*, Model*, Camera*, glm::vec3, glm::vec3, glm::vec3, int, int);
+	     Draw(Shader*, Model*, Camera*, glm::vec3, glm::vec3, glm::vec3, int, int, float);
 	void Draw(Shader *);
 	void Init();
 
