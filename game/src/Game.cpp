@@ -165,7 +165,7 @@ Game::Loop()
 
 	renderSystem->Init();
 
-	scriptsSystem->Init();
+	scriptsSystem->Init(gameplayManager->GetComponentManager());
 	
 	while (!gameWindow->ShouldClose()) {
 		auto startTime = std::chrono::high_resolution_clock::now();
@@ -188,6 +188,8 @@ Game::Loop()
 
 		gameWindow->SwapBuffers();
 	}
+
+	scriptsSystem->CloseAllLuaStates(gameplayManager->GetComponentManager());
 
 	delete gameWindow;
 
