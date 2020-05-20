@@ -279,8 +279,8 @@ private:
                 }
                 if (vertex.BoneIDs[j] == -1)
                 {
-                    vertex.BoneIDs[j] = vertex.BoneIDs[0];
-                    vertex.Weights[j] = 0.0;
+                    vertex.BoneIDs[j] = 0;
+                    vertex.Weights[j] = 0.01;
                 }                    
             }
 
