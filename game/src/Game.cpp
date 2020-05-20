@@ -79,6 +79,7 @@ Game::Loop()
 	gameplayManager->RegisterComponent<Renderer>();
 	gameplayManager->RegisterComponent<Camera>();
 	gameplayManager->RegisterComponent<BoundingBox>();
+	gameplayManager->RegisterComponent<ModelArray>();
 
 	// Register the systems used during the gameplay
 	auto physicsSystem = gameplayManager->RegisterSystem<PhysicsSystem>();
@@ -124,20 +125,14 @@ Game::Loop()
 	//RenderSystem
 	gameplayManager->SetRequiredComponent<RenderSystem>(
 	  gameplayManager->GetComponentType<Renderer>());
+	gameplayManager->SetRequiredComponent<ModelArray>(
+	   gameplayManager->GetComponentType<Renderer>());
 	gameplayManager->SetRequiredComponent<RenderSystem>(
 	  gameplayManager->GetComponentType<Transform>());
 
 	// Load levelData from JSON file
 	LoadLevel("assets/levels/levelTest.json");
-	
-	/*
-		gameplayManager->AddComponent(
-		modelEntity,
-		BoundingBox{ gameplayManager->GetComponent<Transform>(modelEntity).position,
-					gameplayManager->GetComponent<Model>(modelEntity).meshes}
-		);
-		gameplayManager->AddComponent(modelEntity, Collidable());
-	*/
+
 	float dt = 0.0f;
 	
 	// Initialize CameraSystem and bound mainCamera to RenderSystem
@@ -192,17 +187,39 @@ Game::LoadLevel(std::string levelPath)
 	// Write that data to JSON object
 	nlohmann::json jsonLevelData;
 	rawLevelData >> jsonLevelData;
-
+	
 	for (auto& it : jsonLevelData.items()) {
 		Entity entity = gameplayManager->CreateEntity();
 
 		for (auto& it2 : it.value().items()) {
-			if (it2.key() == "Model") {
-				// 0: model Path
-				// 1: texture Path
+			if (it2.key() == "ModelArray") 
+			{
 				gameplayManager->AddComponent(entity,
-				                              Model(it2.value()[0], it2.value()[1]));
-			} else if (it2.key() == "Shader") {
+											  ModelArray(it2.value()[0]));
+				if (it2.value()[0] == 0)
+				{
+					std::cout << "Leciom" << std::endl;
+					// 0: - chechLevelOfDetail (false)
+					// 1: - model Path
+					// 2: - texture Path
+					gameplayManager->GetComponent<ModelArray>(entity).zeroLevelModel = Model(it2.value()[1], it2.value()[2]);
+					
+				}
+				else
+				{
+					// 0: 		chechLevelOfDetail (true)
+					// 1/3/5: - modelPath   (first/second/third LoD)
+					// 2/4/6: - texturePath (first/second/third LoD)
+					gameplayManager->GetComponent<ModelArray>(entity).firstLevelModel = Model(it2.value()[1], it2.value()[2]);
+					gameplayManager->GetComponent<ModelArray>(entity).secondLevelModel = Model(it2.value()[3], it2.value()[4]);
+					gameplayManager->GetComponent<ModelArray>(entity).thirdLevelModel = Model(it2.value()[5], it2.value()[6]);
+						
+				}
+				std::cout << "Leciom3" << std::endl;
+			} 
+			else if (it2.key() == "Shader") 
+			{
+				std::cout << "Shader" << std::endl;
 				// 0: vertex Path
 				// 1: fragment Path
 				// 2. shader type
@@ -215,6 +232,7 @@ Game::LoadLevel(std::string levelPath)
 			}
 			else if (it2.key() == "Transform")
 			{
+				std::cout << "Transform" << std::endl;
 				// 0 - 2: Position X Y Z
 				// 3 - 5: Rotation X Y Z
 				// 6 - 8: Scale X Y Z
@@ -224,7 +242,10 @@ Game::LoadLevel(std::string levelPath)
 				    glm::vec3(it2.value()[0], it2.value()[1], it2.value()[2]),
 				    glm::vec3(it2.value()[3], it2.value()[4], it2.value()[5]),
 				    glm::vec3(it2.value()[6], it2.value()[7], it2.value()[8]) });
-			} else if (it2.key() == "Rigidbody") {
+			} 
+			else if (it2.key() == "Rigidbody") 
+			{
+				std::cout << "Rigidbody" << std::endl;
 				// 0 - 2: Velocity X Y Z
 				// 3 - 5: Acceleration X Y Z
 				gameplayManager->AddComponent(
@@ -233,21 +254,30 @@ Game::LoadLevel(std::string levelPath)
 				    glm::vec3(it2.value()[0], it2.value()[1], it2.value()[2]),
 				    glm::vec3(it2.value()[3], it2.value()[4], it2.value()[5]) });
 
-			} else if (it2.key() == "Gravity") {
+			} 
+			else if (it2.key() == "Gravity") 
+			{
+				std::cout << "Gravity" << std::endl;
 				// 0 - 2: Gravity X Y Z
 				gameplayManager->AddComponent(
 				  entity,
 				  Gravity{ glm::vec3(it2.value()[0], it2.value()[1], it2.value()[2]) });
-			} else if (it2.key() == "Renderer") {
+			} 
+			else if (it2.key() == "Renderer") 
+			{
+				std::cout << "Renderer" << std::endl;
 				// Render Component
 				gameplayManager->AddComponent(entity, Renderer(it2.value()));
 
-			} else if (it2.key() == "Camera") {
+			} 
+			else if (it2.key() == "Camera") 
+			{
 				// 0 - 2: Camera Position
 				// 3 - 5: Camera Front/Target
 				// 6 - 8: Camera Up
 				// 9: Field Of View
 
+				std::cout << "Camera" << std::endl;
 				gameplayManager->AddComponent(
 				  entity,
 				  Camera(glm::vec3(it2.value()[0], it2.value()[1], it2.value()[2]),
@@ -257,6 +287,7 @@ Game::LoadLevel(std::string levelPath)
 			}
 			else if (it2.key() == "BoundingBox") 
 			{
+				std::cout << "BoundingBox" << std::endl;
 				// 0 - width
 				// 1 - height
 				// 2 - depth
