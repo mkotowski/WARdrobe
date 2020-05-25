@@ -23,6 +23,9 @@ ShaderSystem::Init(std::shared_ptr<ComponentManager> componentManager)
                         componentManager->GetComponent<Shader>(entity).shaderType, 
                         entity
                         });
+        auto& shader = componentManager->GetComponent<Shader>(entity);
+        shader.currentSubroutine = "ColorCustom";
+        std::cout << shader.currentSubroutine << std::endl;
     }
 }
 
@@ -30,8 +33,5 @@ void
 ShaderSystem::Update(float                             dt,
                      std::shared_ptr<ComponentManager> componentManager)
 {
-    for (auto& entity : entities)
-    {
-        
-    }
+    
 }
