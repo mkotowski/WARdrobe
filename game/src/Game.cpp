@@ -198,7 +198,6 @@ Game::LoadLevel(std::string levelPath)
 											  ModelArray(it2.value()[0]));
 				if (it2.value()[0] == 0)
 				{
-					std::cout << "Leciom" << std::endl;
 					// 0: - chechLevelOfDetail (false)
 					// 1: - model Path
 					// 2: - texture Path
@@ -215,11 +214,9 @@ Game::LoadLevel(std::string levelPath)
 					gameplayManager->GetComponent<ModelArray>(entity).thirdLevelModel = Model(it2.value()[5], it2.value()[6]);
 						
 				}
-				std::cout << "Leciom3" << std::endl;
 			} 
 			else if (it2.key() == "Shader") 
 			{
-				std::cout << "Shader" << std::endl;
 				// 0: vertex Path
 				// 1: fragment Path
 				// 2. shader type
@@ -232,7 +229,6 @@ Game::LoadLevel(std::string levelPath)
 			}
 			else if (it2.key() == "Transform")
 			{
-				std::cout << "Transform" << std::endl;
 				// 0 - 2: Position X Y Z
 				// 3 - 5: Rotation X Y Z
 				// 6 - 8: Scale X Y Z
@@ -245,7 +241,6 @@ Game::LoadLevel(std::string levelPath)
 			} 
 			else if (it2.key() == "Rigidbody") 
 			{
-				std::cout << "Rigidbody" << std::endl;
 				// 0 - 2: Velocity X Y Z
 				// 3 - 5: Acceleration X Y Z
 				gameplayManager->AddComponent(
@@ -256,8 +251,7 @@ Game::LoadLevel(std::string levelPath)
 
 			} 
 			else if (it2.key() == "Gravity") 
-			{
-				std::cout << "Gravity" << std::endl;
+			{;
 				// 0 - 2: Gravity X Y Z
 				gameplayManager->AddComponent(
 				  entity,
@@ -265,7 +259,6 @@ Game::LoadLevel(std::string levelPath)
 			} 
 			else if (it2.key() == "Renderer") 
 			{
-				std::cout << "Renderer" << std::endl;
 				// Render Component
 				gameplayManager->AddComponent(entity, Renderer(it2.value()));
 
@@ -277,7 +270,6 @@ Game::LoadLevel(std::string levelPath)
 				// 6 - 8: Camera Up
 				// 9: Field Of View
 
-				std::cout << "Camera" << std::endl;
 				gameplayManager->AddComponent(
 				  entity,
 				  Camera(glm::vec3(it2.value()[0], it2.value()[1], it2.value()[2]),
@@ -287,7 +279,6 @@ Game::LoadLevel(std::string levelPath)
 			}
 			else if (it2.key() == "BoundingBox") 
 			{
-				std::cout << "BoundingBox" << std::endl;
 				// 0 - width
 				// 1 - height
 				// 2 - depth
