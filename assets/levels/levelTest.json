@@ -7,7 +7,7 @@
                     "Rigidbody" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
                     "Gravity" : [ 0.0, 0.0, 0.0 ],
                     "Renderer" : 1,
-                    "Scripts" : ["character.lua"]
+                    "Scripts" : ["movement.lua", "character.lua"]
                 }
                 
             ,
