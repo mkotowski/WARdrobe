@@ -283,18 +283,22 @@ InputManager::UpdateInput(int id, int source, int state, int mods)
 {
 	if (id == GLFW_KEY_W && source == InputSource::KEY) {
 		forwardInput += 0.1f;
+		playerInputVertical += 0.1f;
 	}
 
 	if (id == GLFW_KEY_S && source == InputSource::KEY) {
 		forwardInput -= 0.1f;
+		playerInputVertical -= 0.1f;
 	}
 
 	if (id == GLFW_KEY_D && source == InputSource::KEY) {
 		rightInput += 0.1f;
+		playerInputHorizontal += 0.1f;
 	}
 
 	if (id == GLFW_KEY_A && source == InputSource::KEY) {
 		rightInput -= 0.1f;
+		playerInputHorizontal -= 0.1f;
 	}
 
 	Input searchedInput;

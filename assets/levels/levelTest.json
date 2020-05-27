@@ -7,7 +7,7 @@
                     "Rigidbody" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
                     "Gravity" : [ 0.0, 0.0, 0.0 ],
                     "Renderer" : 1,
-                    "Scripts" : ["movement.lua", "character.lua"]
+                    "Scripts" : ["movement.lua"]
                 }
                 
             ,
@@ -22,7 +22,8 @@
                     "Rigidbody" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
                     "Gravity" : [ 0.0, 0.0, 0.0 ],
                     "Renderer" : 0,
-                    "BoundingBox" : [1.0, 1.0, 0.7]
+                    "BoundingBox" : [1.0, 1.0, 0.7],
+                    "Scripts" : ["character.lua"]
                 }
                 
             ,

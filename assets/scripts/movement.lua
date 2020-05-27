@@ -1,5 +1,13 @@
 print("Movement")
 
+function start()
+    
+end
+
+function movementUpdate(dt)
+
+end
+
 function moveObject(moveX, moveY, moveZ)
     posX, posY, posZ = getTransform(entity, componentManager)
 

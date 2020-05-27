@@ -129,21 +129,20 @@ ScriptsSystem::Init(std::shared_ptr<ComponentManager> componentManager)
 	lua_pushcfunction(state, l_cppsetTransform);
 	lua_setglobal(state, "setTransform");
 
-	//for (auto const& entity : entities) {
-	//	auto& scripts = componentManager->GetComponent<Scripts>(entity);
+	for (auto const& entity : entities) {
+		auto& scripts = componentManager->GetComponent<Scripts>(entity);
 
-	//	lua_pushnumber(state, entity);
-	//	lua_setglobal(state, "entity");
+		lua_pushnumber(state, entity);
+		lua_setglobal(state, "entity");
 
-	//	for (auto script : scripts.names) {
+		for (auto script : scripts.names) {
 
-	//		//std::string scriptWithoutExt = script.substr(0, script.length() - 4);
-	//		std::string name = "update";
-	//		lua_getglobal(state, name.c_str());
-	//		lua_pushnumber(state, dt);
-	//		ExecuteLuaFunction(name, entity, 1, 0);
-	//	}
-	//}
+			std::string name = "";
+
+			lua_getglobal(state, "start");
+			ExecuteLuaFunction(name, entity, 0, 0);
+		}
+	}
 }
 
 void
@@ -155,10 +154,16 @@ ScriptsSystem::Update(float                             dt,
 
 		lua_pushnumber(state, entity);
 		lua_setglobal(state, "entity");
+		lua_pushnumber(state, playerInputHorizontal);
+		lua_setglobal(state, "rightInput");
+		lua_pushnumber(state, playerInputVertical);
+		lua_setglobal(state, "forwardInput");
 
 		for (auto script : scripts.names) {
 
-			lua_getglobal(state, "update");
+			std::string update = script.substr(0, script.length() - 4) + "Update";
+
+			lua_getglobal(state, update.c_str());
 			lua_pushnumber(state, dt);
 			ExecuteLuaFunction("update", entity, 1, 0);
 		}
