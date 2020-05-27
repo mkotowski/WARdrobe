@@ -14,6 +14,7 @@ class Shader
 public:
     unsigned int ID;
     std::string shaderType;
+    std::string currentSubroutine;
     // constructor generates the shader on the fly
     // ------------------------------------------------------------------------
     Shader()
@@ -167,6 +168,20 @@ public:
     {
         glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
     }
+    // ------------------------------------------------------------------------
+    void SetSubroutineVertex(const std::string &subroutineName) const
+    {
+        GLuint index = glGetSubroutineIndex(ID, GL_VERTEX_SHADER, subroutineName.c_str());
+        glUniformSubroutinesuiv(ID, 1, &index);
+    }
+    // ------------------------------------------------------------------------
+    void SetSubroutineFragment(const std::string &subroutineName) const
+    {
+        GLuint index = glGetSubroutineIndex(ID, GL_FRAGMENT_SHADER, subroutineName.c_str());
+        glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &index);
+    }
+    // ------------------------------------------------------------------------
+
 
 private:
     // utility function for checking shader compilation/linking errors.
