@@ -189,7 +189,7 @@ Game::Loop()
 		gameWindow->SwapBuffers();
 	}
 
-	scriptsSystem->CloseAllLuaStates(gameplayManager->GetComponentManager());
+	scriptsSystem->CloseLuaState(gameplayManager->GetComponentManager());
 
 	delete gameWindow;
 
