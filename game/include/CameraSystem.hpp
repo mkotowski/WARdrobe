@@ -14,6 +14,8 @@
 
 float forwardInput = 0.0f;
 float rightInput = 0.0f;
+float playerInputHorizontal = 0.0f;
+float playerInputVertical = 0.0f;
 
 class CameraSystem : public System
 {
