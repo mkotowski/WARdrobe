@@ -309,6 +309,8 @@ Window::Window(std::string windowTitle)
 		glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
 		SetViewport(0, 0, framebufferWidth, framebufferHeight);
 	}
+
+	std::cout << "Window initialized!\n";
 }
 
 Window::~Window()
@@ -352,6 +354,7 @@ Window::SetGLAndGLSLVersions()
 	glfwWindowHint(GLFW_SAMPLES, 4); // <--- to be changed from setting files
 #endif
 	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+	glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
 	// glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, 1);
 }
 
@@ -387,8 +390,18 @@ Window::CreateContext()
 		return 1;
 	}
 
+	// Get the resolution of the primary monitor
+	const GLFWvidmode * vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+	// Center our window
+	glfwSetWindowPos(window,
+	                 (vidmode->width - framebufferWidth) / 2,
+	                 (vidmode->height - framebufferHeight) / 2);
+
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1); // Enable vsync
+
+	// Make the window visible
+	glfwShowWindow(window);
 
 	return 0;
 }
@@ -416,13 +429,22 @@ Window::ShouldClose()
 int
 Window::GetWindowWidth()
 {
-	return framebufferWidth;
+	if (framebufferWidth > 0) {
+		return framebufferWidth;
+	}
+	else {
+		return 1;
+	}
 }
 
 int
 Window::GetWindowHeight()
 {
-	return framebufferHeight;
+	if (framebufferHeight > 0) {
+		return framebufferHeight;
+	} else {
+		return 1;
+	}
 }
 
 void
