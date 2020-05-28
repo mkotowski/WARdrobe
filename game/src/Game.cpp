@@ -13,6 +13,7 @@
 #include "CameraSystem.hpp"
 #include "ColliderSystem.hpp"
 #include "ShaderSystem.hpp"
+#include "ScriptsSystem.hpp"
 
 #include "ecs.hpp"
 
@@ -79,6 +80,7 @@ Game::Loop()
 	gameplayManager->RegisterComponent<Renderer>();
 	gameplayManager->RegisterComponent<Camera>();
 	gameplayManager->RegisterComponent<BoundingBox>();
+	gameplayManager->RegisterComponent<Scripts>();
 	gameplayManager->RegisterComponent<ModelArray>();
 
 	// Register the systems used during the gameplay
@@ -91,6 +93,8 @@ Game::Loop()
 	auto renderSystem = gameplayManager->RegisterSystem<RenderSystem>();
 
 	auto colliderSystem = gameplayManager->RegisterSystem<ColliderSystem>();
+
+	auto scriptsSystem = gameplayManager->RegisterSystem<ScriptsSystem>();
 	// Add reference to a window
 	renderSystem->window = this->gameWindow;
 
@@ -130,6 +134,10 @@ Game::Loop()
 	gameplayManager->SetRequiredComponent<RenderSystem>(
 	  gameplayManager->GetComponentType<Transform>());
 
+	// ScriptsSystem
+	gameplayManager->SetRequiredComponent<ScriptsSystem>(
+	  gameplayManager->GetComponentType<Scripts>());
+
 	// Load levelData from JSON file
 	LoadLevel("assets/levels/levelTest.json");
 
@@ -151,6 +159,8 @@ Game::Loop()
 	colliderSystem->Initiate(gameplayManager->GetComponentManager());
 
 	renderSystem->Init();
+
+	scriptsSystem->Init(gameplayManager->GetComponentManager());
 	
 	while (!gameWindow->ShouldClose()) {
 		auto startTime = std::chrono::high_resolution_clock::now();
@@ -173,6 +183,8 @@ Game::Loop()
 
 		gameWindow->SwapBuffers();
 	}
+
+	scriptsSystem->CloseLuaState(gameplayManager->GetComponentManager());
 
 	delete gameWindow;
 
@@ -276,9 +288,7 @@ Game::LoadLevel(std::string levelPath)
 				         glm::vec3(it2.value()[3], it2.value()[4], it2.value()[5]),
 				         glm::vec3(it2.value()[6], it2.value()[7], it2.value()[8]),
 				         it2.value()[9]));
-			}
-			else if (it2.key() == "BoundingBox") 
-			{
+			} else if (it2.key() == "BoundingBox") {
 				// 0 - width
 				// 1 - height
 				// 2 - depth
@@ -286,6 +296,14 @@ Game::LoadLevel(std::string levelPath)
 					entity,
 					BoundingBox{ it2.value()[0], it2.value()[1], it2.value()[2]});
 			
+			} else if (it2.key() == "Scripts") {
+				std::list<std::string> scripts;
+
+				for (auto script : it2.value()) {
+					scripts.push_back(script);
+				}
+
+				gameplayManager->AddComponent(entity, Scripts{ scripts });
 			}
 		}
 	}

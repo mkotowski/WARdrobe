@@ -323,7 +323,7 @@ ColliderSystem::CheckCollision(
 			    bounds1.minY < bounds2.maxY && bounds1.maxY > bounds2.minY &&
 			    bounds1.minZ < bounds2.maxZ && bounds1.maxZ > bounds2.minZ) {
 
-				std::cout << "COLLISION DETECTED!!!!!!!!!\n";
+				//std::cout << "COLLISION DETECTED!!!!!!!!!\n";
 			}
 		}
 	}
