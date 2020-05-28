@@ -5,6 +5,7 @@
 #include <map>
 #include <set>
 #include <utility>
+#include <algorithm>
 
 #include <GLFW/glfw3.h>
 
