@@ -438,6 +438,8 @@ Window::Window(std::string windowTitle)
 			std::cout << "Error while initializing OpenGL loader!\n";
 		}
 
+		SplashScreen(window);
+
 		// mainWindowPtr = reinterpret_cast<void*>(this);
 		mainWindowPtr = this;
 
@@ -479,7 +481,7 @@ Window::Window(std::string windowTitle)
 		glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
 		SetViewport(0, 0, framebufferWidth, framebufferHeight);
 
-		SplashScreen(window);
+		
 	}
 }
 
