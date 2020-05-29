@@ -6,6 +6,8 @@
 
 #include "ConfigManager.hpp"
 
+#include <memory>
+
 // Usage:
 //  static ExampleAppLog my_log;
 //  my_log.AddLog("Hello %d world\n", 123);
@@ -145,9 +147,11 @@ public:
 	void RenderFrame();
 	void DrawFrame();
 
-	AppLog log;
+	AppLog * log;
 
 	void ShowAppLog(bool* p_open);
+
+	void AddLog(const char * fmt) { log->AddLog(fmt); }
 
 	void Overlay();
 

@@ -22,6 +22,8 @@ extern "C"
 
 #include "Constants.h"
 
+#include "Logger.hpp"
+
 extern "C"
 {
 	static int l_cppfunction(lua_State* L)
@@ -147,6 +149,9 @@ int
 main()
 {
 	std::setlocale(LC_ALL, "pl_PL");
+
+	Logger log;
+
 	//std::setlocale(LC_ALL, "pl_PL.UTF-8");
 	//std::setlocale(LC_NUMERIC, "de_DE.UTF-8");
 	//std::setlocale(LC_TIME, "ja_JP.UTF-8");

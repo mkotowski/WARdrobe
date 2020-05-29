@@ -304,6 +304,12 @@ if(MSVC)
 		PROPERTY VS_STARTUP_PROJECT game)
 endif(MSVC)
 
+get_property(SPDLOG_INCLUDE_DIR GLOBAL PROPERTY 
+	SPDLOG_INCLUDE_DIR)
+
+target_link_libraries(game PUBLIC spdlog)
+target_include_directories(game PUBLIC SPDLOG_INCLUDE_DIR)
+
 # CLANG-TIDY ##################################################################
 
 # if(CMAKE_VERSION VERSION_GREATER 3.6)

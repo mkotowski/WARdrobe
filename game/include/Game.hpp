@@ -19,7 +19,7 @@ public:
 	Window* GetGameWindow() { return gameWindow; }
 
 	GameplayManager* gameplayManager;
-	Logger*          logger;
+	//Logger*          logger;
 
 	void Loop();
 	void LoadLevel(std::string levelPath);

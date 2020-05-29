@@ -24,6 +24,8 @@ Game::Game(std::string windowTitle)
 {
 	gameWindow = new Window(windowTitle);
 
+	gameWindow->GetDebugUI()->AddLog("test imgui logger\n");
+
 	gameplayManager = new GameplayManager();
 }
 
@@ -180,7 +182,6 @@ Game::Loop()
 		dt = std::chrono::duration<float, std::chrono::seconds::period>(stopTime -
 		                                                                startTime)
 		       .count();
-
 		gameWindow->SwapBuffers();
 	}
 

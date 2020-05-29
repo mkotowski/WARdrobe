@@ -53,6 +53,8 @@ DebugUI::DebugUI(GLFWwindow* window, const char* glsl_version)
 	    .fullscreen; // FIXME: fullscreen doesn't work at start of the game
 	resizableWindow = settingsFromFile.resizable;
 	vsyncEnabled = settingsFromFile.vsync;
+
+	log = new AppLog;
 }
 
 DebugUI::~DebugUI()
@@ -99,7 +101,7 @@ DebugUI::ShowAppLog(bool* p_open)
 			const char* words[] = { "Bumfuzzled",    "Cattywampus",  "Snickersnee",
 				                      "Abibliophobia", "Absquatulate", "Nincompoop",
 				                      "Pauciloquent" };
-			log.AddLog(
+			log->AddLog(
 			  "[%05d] [%s] Hello, current time is %.1f, here's a word: '%s'\n",
 			  ImGui::GetFrameCount(),
 			  categories[counter % IM_ARRAYSIZE(categories)],
@@ -112,7 +114,7 @@ DebugUI::ShowAppLog(bool* p_open)
 
 	// Actually call in the regular Log helper (which will Begin() into the same
 	// window as we just did)
-	log.Draw("Debug Log", p_open);
+	log->Draw("Debug Log", p_open);
 }
 
 void
