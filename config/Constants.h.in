@@ -3,3 +3,11 @@
 #cmakedefine01 INCLUDE_DEBUG_UI
 
 #define WARDROBE_DEFAULT_SETTINGS_STRING "@WARDROBE_DEFAULT_SETTINGS_STRING@"
+
+extern float forwardInput;
+extern float rightInput;
+
+extern float playerInputVertical;
+extern float playerInputHorizontal;
+
+extern float cameraFront;

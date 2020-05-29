@@ -41,23 +41,24 @@ target_include_directories(game
 		"${CMAKE_CURRENT_SOURCE_DIR}/include/"
 		"${CMAKE_BINARY_DIR}/config/"
 		"${GLM_INCLUDE_DIR}"
+		"${CMAKE_SOURCE_DIR}/thirdparty/json/include/"
 )
 
 target_link_libraries(game 
-	PUBLIC ecs renderer lua audio glm OpenAL assetmanager steam_controller)
+	PUBLIC ecs renderer lua audio glm OpenAL assetmanager nlohmann_json)
 
 target_compile_features(game PRIVATE cxx_std_17)
 
 set_target_properties(game PROPERTIES OUTPUT_NAME "wardrobe")
 
 # https://cmake.org/cmake/help/v3.17/prop_tgt/PDB_NAME.html
-set_target_properties(game PROPERTIES PDB_NAME "wardrobe")
-set_target_properties(game PROPERTIES RUNTIME_OUTPUT_NAME "wardrobe")
-set_target_properties(game PROPERTIES ARCHIVE_OUTPUT_NAME "wardrobe")
+set_target_properties(game PROPERTIES PDB_NAME wardrobe)
+set_target_properties(game PROPERTIES RUNTIME_OUTPUT_NAME wardrobe)
+set_target_properties(game PROPERTIES ARCHIVE_OUTPUT_NAME wardrobe)
 
-set_target_properties(game PROPERTIES PDB_NAME_Release "wardrobe")
-set_target_properties(game PROPERTIES PDB_NAME_Debug "wardrobe")
-set_target_properties(game PROPERTIES COMPILE_PDB_NAME "wardrobe")
+set_target_properties(game PROPERTIES PDB_NAME_Release wardrobe)
+set_target_properties(game PROPERTIES PDB_NAME_Debug wardrobe)
+set_target_properties(game PROPERTIES COMPILE_PDB_NAME wardrobe)
 # set_target_properties(game PROPERTIES PROJECT_LABEL "wardrobe")
 
 set_target_properties(game PROPERTIES LINKER_LANGUAGE CXX)

@@ -8,6 +8,8 @@
 #include "Window.hpp"
 #include "ecs.hpp"
 
+#include <nlohmann/json.hpp>
+
 class Game
 {
 public:
@@ -20,6 +22,7 @@ public:
 	Logger*          logger;
 
 	void Loop();
+	void LoadLevel(std::string levelPath);
 
 private:
 	Window* gameWindow;

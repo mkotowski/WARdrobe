@@ -1,0 +1,69 @@
+{
+    "billboard" :
+            
+                {
+                    "ModelArray" : [0, "assets/models/square.obj", "assets/textures/container.jpg"],
+                    "Transform" : [ 0.0, 0.0, -3.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1 ],
+                    "Rigidbody" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+                    "Gravity" : [ 0.0, 0.0, 0.0 ],
+                    "Renderer" : 1,
+                    "Scripts" : ["movement.lua"]
+                }
+                
+            ,
+
+    "rycerzModel" :
+            
+                {
+                    "ModelArray" : [1, "assets/models/nanosuit.obj", "assets/textures/stone2.jpg",
+                                        "assets/models/chr_knight.obj", "assets/textures/chr_knight.png",
+                                        "assets/models/square.obj", "assets/textures/stone2.jpg"],
+                    "Transform" : [ 1.2, 0.0, -30.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+                    "Rigidbody" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+                    "Gravity" : [ 0.0, 0.0, 0.0 ],
+                    "Renderer" : 0,
+                    "BoundingBox" : [1.0, 1.0, 0.7],
+                    "Scripts" : ["character.lua"]
+                }
+                
+            ,
+    "wilkModel" :
+            
+                {
+                    "ModelArray" : [0, "assets/models/Wolf_dae.dae", "assets/textures/stone2.jpg"],
+                    "Transform" : [ 2.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
+                    "Renderer" : 0,
+                    "BoundingBox" : [1.0, 1.0, 1.0]
+                }
+            ,
+    "mainCamera" :
+            
+                {
+                    "Transform" : [0.0, 0.0, 3.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+                    "Camera" : [0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 1.0, 0.0, 80.0]
+                }
+            ,
+    "levelModel" :
+
+                {
+                    "ModelArray" : [0, "assets/models/levelPrototype.obj", "assets/textures/levelPrototype.png"],
+                    "Transform" : [ -5.0, -10.0, -5.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
+                    "Renderer" : 0
+                }
+            ,
+    "billboardShader" :
+
+                {
+                    "Shader" : ["assets/shaders/vertex1.glsl", "assets/shaders/fragment.glsl", "billboardShader"]
+                }
+            ,
+    "modelShader" :
+                {
+                    "Shader" : ["assets/shaders/vertex.glsl", "assets/shaders/fragment.glsl", "modelShader"]
+                }
+            ,
+    "boundingBoxShader" :
+                {
+                    "Shader" : ["assets/shaders/boxVertex.glsl", "assets/shaders/boxFragment.glsl", "boxShader"]
+                }
+}
