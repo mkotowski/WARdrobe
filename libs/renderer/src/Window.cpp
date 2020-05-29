@@ -4,6 +4,8 @@
 
 #include "Window.hpp"
 
+#include <stb_image.h>
+
 static void
 glfw_error_callback(int error, const char* description)
 {
@@ -228,7 +230,7 @@ public:
 void
 Window::SplashScreen(GLFWwindow* mainWindow)
 {
-	const char* vertexShaderSource =
+	/*const char* vertexShaderSource =
 	  "#version 330 core\n"
 	  "layout (location = 0) in vec3 aPos;\n"
 	  "void main()\n"
@@ -241,6 +243,31 @@ Window::SplashScreen(GLFWwindow* mainWindow)
 	  "void main()\n"
 	  "{\n"
 	  "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+	  "}\n\0";*/
+
+	const char* vertexShaderSource =
+	  "#version 330 core\n"
+	  "layout(location = 0) in vec3 aPos;\n"
+	  "layout(location = 1) in vec3 aColor;\n"
+	  "layout(location = 2) in vec2 aTexCoord;\n"
+	  "out vec3 ourColor;\n"
+	  "out vec2 TexCoord;\n"
+	  "void main()\n"
+	  "{\n"
+	  "	gl_Position = vec4(aPos, 1.0);\n"
+	  "	ourColor = aColor;\n"
+	  "	TexCoord = vec2(aTexCoord.x, aTexCoord.y);\n"
+	  "}\n\0";
+
+	const char* fragmentShaderSource =
+	  "#version 330 core\n"
+	  "out vec4 FragColor;\n"
+	  "in vec3 ourColor;\n"
+	  "in vec2 TexCoord;\n"
+	  "uniform sampler2D texture1;\n"
+	  "void main()\n"
+	  "{\n"
+	  "	FragColor = texture(texture1, TexCoord);\n"
 	  "}\n\0";
 
 	int splashWidth = 400;
@@ -312,11 +339,18 @@ Window::SplashScreen(GLFWwindow* mainWindow)
 
 	// set up vertex data (and buffer(s)) and configure vertex attributes
 	// ------------------------------------------------------------------
+	/*float vertices[] = {
+	  1.0f,  1.0f,  0.0f, // top right
+	  1.0f,  -1.0f, 0.0f, // bottom right
+	  -1.0f, -1.0f, 0.0f, // bottom left
+	  -1.0f, 1.0f,  0.0f  // top left
+	};*/
 	float vertices[] = {
-		1.0f,  1.0f,  0.0f, // top right
-		1.0f,  -1.0f, 0.0f, // bottom right
-		-1.0f, -1.0f, 0.0f, // bottom left
-		-1.0f, 1.0f,  0.0f  // top left
+		// positions          // colors           // texture coords
+		1.0f,  1.0f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // top right
+		1.0f,  -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // bottom right
+		-1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom left
+		-1.0f, 1.0f,  0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f  // top left
 	};
 	unsigned int indices[] = {
 		// note that we start from 0!
@@ -338,8 +372,60 @@ Window::SplashScreen(GLFWwindow* mainWindow)
 	glBufferData(
 	  GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	// glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),
+	// (void*)0); glEnableVertexAttribArray(0);
+
+	// position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+	// color attribute
+	glVertexAttribPointer(
+	  1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+	// texture coord attribute
+	glVertexAttribPointer(
+	  2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+
+	// load and create a texture
+	// -------------------------
+	unsigned int texture;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D,
+	              texture); // all upcoming GL_TEXTURE_2D operations now have
+	                        // effect on this texture object
+	// set the texture wrapping parameters
+	glTexParameteri(
+	  GL_TEXTURE_2D,
+	  GL_TEXTURE_WRAP_S,
+	  GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// set texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// load image, create texture and generate mipmaps
+	int width, height, nrChannels;
+	// The FileSystem::getPath(...) is part of the GitHub repository so we can
+	// find files on any IDE/platform; replace it with your own image path.
+		stbi_set_flip_vertically_on_load(true);
+	unsigned char* data =
+	  stbi_load("assets/images/splash.png", &width, &height, &nrChannels, 0);
+	if (data) {
+		glTexImage2D(GL_TEXTURE_2D,
+		             0,
+		             GL_RGBA,
+		             width,
+		             height,
+		             0,
+		             GL_RGBA,
+		             GL_UNSIGNED_BYTE,
+		             data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		stbi_set_flip_vertically_on_load(false);
+	} else {
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(data);
 
 	// note that this is allowed, the call to glVertexAttribPointer registered VBO
 	// as the vertex attribute's bound vertex buffer object so afterwards we can
@@ -480,8 +566,6 @@ Window::Window(std::string windowTitle)
 
 		glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
 		SetViewport(0, 0, framebufferWidth, framebufferHeight);
-
-		
 	}
 }
 
