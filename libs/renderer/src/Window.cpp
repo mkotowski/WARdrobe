@@ -214,9 +214,9 @@ Window* Window::mainWindowPtr = nullptr;
 class Tmp
 {
 public:
-	double  beforeState = -1;
-	double    currentState = 0;
-	void execute(double data)
+	double beforeState = -1;
+	double currentState = 0;
+	void   execute(double data)
 	{
 		std::cout << "Call from TMP"
 		          << "\n";
@@ -351,7 +351,7 @@ Window::SetGLAndGLSLVersions()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // 3.2+ only
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);           // 3.0+ only
-	glfwWindowHint(GLFW_SAMPLES, 4); // <--- to be changed from setting files
+	glfwWindowHint(GLFW_SAMPLES, 4);                               // <--- to be changed from setting files
 #endif
 	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 	glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
@@ -391,11 +391,11 @@ Window::CreateContext()
 	}
 
 	// Get the resolution of the primary monitor
-	const GLFWvidmode * vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+	const GLFWvidmode* vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 	// Center our window
 	glfwSetWindowPos(window,
-	                 (vidmode->width - framebufferWidth) / 2,
-	                 (vidmode->height - framebufferHeight) / 2);
+	                 (vidmode->width - windowSettings.size[0]) / 2,
+	                 (vidmode->height - windowSettings.size[1]) / 2);
 
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1); // Enable vsync
@@ -431,8 +431,7 @@ Window::GetWindowWidth()
 {
 	if (framebufferWidth > 0) {
 		return framebufferWidth;
-	}
-	else {
+	} else {
 		return 1;
 	}
 }
