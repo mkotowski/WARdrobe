@@ -225,6 +225,47 @@ public:
 	}
 };
 
+void
+Window::SplashScreen(GLFWwindow* mainWindow)
+{
+	int splashWidth = 400;
+	int splashHeight = 250;
+
+	// Get the resolution of the primary monitor
+	const GLFWvidmode* vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+	splashScreen =
+	  glfwCreateWindow(splashWidth, splashHeight, "Splash Screen", NULL, NULL);
+
+	glfwSetWindowAttrib(splashScreen, GLFW_DECORATED, GLFW_FALSE);
+	glfwSetWindowAttrib(splashScreen, GLFW_RESIZABLE, GLFW_FALSE);
+
+	glfwSetWindowPos(splashScreen,
+	                 (vidmode->width - splashWidth) / 2,
+	                 (vidmode->height - splashHeight) / 2);
+
+	glfwMakeContextCurrent(splashScreen);
+	glfwSwapInterval(1); // Enable vsync
+
+	glClearColor(0.45f, 0.55f, 0.60f, 0.00f);
+	glViewport(0, 0, splashWidth, splashHeight);
+
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	glfwShowWindow(splashScreen);
+
+	glfwSwapBuffers(splashScreen);
+
+	// set the current context back to main window
+	glfwMakeContextCurrent(mainWindow);
+}
+
+void
+Window::CloseSplashScreen()
+{
+	glfwHideWindow(splashScreen);
+}
+
 Window::Window(std::string windowTitle)
   : windowTitle(windowTitle)
 {
@@ -308,9 +349,9 @@ Window::Window(std::string windowTitle)
 
 		glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
 		SetViewport(0, 0, framebufferWidth, framebufferHeight);
-	}
 
-	std::cout << "Window initialized!\n";
+		SplashScreen(window);
+	}
 }
 
 Window::~Window()
@@ -400,10 +441,15 @@ Window::CreateContext()
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1); // Enable vsync
 
+	return 0;
+}
+
+void
+Window::ShowWindow()
+{
+	glfwMakeContextCurrent(window);
 	// Make the window visible
 	glfwShowWindow(window);
-
-	return 0;
 }
 
 int

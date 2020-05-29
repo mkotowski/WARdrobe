@@ -161,6 +161,10 @@ Game::Loop()
 	renderSystem->Init();
 
 	scriptsSystem->Init(gameplayManager->GetComponentManager());
+
+	gameWindow->CloseSplashScreen();
+	// avoid displaying empty window
+	gameWindow->ShowWindow();
 	
 	while (!gameWindow->ShouldClose()) {
 		auto startTime = std::chrono::high_resolution_clock::now();

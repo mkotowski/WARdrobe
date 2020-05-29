@@ -46,6 +46,10 @@ public:
 
 	GLFWwindow* GetWindow() { return window; }
 
+	void ShowWindow();
+
+	void CloseSplashScreen();
+
 	// GLFW Callback Setters
 
 	template<typename Function>
@@ -137,4 +141,7 @@ private:
 	int InitializeOpenGLLoader();
 
 	std::shared_ptr<InputManager> input = nullptr;
+
+	void SplashScreen(GLFWwindow* mainWindow);
+	GLFWwindow* splashScreen;
 };
