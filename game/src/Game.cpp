@@ -175,7 +175,7 @@ Game::Loop()
 		gameWindow->ClearScreen();
 
 		gameplayManager->Update(dt);
-
+		gameWindow->TestGUI();
 #if INCLUDE_DEBUG_UI
 		gameWindow->RenderDebugUI();
 #endif // INCLUDE_DEBUG_UI
@@ -184,7 +184,7 @@ Game::Loop()
 		dt = std::chrono::duration<float, std::chrono::seconds::period>(stopTime -
 		                                                                startTime)
 		       .count();
-
+		
 		gameWindow->SwapBuffers();
 	}
 

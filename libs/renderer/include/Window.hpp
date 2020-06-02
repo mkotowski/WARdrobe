@@ -120,6 +120,8 @@ public:
 
 	static Window* mainWindowPtr;
 
+	void TestGUI();
+
 private:
 	GLFWwindow* window;
 
@@ -142,6 +144,6 @@ private:
 
 	std::shared_ptr<InputManager> input = nullptr;
 
-	void SplashScreen(GLFWwindow* mainWindow);
+	void        SplashScreen(GLFWwindow* mainWindow);
 	GLFWwindow* splashScreen;
 };
