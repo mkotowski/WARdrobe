@@ -161,6 +161,10 @@ Game::Loop()
 	renderSystem->Init();
 
 	scriptsSystem->Init(gameplayManager->GetComponentManager());
+
+	gameWindow->CloseSplashScreen();
+	// avoid displaying empty window
+	gameWindow->ShowWindow();
 	
 	while (!gameWindow->ShouldClose()) {
 		auto startTime = std::chrono::high_resolution_clock::now();
@@ -171,7 +175,7 @@ Game::Loop()
 		gameWindow->ClearScreen();
 
 		gameplayManager->Update(dt);
-
+		gameWindow->TestGUI();
 #if INCLUDE_DEBUG_UI
 		gameWindow->RenderDebugUI();
 #endif // INCLUDE_DEBUG_UI
@@ -180,7 +184,7 @@ Game::Loop()
 		dt = std::chrono::duration<float, std::chrono::seconds::period>(stopTime -
 		                                                                startTime)
 		       .count();
-
+		
 		gameWindow->SwapBuffers();
 	}
 
