@@ -1,29 +1,28 @@
 #ifndef ANIMATION_H
 #define ANIMATION_H
 
-#include <glm/glm.hpp>
-#include <string>
-#include <vector>
-#include <KeyFrame.hpp>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+
 
 class Animation
 {
 public:
-    std::string name;
-    double length;
-    std::vector<KeyFrame> keyFrames;
-
+    const aiScene* scene;
+    float ticksPerSecond;
+    std::string animationName;
+    bool isLooping;
     Animation()
     {
 
     }
-    /**
-     * Konstruktor, długość w sekundach (0.833 sekundy np.), wektor KeyFrames
-     */
-    Animation(double lengthInSeconds, std::vector<KeyFrame> keyframes)
+
+    Animation(const aiScene* scene, float ticksPerSecond, std::string animationName, bool isLooping)
     {
-        this->keyFrames = keyFrames;
-        this->length = lengthInSeconds;
+        this->scene = scene;
+        this->ticksPerSecond = ticksPerSecond;
+        this->animationName = animationName;
+        this->isLooping = isLooping;
     }
 };
 

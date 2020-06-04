@@ -134,7 +134,7 @@ Game::Loop()
 	gameplayManager->SetRequiredComponent<AnimationSystem>(
 	   gameplayManager->GetComponentType<Model>());
 	gameplayManager->SetRequiredComponent<AnimationSystem>(
-	   gameplayManager->GetComponentType<Animator>());
+		gameplayManager->GetComponentType<Animator>());
 
 	// Load levelData from JSON file
 	LoadLevel("assets/levels/levelTest.json");
@@ -337,12 +337,28 @@ Game::LoadLevel(std::string levelPath)
 				}		
 				
 			}
-			else if (it2.key() == "Animator")	
+			else if (it2.key() == "Animator")
 			{
+				// 0 	- number of Animations
+				// 1 	- name of the IdleAnimation
+				// 2x	- path to animation file
+				// 3x	- looping option (true/false)
+
+				std::vector<std::pair<std::string, bool>> animations;
 				
-				gameplayManager->AddComponent(entity,
-							Animator());
+				int numOfAnimations = it2.value()[0];
+
+				for (int i = 0; i < numOfAnimations * 2; i += 2)
+				{
+					std::pair<std::string, bool> animation (it2.value()[2+i], it2.value()[3+i]);
+					animations.push_back(animation);
+				}
+				gameplayManager->AddComponent(
+							entity,
+							Animator(animations));
+				
 			}
+			
 		}
 	}
 }

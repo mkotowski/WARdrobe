@@ -9,8 +9,9 @@
             {
                 "Model" : ["assets/models/model_tutorial.dae", "assets/textures/stone2.jpg"],
                 "Transform" : [ 0.0, -2.0, -4.0, 270.0, 0.0, -90.0, 1.0, 1.0, 1.0 ],
-                "Animator" : [],
-                "Renderer" : 0
+                "Renderer" : 0,
+                "Animator" : [1, "IDLEANIMATIONNAME", 
+                              "assets/models/model_tutorial.dae", true]
             }
         ,
     "billboardShader" :
