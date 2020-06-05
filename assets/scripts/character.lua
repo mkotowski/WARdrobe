@@ -1,10 +1,24 @@
 position = {x, y, z}
 
-function start()
+enemies = { {hp = 1.0, some = 2.0}}
+
+function functionShadyXX()
+    print("la cucaracha la cucharacha \n lal lallalla")
+end
+
+function characterStart()
     print("CharacterSTART")
+
+    print("enemies 1 : " .. enemies[1].hp .. " " .. enemies[1].some )
+
+    local enemy = {hp = 2.0, some = 225.0}
+
+    table.insert(enemies, enemy)
+
+    print("enemies 1 : " .. enemies[2].hp .. " " .. enemies[2].some )
+
     position.x, position.y, position.z = getTransform(entity, componentManager)
 
-    print(position.x .. " " .. position.y .. " " .. position.z)
     prevRightInput = 0.0
     prevDirectionH = 0.0
     dirZeroHCounter = 0
@@ -34,8 +48,6 @@ function characterUpdate(dt)
 
     prevDirectionH = directionH
 
-    print(directionH)
-
     if forwardInput - prevForwardInput < 0 then
         directionV = -1.0
     elseif forwardInput - prevForwardInput > 0 then
@@ -47,4 +59,7 @@ function characterUpdate(dt)
     moveObject(directionH * 10.0 * dt, directionV * 10.0 * dt, 0.0)
     prevRightInput = rightInput
     prevForwardInput = forwardInput
+end
+
+function characterOnCollisionEnter(tag)
 end

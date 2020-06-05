@@ -1,6 +1,6 @@
 print("Movement")
 
-function start()
+function movementStart()
     
 end
 
