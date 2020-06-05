@@ -32,7 +32,7 @@ class ScriptsSystem : public System
 	lua_State*                        state;
 	std::list<std::string>            uniqueScripts;
 
-	void ExecuteLuaFunction(std::string name, Entity e, int argsNr, int resNr);
+	void ExecuteLuaFunction(int argsNr, int resNr);
 	bool IsScriptAlreadyInCollection(std::string name);
 	bool flag = false;
 
@@ -103,21 +103,6 @@ ScriptsSystem::Init(std::shared_ptr<ComponentManager> componentManager)
 		}
 	}
 
-	// std::string filePath = "assets/scripts/main.lua";
-
-	// if (luaL_loadfile(state, filePath.c_str())) {
-	//	std::cerr << "Something went wrong loading the chunk (syntax error?)"
-	//	          << std::endl;
-	//	std::cerr << lua_tostring(state, -1) << std::endl;
-	//	lua_pop(state, 1);
-	//}
-
-	// if (lua_pcall(state, 0, LUA_MULTRET, 0)) {
-	//	std::cerr << "Something went wrong during execution" << std::endl;
-	//	std::cerr << lua_tostring(state, -1) << std::endl;
-	//	lua_pop(state, 1);
-	//}
-
 	this->componentManager = componentManager;
 
 	lua_pushlightuserdata(state, &(*componentManager));
@@ -137,10 +122,10 @@ ScriptsSystem::Init(std::shared_ptr<ComponentManager> componentManager)
 
 		for (auto script : scripts.names) {
 
-			std::string name = "";
+			std::string start = script.substr(0, script.length() - 4) + "Start";
 
-			lua_getglobal(state, "start");
-			ExecuteLuaFunction(name, entity, 0, 0);
+			lua_getglobal(state, start.c_str());
+			ExecuteLuaFunction(0, 0);
 		}
 	}
 }
@@ -161,20 +146,36 @@ ScriptsSystem::Update(float                             dt,
 
 		for (auto script : scripts.names) {
 
+			std::string onCollision =
+			  script.substr(0, script.length() - 4) + "OnCollisionEnter";
+
+			lua_getglobal(state, onCollision.c_str());
+			bool exists = !lua_isnil(state, -1);
+			if (exists) {
+				for (Entity collidedEntity :
+				     componentManager->GetComponent<BoundingBox>(entity)
+				       .collisionEnterEntities) {
+				
+					lua_pushstring(
+					  state,
+					  componentManager->GetComponent<BoundingBox>(collidedEntity).tag.c_str());
+					ExecuteLuaFunction(1, 0);
+				}
+			} else {
+				lua_pop(state, 1);
+			}
+
 			std::string update = script.substr(0, script.length() - 4) + "Update";
 
 			lua_getglobal(state, update.c_str());
 			lua_pushnumber(state, dt);
-			ExecuteLuaFunction("update", entity, 1, 0);
+			ExecuteLuaFunction(1, 0);
 		}
 	}
 }
 
 void
-ScriptsSystem::ExecuteLuaFunction(std::string name,
-                                  Entity      e,
-                                  int         argsNr,
-                                  int         resNr)
+ScriptsSystem::ExecuteLuaFunction(int argsNr, int resNr)
 {
 	if (lua_pcall(state, argsNr, resNr, 0)) {
 		std::cerr << "Something went wrong during execution" << std::endl;
@@ -193,7 +194,7 @@ ScriptsSystem::CloseLuaState(std::shared_ptr<ComponentManager> componentManager)
 int
 l_cppgetTransform(lua_State* l)
 {
-	Entity e = luaL_checknumber(l, 1);
+	Entity            e = luaL_checknumber(l, 1);
 	ComponentManager* cm = (ComponentManager*)lua_touserdata(l, 2);
 
 	Transform t = cm->GetComponent<Transform>(e);

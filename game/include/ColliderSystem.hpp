@@ -10,6 +10,7 @@ struct BoundingBox
 	float width;
 	float height;
 	float depth;
+	std::string tag;
 	glm::vec3 origin;
 	glm::vec3 rotation;
 	glm::vec3 scale;
@@ -23,6 +24,8 @@ struct BoundingBox
 	float     minXLoc, maxXLoc, minYLoc, maxYLoc, minZLoc, maxZLoc;
 	glm::vec4      AABBVertices[8];
 	glm::vec3      prevRotation;
+
+	std::vector<Entity> collisionEnterEntities;
 
 	void StartAABB() {
 		minXLoc = -width / 2.0f;
@@ -310,6 +313,11 @@ ColliderSystem::CheckCollision(
   std::shared_ptr<ComponentManager> componentManager)
 {
 
+	for (int i = 0; i < entitiesToCollide.size(); i++) {
+		componentManager->GetComponent<BoundingBox>(entitiesToCollide[i])
+		  .collisionEnterEntities.clear();
+	}
+
 	for (int i = 0; i < entitiesToCollide.size() - 1; i++) {
 		auto& bounds1 =
 		  componentManager->GetComponent<BoundingBox>(entitiesToCollide[i]);
@@ -323,7 +331,50 @@ ColliderSystem::CheckCollision(
 			    bounds1.minY < bounds2.maxY && bounds1.maxY > bounds2.minY &&
 			    bounds1.minZ < bounds2.maxZ && bounds1.maxZ > bounds2.minZ) {
 
+				bounds1.collisionEnterEntities.push_back(entitiesToCollide[j]);
+				bounds2.collisionEnterEntities.push_back(entitiesToCollide[i]);
+
 				//std::cout << "COLLISION DETECTED!!!!!!!!!\n";
+
+				float xDistance = bounds1.origin.x - bounds2.origin.x;
+				float yDistance = bounds1.origin.y - bounds2.origin.y;
+				float zDistance = bounds1.origin.z - bounds2.origin.z;
+
+				float xGoalDistance = (bounds1.width / 2.0f) + (bounds2.width / 2.0f);
+				float yGoalDistance = (bounds1.height / 2.0f) + (bounds2.height / 2.0f);
+				float zGoalDistance = (bounds1.depth / 2.0f) + (bounds2.depth / 2.0f);
+
+				float xMove = abs(xGoalDistance) - abs(xDistance);
+				float yMove = abs(yGoalDistance) - abs(yDistance);
+				float zMove = abs(zGoalDistance) - abs(zDistance);
+
+				if (abs(xMove) < abs(yMove) && abs(xMove) < abs(zMove)) {
+					yMove = 0.0f;
+					zMove = 0.0f;
+
+					if (xDistance < 0.0f) {
+						xMove = -xMove;
+					}
+				} else if (abs(yMove) < abs(xMove) && abs(yMove) < abs(zMove)) {
+					xMove = 0.0f;
+					zMove = 0.0f;
+
+					if (yDistance < 0.0f) {
+						yMove = -yMove;
+					}
+				} else if (abs(zMove) < abs(xMove) && abs(zMove) < abs(yMove)) {
+					xMove = 0.0f;
+					yMove = 0.0f;
+
+					if (zDistance < 0.0f) {
+						zMove = -zMove;
+					}
+				}
+
+				componentManager->GetComponent<Transform>(entitiesToCollide[i])
+				  .position += glm::vec3(xMove, yMove, zMove);
+				//componentManager->GetComponent<Transform>(entitiesToCollide[j])
+				  //.position -= glm::vec3(xMove, yMove, zMove) / 2.0f;
 			}
 		}
 	}
