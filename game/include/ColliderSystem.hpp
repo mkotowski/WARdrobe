@@ -289,7 +289,7 @@ public:
 	            std::shared_ptr<ComponentManager> componentManager) override;
 	void CheckCollision(std::shared_ptr<ComponentManager> componentManager);
 	void Initiate(std::shared_ptr<ComponentManager> componentManager);
-	void DrawBoundingBox(BoundingBox box);
+	//void DrawBoundingBox(BoundingBox box);
 };
 
 void
@@ -302,7 +302,7 @@ ColliderSystem::Update(float                             dt,
 		entitiesToCollide.push_back(entity);
 		componentManager->GetComponent<BoundingBox>(entity).origin = 
 			componentManager->GetComponent<Transform>(entity).position;
-		DrawBoundingBox(componentManager->GetComponent<BoundingBox>(entity));
+		//DrawBoundingBox(componentManager->GetComponent<BoundingBox>(entity));
 	}
 	CheckCollision(componentManager);
 	entitiesToCollide.clear();
@@ -372,9 +372,11 @@ ColliderSystem::CheckCollision(
 				}
 
 				componentManager->GetComponent<Transform>(entitiesToCollide[i])
-				  .position += glm::vec3(xMove, yMove, zMove);
-				//componentManager->GetComponent<Transform>(entitiesToCollide[j])
-				  //.position -= glm::vec3(xMove, yMove, zMove) / 2.0f;
+				  .position += glm::vec3(xMove, yMove, zMove) / 2.0f;
+				bounds1.origin += glm::vec3(xMove, yMove, zMove) / 2.0f;
+				componentManager->GetComponent<Transform>(entitiesToCollide[j])
+				  .position -= glm::vec3(xMove, yMove, zMove) / 2.0f;
+				bounds2.origin -= glm::vec3(xMove, yMove, zMove) / 2.0f;
 			}
 		}
 	}
@@ -389,7 +391,7 @@ ColliderSystem::Initiate(std::shared_ptr<ComponentManager> componentManager)
 }
 
 void
-ColliderSystem::DrawBoundingBox(BoundingBox box)
+DrawBoundingBox(BoundingBox box, Camera* camera, Shader* ourShader, Window* window)
 {	
 	float vertices[] = 
 	{

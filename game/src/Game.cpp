@@ -92,11 +92,11 @@ Game::Loop()
 
 	auto shaderSystem = gameplayManager->RegisterSystem<ShaderSystem>();
 
-	auto renderSystem = gameplayManager->RegisterSystem<RenderSystem>();
+	auto scriptsSystem = gameplayManager->RegisterSystem<ScriptsSystem>();
 
 	auto colliderSystem = gameplayManager->RegisterSystem<ColliderSystem>();
-
-	auto scriptsSystem = gameplayManager->RegisterSystem<ScriptsSystem>();
+	
+	auto renderSystem = gameplayManager->RegisterSystem<RenderSystem>();
 	// Add reference to a window
 	renderSystem->window = this->gameWindow;
 

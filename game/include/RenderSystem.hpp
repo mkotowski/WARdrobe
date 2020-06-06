@@ -13,6 +13,7 @@
 #include "Shader.hpp"
 #include "Window.hpp"
 #include "ecs.hpp"
+#include "ColliderSystem.hpp"
 
 class RenderSystem : public System
 {
@@ -41,7 +42,7 @@ RenderSystem::Update(float                             dt,
 		auto& renderer = componentManager->GetComponent<Renderer>(entity);
 		auto& modelArray = componentManager->GetComponent<ModelArray>(entity);
 		auto& shader = Shader();
-		if (renderer.drawingType == 0)
+		if (renderer.drawingType == 0 || renderer.drawingType == 3)
 		{
 			shader = componentManager->GetComponent<Shader>(shaders["modelShader"]);
 		}
@@ -62,6 +63,18 @@ RenderSystem::Update(float                             dt,
 		              transform.scale,
 		              this->window->GetWindowWidth(),
 		              this->window->GetWindowHeight());
+
+			if (renderer.drawingType == 3) {
+				shader =
+				  componentManager->GetComponent<Shader>(shaders["boxShader"]);
+
+				auto& box = componentManager->GetComponent<BoundingBox>(entity);
+
+				DrawBoundingBox(box,
+				                &componentManager->GetComponent<Camera>(cameraEntity),
+				                &shader,
+				                this->window);
+			}
 		}
 		else
 		{

@@ -17,7 +17,7 @@ extern "C"
 int
 l_cppgetTransform(lua_State* l);
 int
-l_cppsetTransform(lua_State* l);
+l_cppsetRBVelocity(lua_State* l);
 
 int a = 1, b = 2, c = 3;
 
@@ -111,8 +111,8 @@ ScriptsSystem::Init(std::shared_ptr<ComponentManager> componentManager)
 	lua_pushcfunction(state, l_cppgetTransform);
 	lua_setglobal(state, "getTransform");
 
-	lua_pushcfunction(state, l_cppsetTransform);
-	lua_setglobal(state, "setTransform");
+	lua_pushcfunction(state, l_cppsetRBVelocity);
+	lua_setglobal(state, "setVelocity");
 
 	for (auto const& entity : entities) {
 		auto& scripts = componentManager->GetComponent<Scripts>(entity);
@@ -207,7 +207,7 @@ l_cppgetTransform(lua_State* l)
 }
 
 int
-l_cppsetTransform(lua_State* l)
+l_cppsetRBVelocity(lua_State* l)
 {
 	Entity            e = luaL_checknumber(l, 1);
 	ComponentManager* cm = (ComponentManager*)lua_touserdata(l, 2);
@@ -216,10 +216,10 @@ l_cppsetTransform(lua_State* l)
 	float y = luaL_checknumber(l, 4);
 	float z = luaL_checknumber(l, 5);
 
-	Transform* t = &cm->GetComponent<Transform>(e);
-	t->position.x = x;
-	t->position.y = y;
-	t->position.z = z;
+	RigidBody* t = &cm->GetComponent<RigidBody>(e);
+	t->velocity.x = x;
+	t->velocity.y = y;
+	t->velocity.z = z;
 
 	return 1;
 }
