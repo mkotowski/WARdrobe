@@ -138,18 +138,21 @@ private:
             cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << endl;
             return;
         }
-        
-        mGlobalInverseTransform = scene->mRootNode->mTransformation;
-        mGlobalInverseTransform.Inverse();
+        if (scene->mNumAnimations > 0)
+        {
+            mGlobalInverseTransform = scene->mRootNode->mTransformation;
+            mGlobalInverseTransform.Inverse();
 
-        if (scene->mAnimations[0]->mTicksPerSecond != 0.0)
-        {
-            ticksPerSecond = scene->mAnimations[0]->mTicksPerSecond;
+            if (scene->mAnimations[0]->mTicksPerSecond != 0.0)
+            {
+                ticksPerSecond = scene->mAnimations[0]->mTicksPerSecond;
+            }
+            else
+            {
+                ticksPerSecond = 25.0f;
+            }
         }
-        else
-        {
-            ticksPerSecond = 25.0f;
-        }
+        
 
         
 

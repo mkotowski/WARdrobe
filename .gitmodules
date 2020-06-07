@@ -25,3 +25,6 @@
 [submodule "thirdparty/steam_controller"]
 	path = thirdparty/steam_controller
 	url = https://github.com/ltjax/steam_controller
+[submodule "thirdparty/spdlog"]
+	path = thirdparty/spdlog
+	url = https://github.com/gabime/spdlog

@@ -30,21 +30,23 @@ LightningSystem::Update(float                             dt,
     // Set all uniforms
     for(auto& entity: entities)
     {
-        if (componentManager->GetComponent<Light>(entity).typeOfTheLight == "directionalLight")
+        auto& light = componentManager->GetComponent<Light>(entity);
+        if (light.typeOfTheLight == "directionalLight")
         {
             for(std::map<std::string, Entity>::iterator it = shaders->begin(); it != shaders->end(); it++)
             {
                 auto& value = componentManager->GetComponent<Shader>(it->second);
-                if (value.shaderType == "modelShader")
+                if (value.shaderType == "modelShader" || value.shaderType == "animatedModelShader")
                 {
+                    value.use();
                     value.setVec3("dirLight.direction",
-                             componentManager->GetComponent<Light>(entity).direction);
+                             light.direction);
                     value.setVec3("dirLight.ambient",
-                                componentManager->GetComponent<Light>(entity).ambientColor);
+                                light.ambientColor);
                     value.setVec3("dirLight.diffuse",
-                                componentManager->GetComponent<Light>(entity).diffuseColor);
+                                light.diffuseColor);
                     value.setVec3("dirLight.specular",
-                                componentManager->GetComponent<Light>(entity).specularColor);
+                                light.specularColor);
                 }
                
             }
@@ -55,8 +57,9 @@ LightningSystem::Update(float                             dt,
             for(std::map<std::string, Entity>::iterator it = shaders->begin(); it != shaders->end(); it++)
             {
                 auto& value = componentManager->GetComponent<Shader>(it->second);
-                if (value.shaderType == "modelShader")
+                if (value.shaderType == "modelShader" || value.shaderType == "animatedModelShader")
                 {
+                    value.use();
                     value.setVec3("pointLight.position",
                             componentManager->GetComponent<Light>(entity).position);
                     value.setFloat("pointLight.constant",
@@ -83,8 +86,9 @@ LightningSystem::Update(float                             dt,
             for(std::map<std::string, Entity>::iterator it = shaders->begin(); it != shaders->end(); it++)
             {
                 auto& value = componentManager->GetComponent<Shader>(it->second);
-                if (value.shaderType == "modelShader")
+                if (value.shaderType == "modelShader" || value.shaderType == "animatedModelShader")
                 {
+                    value.use();
                      value.setVec3(spotLightName + "direction",
                             componentManager->GetComponent<Light>(entity).direction);
                     value.setVec3(spotLightName + "position",
@@ -115,6 +119,7 @@ LightningSystem::Update(float                             dt,
     for(std::map<std::string, Entity>::iterator it = shaders->begin(); it != shaders->end(); it++)
     {
         auto& value = componentManager->GetComponent<Shader>(it->second);
+        value.use();
         value.setInt("numberOfSpotLights", spotLightCounter);
     }
 }

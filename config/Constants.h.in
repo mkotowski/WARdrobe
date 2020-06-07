@@ -7,4 +7,7 @@
 extern float forwardInput;
 extern float rightInput;
 
+extern float playerInputVertical;
+extern float playerInputHorizontal;
+
 extern float cameraFront;

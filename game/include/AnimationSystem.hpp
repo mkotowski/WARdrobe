@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ecs.hpp"
-#include "Model.hpp"
+#include "ModelArray.hpp"
 #include "Animator.hpp"
 
 class AnimationSystem : public System
@@ -17,9 +17,9 @@ void AnimationSystem::Init(std::shared_ptr<ComponentManager> componentManager)
 {
 	for(auto& entity: entities)
 	{
-		auto& model = componentManager->GetComponent<Model>(entity);
+		auto& modelArray = componentManager->GetComponent<ModelArray>(entity);
 		auto& animator = componentManager->GetComponent<Animator>(entity);
-		animator.animatedModel = &model;
+		animator.animatedModel = &modelArray.zeroLevelModel;
 	}
     
 }

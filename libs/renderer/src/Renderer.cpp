@@ -46,6 +46,9 @@ Renderer::Draw(Shader*   ourShader,
 	ourShader->setMat4("projection", projection);
 	ourShader->setMat4("view", view);
 	ourShader->setMat4("model", model);
+	if (ourShader->shaderType != "boxShader")
+		ourShader->SetSubroutineFragment(ourShader->currentSubroutine);
+
 	if (drawingType == 1) {
 		glm::mat4 mv = view * model;
 

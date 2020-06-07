@@ -53,6 +53,8 @@ DebugUI::DebugUI(GLFWwindow* window, const char* glsl_version)
 	    .fullscreen; // FIXME: fullscreen doesn't work at start of the game
 	resizableWindow = settingsFromFile.resizable;
 	vsyncEnabled = settingsFromFile.vsync;
+
+	log = new AppLog;
 }
 
 DebugUI::~DebugUI()
@@ -78,6 +80,41 @@ DebugUI::GetNewFrame()
 
 	// ImGui::SetCurrentContext();
 	ImGui::NewFrame();
+}
+
+// Demonstrate creating a simple log window with basic filtering.
+void
+DebugUI::ShowAppLog(bool* p_open)
+{
+	//static AppLog log;
+
+	// For the demo: add a debug button _BEFORE_ the normal log window contents
+	// We take advantage of a rarely used feature: multiple calls to
+	// Begin()/End() are appending to the _same_ window. Most of the contents of
+	// the window will be added by the log.Draw() call.
+	ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
+	ImGui::Begin("Debug Log", p_open);
+	if (ImGui::SmallButton("[Debug] Add 5 entries")) {
+		static int counter = 0;
+		for (int n = 0; n < 5; n++) {
+			const char* categories[3] = { "info", "warn", "error" };
+			const char* words[] = { "Bumfuzzled",    "Cattywampus",  "Snickersnee",
+				                      "Abibliophobia", "Absquatulate", "Nincompoop",
+				                      "Pauciloquent" };
+			log->AddLog(
+			  "[%05d] [%s] Hello, current time is %.1f, here's a word: '%s'\n",
+			  ImGui::GetFrameCount(),
+			  categories[counter % IM_ARRAYSIZE(categories)],
+			  ImGui::GetTime(),
+			  words[counter % IM_ARRAYSIZE(words)]);
+			counter++;
+		}
+	}
+	ImGui::End();
+
+	// Actually call in the regular Log helper (which will Begin() into the same
+	// window as we just did)
+	log->Draw("Debug Log", p_open);
 }
 
 void
@@ -242,6 +279,13 @@ DebugUI::SetupWidgets()
 			ImGui::EndMenu();
 		}
 
+		if (ImGui::BeginMenu("Msg Log")) {
+			if (ImGui::MenuItem("Display", NULL, this->isLogDisplayed)) {
+				isLogDisplayed = !isLogDisplayed;
+			}
+			ImGui::EndMenu();
+		}
+
 		if (ImGui::BeginMenu("Widgets")) {
 			if (ImGui::MenuItem("Info overlay", NULL, this->showOverlay)) {
 				showOverlay = !showOverlay;
@@ -266,8 +310,8 @@ DebugUI::SetupWidgets()
 	// 1. Show the big demo window (Most of the sample code is in
 	// ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear
 	// ImGui!).
-	if (showDemoWindow)
-		ImGui::ShowDemoWindow(&showDemoWindow);
+	//if (show_demo_window)
+	//	ImGui::ShowDemoWindow(&show_demo_window);
 
 	// 2. Show a simple window that we create ourselves. We use a Begin/End pair
 	// to created a named window.
@@ -317,6 +361,10 @@ DebugUI::SetupWidgets()
 			show_another_window = false;
 		ImGui::End();
 	}*/
+
+	if (this->isLogDisplayed) {
+		ShowAppLog(&isLogDisplayed);
+	}
 }
 
 void

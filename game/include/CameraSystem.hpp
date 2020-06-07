@@ -14,6 +14,8 @@
 
 float forwardInput = 0.0f;
 float rightInput = 0.0f;
+float playerInputHorizontal = 0.0f;
+float playerInputVertical = 0.0f;
 
 class CameraSystem : public System
 {
@@ -119,5 +121,21 @@ CameraSystem::Update(float                             dt,
 		  cameraSpeed;*/
 		//forwardInput = 0;
 		//rightInput = 0;
+
+		transform.position = camera.cameraPos;
+		// smooth movement
+		if (forwardInput > 0.0f)
+			forwardInput -= 0.01f;
+		if (rightInput > 0.0f)
+			rightInput -= 0.01f;
+		if (forwardInput < 0.0f)
+			forwardInput += 0.01f;
+		if (rightInput < 0.0f)
+			rightInput += 0.01f;
+		// poślizg
+		if (abs(forwardInput) < 0.2f)
+			forwardInput = 0.0f;
+		if (abs(rightInput) < 0.2f)
+			rightInput = 0.0f;
 	}
 }

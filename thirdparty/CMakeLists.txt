@@ -299,4 +299,21 @@ set_target_properties (stb_image PROPERTIES
 	FOLDER thirdparty/stb_image
 )
 
+# spdlog ###################################################################
+
+msg(HEADER "[SPDLOG]")
+
+set(SPDLOG_DIR "${THIRDPARTY_DIR}/spdlog")
+
+add_subdirectory(spdlog)
+
+set_property(GLOBAL PROPERTY 
+	SPDLOG_DIR "${SPDLOG_DIR}")
+set_property(GLOBAL PROPERTY 
+	SPDLOG_INCLUDE_DIR "${SPDLOG_DIR}/include")
+
+set_target_properties (spdlog PROPERTIES
+	FOLDER thirdparty/spdlog
+)
+
 msg(STATUS "[CONFIGURE EXTERNAL PROJECTS - END]")
