@@ -86,13 +86,13 @@ Game::Loop()
 	gameplayManager->RegisterComponent<ModelArray>();
 
 	// Register the systems used during the gameplay
-	auto physicsSystem = gameplayManager->RegisterSystem<PhysicsSystem>();
-
 	auto cameraSystem = gameplayManager->RegisterSystem<CameraSystem>();
 
 	auto shaderSystem = gameplayManager->RegisterSystem<ShaderSystem>();
 
 	auto scriptsSystem = gameplayManager->RegisterSystem<ScriptsSystem>();
+
+	auto physicsSystem = gameplayManager->RegisterSystem<PhysicsSystem>();
 
 	auto colliderSystem = gameplayManager->RegisterSystem<ColliderSystem>();
 	
@@ -162,7 +162,11 @@ Game::Loop()
 
 	renderSystem->Init();
 
-	scriptsSystem->Init(gameplayManager->GetComponentManager());
+	scriptsSystem->Init(
+	  gameplayManager->GetComponentManager(),
+	  this->gameWindow,
+	  &gameplayManager->GetComponentManager()->GetComponent<Camera>(
+	    cameraSystem->cameraEntity));
 
 	gameWindow->CloseSplashScreen();
 	// avoid displaying empty window

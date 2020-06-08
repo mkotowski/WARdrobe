@@ -39,9 +39,11 @@ PhysicsSystem::Update(float                             dt,
 		auto&       transform = componentManager->GetComponent<Transform>(entity);
 		auto const& gravity = componentManager->GetComponent<Gravity>(entity);
 
-		rigidBody.velocity += gravity.force * dt;
+		rigidBody.velocity += gravity.force;
 
 		transform.position += rigidBody.velocity * dt;
+
+		//transform.rotation += glm::vec3(0.0f, 0.0f, 100.0f * dt);
 	}
 
 	//std::cout << "Physics updated\n";

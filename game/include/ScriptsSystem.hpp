@@ -17,7 +17,13 @@ extern "C"
 int
 l_cppgetTransform(lua_State* l);
 int
+l_cppsetTransform(lua_State* l);
+int
 l_cppsetRBVelocity(lua_State* l);
+int
+l_cppgetMouseWorldPos(lua_State* l);
+int
+l_cppsetRotation(lua_State* l);
 
 int a = 1, b = 2, c = 3;
 
@@ -31,13 +37,14 @@ class ScriptsSystem : public System
 	std::shared_ptr<ComponentManager> componentManager;
 	lua_State*                        state;
 	std::list<std::string>            uniqueScripts;
+	Window*                           ourWindow;
 
 	void ExecuteLuaFunction(int argsNr, int resNr);
 	bool IsScriptAlreadyInCollection(std::string name);
 	bool flag = false;
 
 public:
-	void Init(std::shared_ptr<ComponentManager> componentManager);
+	void Init(std::shared_ptr<ComponentManager> componentManager, Window* w, Camera* c);
 	void Update(float                             dt,
 	            std::shared_ptr<ComponentManager> componentManager) override;
 	void CloseLuaState(std::shared_ptr<ComponentManager> componentManager);
@@ -76,8 +83,10 @@ ScriptsSystem::IsScriptAlreadyInCollection(std::string name)
 }
 
 void
-ScriptsSystem::Init(std::shared_ptr<ComponentManager> componentManager)
+ScriptsSystem::Init(std::shared_ptr<ComponentManager> componentManager, Window* w, Camera* c)
 {
+	ourWindow = w;
+
 	state = luaL_newstate();
 	luaL_openlibs(state);
 
@@ -108,11 +117,26 @@ ScriptsSystem::Init(std::shared_ptr<ComponentManager> componentManager)
 	lua_pushlightuserdata(state, &(*componentManager));
 	lua_setglobal(state, "componentManager");
 
+	lua_pushlightuserdata(state, &(*w));
+	lua_setglobal(state, "window");
+	
+	lua_pushlightuserdata(state, &(*c));
+	lua_setglobal(state, "camera");
+
 	lua_pushcfunction(state, l_cppgetTransform);
 	lua_setglobal(state, "getTransform");
 
+	lua_pushcfunction(state, l_cppsetTransform);
+	lua_setglobal(state, "setTransform");
+
+	lua_pushcfunction(state, l_cppsetRotation);
+	lua_setglobal(state, "setRotation");
+
 	lua_pushcfunction(state, l_cppsetRBVelocity);
 	lua_setglobal(state, "setVelocity");
+
+	lua_pushcfunction(state, l_cppgetMouseWorldPos);
+	lua_setglobal(state, "getMouseWorldPos");
 
 	for (auto const& entity : entities) {
 		auto& scripts = componentManager->GetComponent<Scripts>(entity);
@@ -207,6 +231,63 @@ l_cppgetTransform(lua_State* l)
 }
 
 int
+l_cppsetTransform(lua_State* l)
+{
+	Entity            e = luaL_checknumber(l, 1);
+	ComponentManager* cm = (ComponentManager*)lua_touserdata(l, 2);
+
+	Transform* t = &cm->GetComponent<Transform>(e);
+
+	float x = luaL_checknumber(l, 3);
+	float y = luaL_checknumber(l, 4);
+	float z = luaL_checknumber(l, 5);
+
+	t->position.x = x;
+	t->position.y = y;
+	t->position.z = z;
+
+	return 3;
+}
+
+int
+l_cppsetRotation(lua_State* l)
+{
+	Entity            e = luaL_checknumber(l, 1);
+	ComponentManager* cm = (ComponentManager*)lua_touserdata(l, 2);
+
+	Transform* t = &cm->GetComponent<Transform>(e);
+
+	float x = luaL_checknumber(l, 3);
+	float y = luaL_checknumber(l, 4);
+	float z = luaL_checknumber(l, 5);
+
+	t->rotation.x = x;
+	t->rotation.y = y;
+	t->rotation.z = z;
+
+	return 3;
+}
+
+int
+l_cppsetCameraTransform(lua_State* l)
+{
+	Entity            e = luaL_checknumber(l, 1);
+	ComponentManager* cm = (ComponentManager*)lua_touserdata(l, 2);
+
+	Camera t = cm->GetComponent<Camera>(e);
+
+	float x = luaL_checknumber(l, 3);
+	float y = luaL_checknumber(l, 4);
+	float z = luaL_checknumber(l, 5);
+
+	t.cameraPos.x = x;
+	t.cameraPos.y = y;
+	t.cameraPos.z = z;
+
+	return 3;
+}
+
+int
 l_cppsetRBVelocity(lua_State* l)
 {
 	Entity            e = luaL_checknumber(l, 1);
@@ -222,4 +303,38 @@ l_cppsetRBVelocity(lua_State* l)
 	t->velocity.z = z;
 
 	return 1;
+}
+
+int
+l_cppgetMouseWorldPos(lua_State* l)
+{
+	Window* w = (Window*)lua_touserdata(l, 1);
+	Camera* sceneCamera = (Camera*)lua_touserdata(l, 2);
+
+	double x, y;
+	glfwGetCursorPos(w->GetWindow(), &x, &y);
+
+	glm::mat4 projection =
+	  glm::perspective(glm::radians(80.0f),
+	                   (float)w->GetWindowWidth() / (float)w->GetWindowHeight(),
+	                   0.1f,
+	                   100.0f);
+	glm::mat4 view =
+	  glm::lookAt(sceneCamera->cameraPos,
+	              sceneCamera->cameraPos + sceneCamera->cameraFront,
+	              sceneCamera->cameraUp);
+
+	glm::mat4 PVinv = glm::inverse(view * projection);
+
+	glm::vec4 pos = glm::vec4(2.0f * (x / w->GetWindowWidth()) - 1.0f,
+	                          1.0f - (2.0f * (y / w->GetWindowHeight())),
+	                          1.0f,
+	                          1.0f);
+
+	pos = pos * PVinv;
+
+	lua_pushnumber(l, pos.x);
+	lua_pushnumber(l, pos.z);
+
+	return 2;
 }
