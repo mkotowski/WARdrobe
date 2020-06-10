@@ -13,12 +13,23 @@ public:
 	            std::shared_ptr<ComponentManager> componentManager) override;
 	void Init(std::shared_ptr<ComponentManager> componentManager);
     std::map<std::string, Entity> *shaders;
+    Entity dirLight;
 };
 
 void
 LightningSystem::Init(std::shared_ptr<ComponentManager> componentManager)
 {
-    
+    for (auto& entity : entities)
+    {
+        auto& light = componentManager->GetComponent<Light>(entity);
+        if (light.typeOfTheLight == "directionalLight")
+        {
+            dirLight = entity;
+            return;
+        }
+            
+
+    }
 }
 
 

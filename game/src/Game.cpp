@@ -171,6 +171,8 @@ Game::Loop()
 	// Initialize LightningSystem
 	lightningSystem->Init(gameplayManager->GetComponentManager());
 	std::cout << "LightningSystem has been initialized" << std::endl;
+	// Bind light to RenderSystem
+	renderSystem->lightEntity = lightningSystem->dirLight;
 
 	// Initialize ShaderSystem and bound map of shaders to RenderSystem and LightningSystem
 	shaderSystem->Init(gameplayManager->GetComponentManager());

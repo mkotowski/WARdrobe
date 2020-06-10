@@ -41,7 +41,7 @@
                 "ModelArray" : [1, "assets/models/nanosuit.obj", "assets/textures/stone2.jpg",
                                     "assets/models/chr_knight.obj", "assets/textures/chr_knight.png",
                                     "assets/models/square.obj", "assets/textures/stone2.jpg"],
-                "Transform" : [ 1.2, 0.0, -30.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+                "Transform" : [ 1.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
                 "Rigidbody" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
                 "Gravity" : [ 0.0, 0.0, 0.0 ],
                 "Renderer" : 0,
@@ -53,7 +53,7 @@
 
             {
                 "ModelArray" : [0, "assets/models/levelPrototype.obj", "assets/textures/levelPrototype.png"],
-                "Transform" : [ -5.0, -5.0, -5.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
+                "Transform" : [ -5.0, -50.0, -5.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
                 "Renderer" : 0
             }
         ,
@@ -69,20 +69,45 @@
                 }
             ,
     "modelShader" :
-            {
-                "Shader" : ["assets/shaders/plainModelVertex.glsl", "assets/shaders/modelFragment.glsl", "modelShader"]
-            }
+                {
+                    "Shader" : ["assets/shaders/plainModelVertex.glsl", "assets/shaders/modelFragment.glsl", "modelShader"]
+                }
+            ,
+    "animatedModelShadowMapShader" :
+                {
+                    "Shader" : ["assets/shaders/plainModelShadowMapVertex.glsl", "assets/shaders/shadowMapFragment.glsl", "animatedModelShadowMapShader"]
+                }
+            ,
+    "modelShadowMapShader" :
+                {
+                    "Shader" : ["assets/shaders/plainModelShadowMapVertex.glsl", "assets/shaders/shadowMapFragment.glsl", "modelShadowMapShader"]
+                }
             ,
     "boundingBoxShader" :
                 {
                     "Shader" : ["assets/shaders/boxVertex.glsl", "assets/shaders/boxFragment.glsl", "boxShader"]
                 }
             ,
+    "debugQuadShader" :
+            {
+                "Shader" : ["assets/shaders/debugQuadVertex.glsl", "assets/shaders/debugQuadFragment.glsl", "debugQuadShader"]
+            }
+         ,
+    "skyBoxShader" :
+            {
+             "Shader" : ["assets/shaders/skyboxVertex.glsl", "assets/shaders/skyboxFragment.glsl", "skyBoxShader"]
+            }
+        ,
+    "cubemapShader" :
+        {
+         "Shader" : ["assets/shaders/cubemapVertex.glsl", "assets/shaders/cubemapFragment.glsl", "cubemapShader"]
+        }
+    ,
     "directionalLight" :
                 {
                     "Light" : ["directionalLight",
-                                0.0, 0.0, 0.0,  
-                                0.0, -10.0, 0.0,                             
+                                -2.0, 10.0, 0.0,  
+                                0.0, 0.0, 0.0,                             
                                 0.5, 0.5, 0.5,
                                 0.8, 0.0, 0.0,
                                 0.1, 0.1, 0.1]

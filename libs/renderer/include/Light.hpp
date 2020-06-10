@@ -41,4 +41,6 @@ public:
     // Type of the lightning to set proper uniforms
     std::string typeOfTheLight;
 
+    void InitFramebuffer();
+
 };

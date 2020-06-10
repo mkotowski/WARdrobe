@@ -13,6 +13,8 @@ public:
 	Renderer(bool, float[], int, unsigned int[], int, std::string);
 	void
 	     Draw(Shader*, Model*, Camera*, glm::vec3, glm::vec3, glm::vec3, int, int, float);
+	void
+	     DrawToShadowMap(Shader*, Model*, glm::vec3, glm::vec3, glm::vec3, float);
 	void Draw(Shader *);
 	void Init();
 
