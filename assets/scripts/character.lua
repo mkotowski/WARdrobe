@@ -1,6 +1,5 @@
-position = {x, y, z}
-
-enemies = { {hp = 1.0, some = 2.0}}
+player = {hp = 100, position = {x = 0.0, y = 0.0, z = 0.0}, rotation = {x = 0.0, y = 0.0, z = 0.0}}
+mouse = {x, y}
 
 function functionShadyXX()
 end
@@ -15,6 +14,11 @@ function characterStart()
 end
 
 function characterUpdate(dt)
+    player.position.x, player.position.y, player.position.z = getTransform(entity, componentManager)
+    player.rotation.x, player.rotation.y, player.rotation.z = getRotation(entity, componentManager)
+
+    characterSetRotation()
+
     directionH = 0.0
     directionV = 0.0
 
@@ -43,10 +47,18 @@ function characterUpdate(dt)
 
     prevDirectionV = directionV
     
-    moveObject(directionH * 10.0, directionV * 10.0, 0.0)
+    moveObject(-directionH * 5.0, 0.0, directionV * 5.0)
     prevRightInput = rightInput
     prevForwardInput = forwardInput
 end
 
-function characterOnCollisionEnter(tag)
+function characterSetRotation()
+    local mouseWorldX, mouseWorldZ = getMouseWorldPos(window, camera)
+
+    local deltaX = mouseWorldX
+    local deltaZ = mouseWorldZ
+
+    local angle = math.atan(deltaZ, deltaX) * 180.0 / 3.14;
+
+    setRotation(entity, componentManager, 0.0, -angle + 90.0, 0.0)
 end

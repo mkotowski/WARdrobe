@@ -10,7 +10,9 @@ struct BoundingBox
 	float       width;
 	float       height;
 	float       depth;
+	bool        trigger;
 	std::string tag;
+	bool        enabled;
 	glm::vec3   origin;
 	glm::vec3   rotation;
 	glm::vec3   scale;
@@ -29,6 +31,7 @@ struct BoundingBox
 
 	void StartAABB()
 	{
+		enabled = true;
 		prevRotation = glm::vec3(0.0f, 0.0f, 0.0f);
 
 		minXLoc = -width / 2.0f;
@@ -103,15 +106,12 @@ struct BoundingBox
 
 		glm::mat4 model = glm::mat4(1.0f);
 
-		model = glm::rotate(model,
-		                    glm::radians(rotation[0]),
-		                    glm::vec3(1.0f, 0.0f, 0.0f)); // X axis
-		model = glm::rotate(model,
-		                    glm::radians(rotation[1]),
-		                    glm::vec3(0.0f, 1.0f, 0.0f)); // Y axis
-		model = glm::rotate(model,
-		                    glm::radians(rotation[2]),
-		                    glm::vec3(0.0f, 0.0f, 1.0f)); // Z axis
+		model = glm::rotate(
+		  model, glm::radians(rotation[0]), glm::vec3(1.0f, 0.0f, 0.0f)); // X axis
+		model = glm::rotate(
+		  model, glm::radians(rotation[1]), glm::vec3(0.0f, 1.0f, 0.0f)); // Y axis
+		model = glm::rotate(
+		  model, glm::radians(rotation[2]), glm::vec3(0.0f, 0.0f, 1.0f)); // Z axis
 
 		prevRotation = rotation;
 
@@ -119,7 +119,7 @@ struct BoundingBox
 			AABBVertices[i] = model * AABBVertices[i];
 		}
 
-		//SetNewBounds();
+		// SetNewBounds();
 
 		minX = minXLoc + origin.x;
 		maxX = maxXLoc + origin.x;
@@ -356,9 +356,11 @@ ColliderSystem::Update(float                             dt,
 {
 	// entitiesToCollide.clear();
 	for (auto const& entity : entities) {
+		if (componentManager->GetComponent<BoundingBox>(entity).enabled) {
+			entitiesToCollide.push_back(entity);
+		}
 		componentManager->GetComponent<BoundingBox>(entity).Assign(
 		  entity, componentManager);
-		entitiesToCollide.push_back(entity);
 		componentManager->GetComponent<BoundingBox>(entity).origin =
 		  componentManager->GetComponent<Transform>(entity).position;
 		// DrawBoundingBox(componentManager->GetComponent<BoundingBox>(entity));
@@ -488,17 +490,24 @@ ColliderSystem::CheckCollision(
 			glm::vec3 mtv = getMtv(bounds1, bounds2);
 
 			if (glm::length(mtv) == 0.0f) {
-				break;
+				continue;
 			}
 
-			//std::cout << "Collision detected\n";
+			bounds1.collisionEnterEntities.push_back(entitiesToCollide[j]);
+			bounds2.collisionEnterEntities.push_back(entitiesToCollide[i]);
 
-			/*componentManager->GetComponent<Transform>(entitiesToCollide[i])
-			    .position -= mtv / 2.0f;
-			  bounds1.origin -= mtv / 2.0f;*/
-			  componentManager->GetComponent<Transform>(entitiesToCollide[j])
-			    .position += mtv;
-			  bounds2.origin += mtv;
+			if (bounds1.trigger || bounds2.trigger) {
+				continue;
+			}
+
+			// std::cout << "Collision detected\n";
+
+			componentManager->GetComponent<Transform>(entitiesToCollide[i])
+			  .position -= mtv / 2.0f;
+			bounds1.origin -= mtv / 2.0f;
+			componentManager->GetComponent<Transform>(entitiesToCollide[j])
+			  .position += mtv / 2.0f;
+			bounds2.origin += mtv / 2.0f;
 
 			// if (bounds1.minX < bounds2.maxX && bounds1.maxX > bounds2.minX &&
 			//    bounds1.minY < bounds2.maxY && bounds1.maxY > bounds2.minY &&
@@ -516,11 +525,11 @@ ColliderSystem::CheckCollision(
 			//	glm::vec3 goalDistance =
 			//	  glm::vec3(bounds1.minX >= bounds2.minX ? bounds2.maxX - bounds2.minX
 			//	                                         : bounds1.maxX -
-			//bounds1.minX, 	            bounds1.minY >= bounds2.minY ? bounds2.maxY - bounds2.minY
-			//	                                         : bounds1.maxY -
-			//bounds1.minY, 	            bounds1.minZ >= bounds2.minZ ? bounds2.maxZ - bounds2.minZ
-			//	                                         : bounds1.maxZ -
-			//bounds1.minZ);
+			// bounds1.minX, 	            bounds1.minY >= bounds2.minY ? bounds2.maxY
+			// - bounds2.minY 	                                         : bounds1.maxY
+			// - bounds1.minY, 	            bounds1.minZ
+			// >= bounds2.minZ ? bounds2.maxZ - bounds2.minZ : bounds1.maxZ -
+			// bounds1.minZ);
 
 			//	glm::vec3 move = goalDistance - abs(distance);
 
@@ -632,6 +641,12 @@ DrawBoundingBox(BoundingBox box,
 
 	// miejsce na shader
 	ourShader->use();
+
+	if (box.enabled) {
+		ourShader->setVec4("boxColor", glm::vec4(0.0f, 1.0f, 0.0f, 0.3f));
+	} else {
+		ourShader->setVec4("boxColor", glm::vec4(1.0f, 0.0f, 0.0f, 0.3f));
+	}
 
 	glm::mat4 model = glm::mat4(1.0f);
 	model =

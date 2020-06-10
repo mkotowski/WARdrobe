@@ -302,11 +302,12 @@ Game::LoadLevel(std::string levelPath)
 				// 0 - width
 				// 1 - height
 				// 2 - depth
-				// 3 - tag (optional)
-				std::string tag = it2.value()[3] != nullptr ? it2.value()[3] : "none";
+				// 3 - 0-collider, 1-trigger
+				// 4 - tag (optional)
+				std::string tag = it2.value()[4] != nullptr ? it2.value()[4] : "none";
 				gameplayManager->AddComponent(
 					entity,
-					BoundingBox{ it2.value()[0], it2.value()[1], it2.value()[2], tag});
+					BoundingBox{ it2.value()[0], it2.value()[1], it2.value()[2], it2.value()[3] == 1, tag});
 			
 			} else if (it2.key() == "Scripts") {
 				std::list<std::string> scripts;

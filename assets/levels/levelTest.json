@@ -11,37 +11,51 @@
                 }
                 
             ,
-
     "rycerzModel" :
             
                 {
                     "ModelArray" : [0, "assets/models/nanosuit.obj", "assets/textures/stone2.jpg",
                                         "assets/models/chr_knight.obj", "assets/textures/chr_knight.png",
                                         "assets/models/square.obj", "assets/textures/stone2.jpg"],
-                    "Transform" : [ 0.7, 0.0, 1.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+                    "Transform" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
                     "Rigidbody" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
                     "Gravity" : [ 0.0, 0.0, 0.0 ],
                     "Renderer" : 3,
-                    "BoundingBox" : [1.0, 1.0, 0.7],
+                    "BoundingBox" : [2.0, 7.0, 2.0, 0, "player"],
                     "Scripts" : ["character.lua"]
                 }
                 
                 
             ,
-    "wilkModel" :
+    "playerFist" :
+
+                {
+                    "ModelArray" : [0, "assets/models/Wolf_dae.dae", "assets/textures/stone2.jpg"],
+                    "Transform" : [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0],
+                    "Renderer" : 3,
+                    "BoundingBox" : [1.0, 1.0, 1.0, 1, "playerWeapon"],
+                    "Scripts" : ["weapon.lua"]
+                }
+
+            ,
+    "enemy" :
             
                 {
                     "ModelArray" : [0, "assets/models/Wolf_dae.dae", "assets/textures/stone2.jpg"],
-                    "Transform" : [ 2.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
+                    "Transform" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
+                    "Rigidbody" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+                    "Gravity" : [ 0.0, 0.0, 0.0 ],
                     "Renderer" : 3,
-                    "BoundingBox" : [1.0, 1.0, 1.0, "wall"]
+                    "BoundingBox" : [2.0, 7.0, 2.0, 0, "enemy"],
+                    "Scripts" : ["enemy.lua"]
                 }
             ,
     "mainCamera" :
             
                 {
-                    "Transform" : [0.0, 0.0, 3.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
-                    "Camera" : [0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 1.0, 0.0, 80.0]
+                    "Transform" : [0.0, 10.0, 0.0, 0.0, 0.0, 90.0, 1.0, 1.0, 1.0],
+                    "Camera" : [0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 1.0, 80.0],
+                    "Scripts" : ["camera.lua"]
                 }
             ,
     "levelModel" :

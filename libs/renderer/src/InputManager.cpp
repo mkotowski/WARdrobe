@@ -301,6 +301,14 @@ InputManager::UpdateInput(int id, int source, int state, int mods)
 		playerInputHorizontal -= 0.1f;
 	}
 
+	if (id == GLFW_KEY_SPACE && source == InputSource::KEY &&
+	    state == GLFW_PRESS) {
+		leftMousePressed = true;
+	} else if (id == GLFW_KEY_SPACE && source == InputSource::KEY &&
+	           state == GLFW_RELEASE) {
+		leftMousePressed = false;
+	}
+
 	Input searchedInput;
 	searchedInput.id = id;
 	searchedInput.source = source;
@@ -328,7 +336,7 @@ InputManager::Call()
 		auto it = bindings.find(input);
 
 		if (it != bindings.end()) {
-			//std::cout << "Activate callback binded to input " << (&input)->id
+			// std::cout << "Activate callback binded to input " << (&input)->id
 			//          << " from source " << (&input)->source << "!\n";
 			(*(it->second))(input.state);
 		}

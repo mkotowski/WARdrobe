@@ -14,6 +14,10 @@ struct RigidBody
 {
 	glm::vec3 velocity;
 	glm::vec3 acceleration;
+
+	void applyForce(glm::vec3 force) {
+		acceleration += force;
+	}
 };
 
 struct Transform
@@ -39,9 +43,11 @@ PhysicsSystem::Update(float                             dt,
 		auto&       transform = componentManager->GetComponent<Transform>(entity);
 		auto const& gravity = componentManager->GetComponent<Gravity>(entity);
 
-		rigidBody.velocity += gravity.force;
+		rigidBody.velocity += (rigidBody.acceleration + gravity.force - (rigidBody.velocity * 2.0f)) * dt;
 
 		transform.position += rigidBody.velocity * dt;
+
+		rigidBody.acceleration = glm::vec3(0.0f, 0.0f, 0.0f);
 
 		//transform.rotation += glm::vec3(0.0f, 0.0f, 100.0f * dt);
 	}
