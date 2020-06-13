@@ -89,6 +89,7 @@ Game::Loop()
 	gameplayManager->RegisterComponent<BoundingBox>();
 	gameplayManager->RegisterComponent<Scripts>();
 	gameplayManager->RegisterComponent<ModelArray>();
+	gameplayManager->RegisterComponent<Skybox>();
 
 	// Register the systems used during the gameplay
 	auto physicsSystem = gameplayManager->RegisterSystem<PhysicsSystem>();
@@ -140,10 +141,6 @@ Game::Loop()
 	//RenderSystem
 	gameplayManager->SetRequiredComponent<RenderSystem>(
 	  gameplayManager->GetComponentType<Renderer>());
-	gameplayManager->SetRequiredComponent<ModelArray>(
-	   gameplayManager->GetComponentType<Renderer>());
-	gameplayManager->SetRequiredComponent<RenderSystem>(
-	  gameplayManager->GetComponentType<Transform>());
 
 	// LightningSystem
 	gameplayManager->SetRequiredComponent<LightningSystem>(
@@ -313,7 +310,6 @@ Game::LoadLevel(std::string levelPath)
 			{
 				// Render Component
 				gameplayManager->AddComponent(entity, Renderer(it2.value()));
-
 			} 
 			else if (it2.key() == "Camera") 
 			{
@@ -432,6 +428,22 @@ Game::LoadLevel(std::string levelPath)
 							entity,
 							Animator(animations));
 				
+			}
+			else if (it2.key() == "Skybox")
+			{
+				// 0 - 5: - paths to cubemaps 
+				std::vector<std::string> faces
+				{
+					it2.value()[0],
+					it2.value()[1],
+					it2.value()[2],
+					it2.value()[3],
+					it2.value()[4],
+					it2.value()[5],
+				};
+				gameplayManager->AddComponent(
+							entity,
+							Skybox(faces));
 			}
 			
 		}

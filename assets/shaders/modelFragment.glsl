@@ -4,7 +4,6 @@ out vec4 FragColor;
 in vec2 TexCoord;
 in vec3 Normal;
 in vec3 FragPos;
-in vec4 FragPosLightSpace;
 
 
 struct DirLight
@@ -137,8 +136,8 @@ vec3 ResultDirLight(DirLight light, vec3 normal, vec3 viewDir)
 	vec3 diffuse = light.diffuse * diff * vec3(texture(texture1, TexCoord).rgb);
 	vec3 specular = light.specular * spec;
 	
-	float shadow = ShadowCalculation(FragPosLightSpace, light.position);
-	vec3 result = (ambient + (1.0 - shadow) * (diffuse + specular));
+	//float shadow = ShadowCalculation(FragPosLightSpace, light.position);
+	vec3 result = (ambient + diffuse + specular);
 
 	return result;
 }

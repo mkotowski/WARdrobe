@@ -54,13 +54,19 @@ public:
     }
 
     // draws the model, and thus all its meshes
-    void Draw(unsigned int shaderID, float dt)
+    void Draw(unsigned int shaderID)
     {
         
         InitShaders(shaderID);
 
         for (unsigned int i = 0; i < meshes.size(); i++)
             meshes[i].Draw(shaderID);
+    }
+
+    void DrawAsRefractive(unsigned int shaderID)
+    {
+        for (unsigned int i = 0; i < meshes.size(); i++)
+            meshes[i].DrawAsRefractive(shaderID);
     }
     
 private:
