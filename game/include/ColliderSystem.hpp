@@ -16,6 +16,7 @@ struct BoundingBox
 	glm::vec3   origin;
 	glm::vec3   rotation;
 	glm::vec3   scale;
+	glm::vec3   orgScale = glm::vec3(0.0f, 0.0f, 0.0f);
 
 	vector<Mesh>   meshes;
 	vector<Vertex> vertices;
@@ -68,6 +69,10 @@ struct BoundingBox
 		rotation = componentManager->GetComponent<Transform>(e).rotation;
 		scale = componentManager->GetComponent<Transform>(e).scale;
 
+		if (orgScale == glm::vec3(0.0f, 0.0f, 0.0f)) {
+			orgScale = scale;
+		}
+
 		if (e == 6) {
 			/*cout << "minX " << minX << ", maxX " << maxX << ", minY " << minY
 			     << ", maxY " << maxY << ", minZ " << minZ << ", maxZ " << maxZ
@@ -95,12 +100,12 @@ struct BoundingBox
 		minZ = vertices[indexes[4]].Position.z + origin[2] * scale[2];
 		maxZ = vertices[indexes[5]].Position.z + origin[2] * scale[2];*/
 
-		minXLoc = -width / 2.0f;
-		maxXLoc = width / 2.0f;
+		minXLoc = -width / 2.0f * scale.x;
+		maxXLoc = width / 2.0f * scale.x;
 		minYLoc = 0.0f;
-		maxYLoc = height;
-		minZLoc = -depth / 2.0f;
-		maxZLoc = depth / 2.0f;
+		maxYLoc = height * scale.y;
+		minZLoc = -depth / 2.0f * scale.z;
+		maxZLoc = depth / 2.0f * scale.z;
 
 		AABBVertices[0] = glm::vec4(maxXLoc, maxYLoc, minZLoc, 0.0f);
 		AABBVertices[1] = glm::vec4(minXLoc, maxYLoc, minZLoc, 0.0f);
@@ -533,7 +538,8 @@ ColliderSystem::CheckCollision(
 			//	  glm::vec3(bounds1.minX >= bounds2.minX ? bounds2.maxX - bounds2.minX
 			//	                                         : bounds1.maxX -
 			// bounds1.minX, 	            bounds1.minY >= bounds2.minY ? bounds2.maxY
-			// - bounds2.minY 	                                         : bounds1.maxY
+			// - bounds2.minY 	                                         :
+			// bounds1.maxY
 			// - bounds1.minY, 	            bounds1.minZ
 			// >= bounds2.minZ ? bounds2.maxZ - bounds2.minZ : bounds1.maxZ -
 			// bounds1.minZ);
@@ -668,6 +674,8 @@ DrawBoundingBox(BoundingBox box,
 	model = glm::rotate(model,
 	                    glm::radians(box.rotation[2]),
 	                    glm::vec3(0.0f, 0.0f, 1.0f)); // Z axis
+
+	model = glm::scale(model, box.scale);
 
 	// model = glm::scale(model, box.scale);
 

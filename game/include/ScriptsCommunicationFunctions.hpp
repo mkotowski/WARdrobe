@@ -218,7 +218,8 @@ l_cppsetBoundingBoxDepth(lua_State* l)
 	float d = luaL_checknumber(l, 4);
 
 	cm->GetComponent<BoundingBox>(e).depth = d;
-	cm->GetComponent<Transform>(e).scale.z = d / defaultd;
+	cm->GetComponent<Transform>(e).scale.z =
+	  cm->GetComponent<BoundingBox>(e).orgScale.z * d / defaultd;
 
 	return 1;
 }
@@ -267,7 +268,7 @@ l_cppsetColor(lua_State* l)
 void
 setAllFunctions(lua_State* state)
 {
-	//Transform
+	// Transform
 	lua_pushcfunction(state, l_cppgetTransform);
 	lua_setglobal(state, "getTransform");
 
@@ -283,18 +284,18 @@ setAllFunctions(lua_State* state)
 	lua_pushcfunction(state, l_cppsetTransformRelToRotatingParent);
 	lua_setglobal(state, "setTransformRelToRotatingParent");
 
-	//Rigidbody
+	// Rigidbody
 	lua_pushcfunction(state, l_cppsetRBVelocity);
 	lua_setglobal(state, "setVelocity");
 
 	lua_pushcfunction(state, l_cppapplyForce);
 	lua_setglobal(state, "applyForce");
 
-	//Other
+	// Other
 	lua_pushcfunction(state, l_cppgetMouseWorldPos);
 	lua_setglobal(state, "getMouseWorldPos");
 
-	//BoundingBox
+	// BoundingBox
 	lua_pushcfunction(state, l_cppsetBoundingBox);
 	lua_setglobal(state, "setBoundingBox");
 
@@ -310,7 +311,7 @@ setAllFunctions(lua_State* state)
 	lua_pushcfunction(state, l_cppgetBoxPosition);
 	lua_setglobal(state, "getBoxPosition");
 
-	//Model
+	// Model
 	lua_pushcfunction(state, l_cppsetColor);
 	lua_setglobal(state, "setColor");
 }

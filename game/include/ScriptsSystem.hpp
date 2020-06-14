@@ -123,6 +123,12 @@ ScriptsSystem::Update(float                             dt,
 
 		for (auto script : scripts.names) {
 
+			std::string update = script.substr(0, script.length() - 4) + "Update";
+
+			lua_getglobal(state, update.c_str());
+			lua_pushnumber(state, dt);
+			ExecuteLuaFunction(1, 0);
+
 			std::string onCollision =
 			  script.substr(0, script.length() - 4) + "OnCollisionEnter";
 
@@ -140,12 +146,6 @@ ScriptsSystem::Update(float                             dt,
 			} else {
 				lua_pop(state, 1);
 			}
-
-			std::string update = script.substr(0, script.length() - 4) + "Update";
-
-			lua_getglobal(state, update.c_str());
-			lua_pushnumber(state, dt);
-			ExecuteLuaFunction(1, 0);
 		}
 	}
 }
