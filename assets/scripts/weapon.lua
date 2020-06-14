@@ -33,8 +33,6 @@ function weaponUpdate(dt)
         if #currentCombination > 0 then 
             table.remove( currentCombination, 1 )
         end
-
-        comboDecreaseTimeStamp = time
     end
 
     local fist = fists[1] == entity and leftFist or rightFist
@@ -185,14 +183,8 @@ function whirlwindCoroutine(dt)
 
     currentDepth = defaultDepth
 
-    while currentDepth < defaultDepth + 1.0 do
-        currentDepth = currentDepth + (20.0 * dt)
-        setBoundingBoxDepth(fists[1], componentManager, defaultDepth, currentDepth)
-        setBoundingBoxDepth(fists[2], componentManager, defaultDepth, currentDepth)
-        dt = coroutine.yield()
-    end
-    setBoundingBoxDepth(fists[1], componentManager, defaultDepth, defaultDepth + 1.0)
-    setBoundingBoxDepth(fists[2], componentManager, defaultDepth, defaultDepth + 1.0)
+    setBoundingBoxDepth(fists[1], componentManager, defaultDepth, defaultDepth + 0.33)
+    setBoundingBoxDepth(fists[2], componentManager, defaultDepth, defaultDepth + 0.33)
 
     local startingRotY = player.rotation.y
     local rotationY = startingRotY
@@ -215,11 +207,13 @@ function whirlwindCoroutine(dt)
         player.rotation.x, startingRotY, player.rotation.z)
 
     while currentDepth > defaultDepth do
-        currentDepth = currentDepth - (10.0 * dt)
+        currentDepth = currentDepth - (1.0 * dt)
         setBoundingBoxDepth(fists[1], componentManager, defaultDepth, currentDepth)
         setBoundingBoxDepth(fists[2], componentManager, defaultDepth, currentDepth)
+        print("current depth", currentDepth)
         dt = coroutine.yield()
     end
+
     setBoundingBoxDepth(fists[1], componentManager, defaultDepth, defaultDepth)
     setBoundingBoxDepth(fists[2], componentManager, defaultDepth, defaultDepth)
 

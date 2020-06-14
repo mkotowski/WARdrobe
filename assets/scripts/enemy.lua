@@ -10,13 +10,16 @@ function enemyStart()
 end
 
 function enemyUpdate(dt)
+    if detectedCombo == "none" then
+        enemies[entity].gotWhirlwind = false
+    end
 end
 
 function enemyOnCollisionEnter(box)
     local enemy = enemies[entity]
     if getTag(box) == "playerWeaponLeft" and time - enemy.leftHitTimeStamp > hitInterval 
     and leftFist.attackTimeStamp ~= enemy.leftHitTimeStamp then
-        enemy.leftHitTimeStamp = time
+        enemy.leftHitTimeStamp = leftFist.attackTimeStamp
 
         if globalComboLeftHitStamp ~= leftFist.attackTimeStamp then
             globalComboLeftHitStamp = leftFist.attackTimeStamp
@@ -25,13 +28,15 @@ function enemyOnCollisionEnter(box)
             if #currentCombination == 4 then
                 table.remove( currentCombination, 1 )
             end
+
+            comboDecreaseTimeStamp = time
         end
         getHit(enemy, leftFist.damage)
     end
 
     if getTag(box) == "playerWeaponRight" and time - enemy.rightHitTimeStamp > hitInterval 
     and rightFist.attackTimeStamp ~= enemy.rightHitTimeStamp then
-        enemy.rightHitTimeStamp = time
+        enemy.rightHitTimeStamp = rightFist.attackTimeStamp
 
         if globalComboRightHitStamp ~= rightFist.attackTimeStamp then
             globalComboRightHitStamp = rightFist.attackTimeStamp
@@ -40,6 +45,8 @@ function enemyOnCollisionEnter(box)
             if #currentCombination == 4 then
                 table.remove( currentCombination, 1 )
             end
+
+            comboDecreaseTimeStamp = time
         end
         getHit(enemy, rightFist.damage)
     end
@@ -47,7 +54,6 @@ end
 
 function getHit( enemy, dmg )
     enemy.health = enemy.health - dmg
-    print("Got dmg ", dmg, entity)
 
     if enemy.health <= 0.0 then
     end
@@ -55,10 +61,7 @@ function getHit( enemy, dmg )
     if detectedCombo ~= "none" and enemy.gotWhirlwind == false then
         local x, y, z = getTransform(entity, componentManager)
         applyForce(entity, componentManager, (player.position.x - x), (player.position.y - y), 
-        (player.position.z - z), -1000.0)
+        (player.position.z - z), -400.0)
         enemy.gotWhirlwind = true
-        print("Force applied")
-    elseif detectedCombo == "none" then
-        enemy.gotWhirlwind = false
     end
 end
