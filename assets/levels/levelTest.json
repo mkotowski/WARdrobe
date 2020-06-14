@@ -27,13 +27,24 @@
                 
                 
             ,
-    "playerFist" :
+    "playerFistLeft" :
 
                 {
                     "ModelArray" : [0, "assets/models/Wolf_dae.dae", "assets/textures/stone2.jpg"],
                     "Transform" : [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0],
                     "Renderer" : 3,
-                    "BoundingBox" : [1.0, 1.0, 1.0, 1, "playerWeapon"],
+                    "BoundingBox" : [1.0, 1.0, 1.0, 1, "playerWeaponLeft"],
+                    "Scripts" : ["weapon.lua"]
+                }
+
+            ,
+    "playerFistRight" :
+
+                {
+                    "ModelArray" : [0, "assets/models/Wolf_dae.dae", "assets/textures/stone2.jpg"],
+                    "Transform" : [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0],
+                    "Renderer" : 3,
+                    "BoundingBox" : [1.0, 1.0, 1.0, 1, "playerWeaponRight"],
                     "Scripts" : ["weapon.lua"]
                 }
 
@@ -43,6 +54,30 @@
                 {
                     "ModelArray" : [0, "assets/models/Wolf_dae.dae", "assets/textures/stone2.jpg"],
                     "Transform" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
+                    "Rigidbody" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+                    "Gravity" : [ 0.0, 0.0, 0.0 ],
+                    "Renderer" : 3,
+                    "BoundingBox" : [2.0, 7.0, 2.0, 0, "enemy"],
+                    "Scripts" : ["enemy.lua"]
+                }
+            ,
+    "enemy1" :
+            
+                {
+                    "ModelArray" : [0, "assets/models/Wolf_dae.dae", "assets/textures/stone2.jpg"],
+                    "Transform" : [ 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
+                    "Rigidbody" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+                    "Gravity" : [ 0.0, 0.0, 0.0 ],
+                    "Renderer" : 3,
+                    "BoundingBox" : [2.0, 7.0, 2.0, 0, "enemy"],
+                    "Scripts" : ["enemy.lua"]
+                }
+            ,
+    "enemy2" :
+            
+                {
+                    "ModelArray" : [0, "assets/models/Wolf_dae.dae", "assets/textures/stone2.jpg"],
+                    "Transform" : [ 5.0, 0.0, 10.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
                     "Rigidbody" : [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
                     "Gravity" : [ 0.0, 0.0, 0.0 ],
                     "Renderer" : 3,

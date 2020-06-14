@@ -17,6 +17,7 @@ float rightInput = 0.0f;
 float playerInputHorizontal = 0.0f;
 float playerInputVertical = 0.0f;
 bool  leftMousePressed = false;
+bool  rightMousePressed = false;
 
 class CameraSystem : public System
 {

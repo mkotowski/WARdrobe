@@ -13,6 +13,7 @@
 #include "CameraSystem.hpp"
 #include "ColliderSystem.hpp"
 #include "ShaderSystem.hpp"
+#include "ScriptsCommunicationFunctions.hpp"
 #include "ScriptsSystem.hpp"
 
 #include "ecs.hpp"

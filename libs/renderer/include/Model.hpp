@@ -34,6 +34,7 @@ public:
     string directory;
     unsigned int textureID;
     bool gammaCorrection;
+    glm::vec4 color;
 
     /*  Functions   */
     // constructor, expects a filepath to a 3D model.
@@ -43,6 +44,7 @@ public:
     }
     Model(string const &modelPath, string const &texturesPath,bool gamma = false) : gammaCorrection(gamma)
     {
+		color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
         loadModel(modelPath, texturesPath);
         //textureID = TextureFromFile(texturesPath.c_str());
         

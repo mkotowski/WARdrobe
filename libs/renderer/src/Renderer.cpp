@@ -28,7 +28,7 @@ Renderer::Draw(Shader*   ourShader,
 	              sceneCamera->cameraPos + sceneCamera->cameraFront,
 	              sceneCamera->cameraUp);
 
-	glm::vec4 newColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	glm::vec4 newColor = ourModel->color;
 
 	glm::mat4 model = glm::mat4(1.0f);
 

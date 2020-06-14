@@ -95,6 +95,13 @@ struct BoundingBox
 		minZ = vertices[indexes[4]].Position.z + origin[2] * scale[2];
 		maxZ = vertices[indexes[5]].Position.z + origin[2] * scale[2];*/
 
+		minXLoc = -width / 2.0f;
+		maxXLoc = width / 2.0f;
+		minYLoc = 0.0f;
+		maxYLoc = height;
+		minZLoc = -depth / 2.0f;
+		maxZLoc = depth / 2.0f;
+
 		AABBVertices[0] = glm::vec4(maxXLoc, maxYLoc, minZLoc, 0.0f);
 		AABBVertices[1] = glm::vec4(minXLoc, maxYLoc, minZLoc, 0.0f);
 		AABBVertices[2] = glm::vec4(minXLoc, minYLoc, minZLoc, 0.0f);

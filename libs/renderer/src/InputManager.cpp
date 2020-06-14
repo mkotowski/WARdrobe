@@ -309,6 +309,14 @@ InputManager::UpdateInput(int id, int source, int state, int mods)
 		leftMousePressed = false;
 	}
 
+	if (id == GLFW_KEY_B && source == InputSource::KEY &&
+	    state == GLFW_PRESS) {
+		rightMousePressed = true;
+	} else if (id == GLFW_KEY_B && source == InputSource::KEY &&
+	           state == GLFW_RELEASE) {
+		rightMousePressed = false;
+	}
+
 	Input searchedInput;
 	searchedInput.id = id;
 	searchedInput.source = source;
