@@ -13,6 +13,7 @@
 #include "CameraSystem.hpp"
 #include "ColliderSystem.hpp"
 #include "ShaderSystem.hpp"
+#include "ScriptsSystem.hpp"
 
 #include "LightningSystem.hpp"
 #include "AnimationSystem.hpp"
@@ -151,6 +152,10 @@ Game::Loop()
 	   gameplayManager->GetComponentType<ModelArray>());
 	gameplayManager->SetRequiredComponent<AnimationSystem>(
 		gameplayManager->GetComponentType<Animator>());
+	// ScriptsSystem
+	gameplayManager->SetRequiredComponent<ScriptsSystem>(
+	  gameplayManager->GetComponentType<Scripts>());
+
 	// ScriptsSystem
 	gameplayManager->SetRequiredComponent<ScriptsSystem>(
 	  gameplayManager->GetComponentType<Scripts>());
