@@ -418,7 +418,7 @@ ColliderSystem::DrawBoundingBox(BoundingBox box)
     glm::mat4 projection = glm::mat4(1.0f);
 	//https://community.khronos.org/t/application-crashes-with-the-window-resize-event/72684
 	  /*
-	  It’s complaining that you’re passing zero for the “aspect” parameter of glm::perspective.
+	  Itï¿½s complaining that youï¿½re passing zero for the ï¿½aspectï¿½ parameter of glm::perspective.
 
 		This will occur if winWidth and winHeight are both integers 
 		and winWidth is less than winHeight. If you want the ratio as 

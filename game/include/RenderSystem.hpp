@@ -7,12 +7,17 @@
 #include "stb_image.h"
 
 #include "AssetManager.hpp"
+#include "Animator.hpp"
 #include "Camera.hpp"
 #include "ModelArray.hpp"
 #include "Renderer.hpp"
+#include "Skybox.hpp"
 #include "Shader.hpp"
 #include "Window.hpp"
+#include "Light.hpp"
 #include "ecs.hpp"
+
+
 
 class RenderSystem : public System
 {
@@ -23,8 +28,11 @@ public:
 	void    Draw();
 	int 	CheckDistance(Entity entityToCheck, std::shared_ptr<ComponentManager> componentManager);
 	Entity  cameraEntity;
-	Window* window;
-	std::map <std::string, Entity> shaders;
+	Entity 	lightEntity;
+	Window *window;
+	std::map <std::string, Entity> *shaders;
+	Skybox* skybox;
+
 	float 	firstLevelOfDetail = 30.0f;
 	float 	secondLevelOfDetail = 50.0f;
 	float 	thirdLevelOfDetail = 75.0f;
@@ -33,30 +41,82 @@ public:
 void
 RenderSystem::Update(float                             dt,
                      std::shared_ptr<ComponentManager> componentManager)
-{
+{	
+	glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	for (auto const& entity : entities) {
 
+	auto& cameraComponent = componentManager->GetComponent<Camera>(cameraEntity);
+	// Setup all neded entities so they dont have to be searched and/or attached to renderSystem at the start
+	for (auto& const entity: entities)
+	{
+		if (componentManager->GetComponent<Renderer>(entity).drawingType == 3)
+		{
+			this->skybox = &componentManager->GetComponent<Skybox>(entity);
+		}
+	}
+
+	for (auto const& entity : entities) 
+	{
 		auto& renderer = componentManager->GetComponent<Renderer>(entity);
-		auto& modelArray = componentManager->GetComponent<ModelArray>(entity);
+		
 		auto& shader = Shader();
 		if (renderer.drawingType == 0)
 		{
-			shader = componentManager->GetComponent<Shader>(shaders["modelShader"]);
+			shader = componentManager->GetComponent<Shader>(shaders->at("modelShader"));
+			shader.use();
 		}
+
 		else if (renderer.drawingType == 1)
 		{
-			shader = componentManager->GetComponent<Shader>(shaders["billboardShader"]);
-		}		
+			shader = componentManager->GetComponent<Shader>(shaders->at("billboardShader"));
+			shader.use();
+		}
+		else if (renderer.drawingType == 2)
+		{
+			shader = componentManager->GetComponent<Shader>(shaders->at("animatedModelShader"));
+			shader.use();
+			auto& animator = componentManager->GetComponent<Animator>(entity);
+			animator.PlayCurrentAnimation(dt);
+		}
+		else if (renderer.drawingType == 3)
+		{
+			shader = componentManager->GetComponent<Shader>(shaders->at("skyBoxShader"));
+			shader.use();
+
+			
+			renderer.DrawSkybox(&shader, 
+								this->skybox, 
+								&cameraComponent, 
+								window->GetWindowWidth(), 
+								window->GetWindowHeight());
+			continue;	
+		}
+		else if (renderer.drawingType == 4)
+		{
+			shader = componentManager->GetComponent<Shader>(shaders->at("cubemapShader"));
+			shader.use();
+			auto& modelArray = componentManager->GetComponent<ModelArray>(entity);	
+			auto& transform = componentManager->GetComponent<Transform>(entity);
+			renderer.DrawRefractiveObject(&shader, 
+										  &modelArray.zeroLevelModel, 
+										  &cameraComponent, 
+										  this->skybox,
+										  transform.position,
+										  transform.rotation,
+									  	  transform.scale,
+										  this->window->GetWindowWidth(),
+										  this->window->GetWindowHeight());
+		}
+		
+		auto& modelArray = componentManager->GetComponent<ModelArray>(entity);	
 		auto& transform = componentManager->GetComponent<Transform>(entity);
 
-		
 		if (modelArray.checkLevelOfDetail == 0)
 		{
 			renderer.Draw(&shader,
 		              &modelArray.zeroLevelModel,
-		              &componentManager->GetComponent<Camera>(cameraEntity),
+		              &cameraComponent,
 		              transform.position,
 		              transform.rotation,
 		              transform.scale,
@@ -73,7 +133,7 @@ RenderSystem::Update(float                             dt,
 			{
 				renderer.Draw(&shader,
 		              &modelArray.firstLevelModel,
-		              &componentManager->GetComponent<Camera>(cameraEntity),
+		              &cameraComponent,
 		              transform.position,
 		              transform.rotation,
 		              transform.scale,
@@ -84,7 +144,7 @@ RenderSystem::Update(float                             dt,
 			{
 				renderer.Draw(&shader,
 		              &modelArray.secondLevelModel,
-		              &componentManager->GetComponent<Camera>(cameraEntity),
+		              &cameraComponent,
 		              transform.position,
 		              transform.rotation,
 		              transform.scale,
@@ -95,7 +155,7 @@ RenderSystem::Update(float                             dt,
 			{
 				renderer.Draw(&shader,
 		              &modelArray.thirdLevelModel,
-		              &componentManager->GetComponent<Camera>(cameraEntity),
+		              &cameraComponent,
 		              transform.position,
 		              transform.rotation,
 		              transform.scale,
@@ -113,9 +173,10 @@ RenderSystem::Update(float                             dt,
 void
 RenderSystem::Init()
 {
+
 	glEnable(GL_MULTISAMPLE);
-	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 

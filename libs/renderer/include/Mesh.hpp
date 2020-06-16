@@ -5,6 +5,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <assimp/Importer.hpp>
 
 #include <Shader.hpp>
 
@@ -34,21 +35,63 @@ struct Texture {
     string path;
 };
 
+struct VertexBoneData
+{
+    int BoneIDs[4];
+    float Weights[4];
+
+    VertexBoneData()
+    {
+        BoneIDs[0] = 0;
+        BoneIDs[1] = 0;
+        BoneIDs[2] = 0;
+        BoneIDs[3] = 0;
+
+        Weights[0] = 0.0f;
+        Weights[1] = 0.0f;
+        Weights[2] = 0.0f;
+        Weights[3] = 0.0f;
+    }
+
+    void addBoneData(unsigned int boneID, float weight)
+    {
+        for (unsigned int i = 0; i < 4; i++) 
+        {
+            if (Weights[i] == 0.0) 
+            {
+                BoneIDs[i] = boneID;
+                Weights[i] = weight;
+                return;
+            }
+	    }
+    }
+};
+
+struct BoneMatrix
+{
+	aiMatrix4x4 offset_matrix;
+	aiMatrix4x4 final_world_transform;
+
+};
+
+
 class Mesh {
 public:
     /*  Mesh Data  */
     vector<Vertex> vertices;
     vector<unsigned int> indices;
     vector<Texture> textures;
-    unsigned int VAO;
+    vector<VertexBoneData> bonesData;
+    unsigned int VAO;    
 
     /*  Functions  */
     // constructor
-    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures)
+    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures, vector<VertexBoneData> vertexBoneData)
     {
         this->vertices = vertices;
         this->indices = indices;
         this->textures = textures;
+        this->bonesData = vertexBoneData;
 
         // now that we have all the required data, set the vertex buffers and its attribute pointers.
         setupMesh();
@@ -82,8 +125,18 @@ public:
             // and finally bind the texture
             glBindTexture(GL_TEXTURE_2D, textures[i].id);
         }
-        
+
         // draw mesh
+        glBindVertexArray(VAO);
+        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
+
+        // always good practice to set everything back to defaults once configured.
+        glActiveTexture(GL_TEXTURE0);
+    }
+
+    void DrawAsRefractive(unsigned int shaderID) 
+    {
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
@@ -94,45 +147,50 @@ public:
 
 private:
     /*  Render data  */
-    unsigned int VBO, EBO;
+    unsigned int VBO_vertices, VBO_bones, EBO;
 
     /*  Functions    */
     // initializes all the buffer objects/arrays
     void setupMesh()
     {
-        // create buffers/arrays
-        glGenVertexArrays(1, &VAO);
-        glGenBuffers(1, &VBO);
+        glGenBuffers(1, &VBO_vertices);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO_vertices);
+        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertices[0]), &vertices[0], GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        //bones data
+        glGenBuffers(1, &VBO_bones);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO_bones);
+        glBufferData(GL_ARRAY_BUFFER, bonesData.size() * sizeof(bonesData[0]), &bonesData[0], GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        //numbers for sequence indices
         glGenBuffers(1, &EBO);
-
-        glBindVertexArray(VAO);
-        // load data into vertex buffers
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        // A great thing about structs is that their memory layout is sequential for all its items.
-        // The effect is that we can simply pass a pointer to the struct and it translates perfectly to a glm::vec3/2 array which
-        // again translates to 3/2 floats which translates to a byte array.
-        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);  
-
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), &indices[0], GL_STATIC_DRAW);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-        // set the vertex attribute pointers
-        // vertex Positions
-        glEnableVertexAttribArray(0);	
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-        // vertex normals
-        glEnableVertexAttribArray(1);	
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
-        // vertex texture coords
-        glEnableVertexAttribArray(2);	
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
-        // vertex tangent
+        // create VAO and binding data from buffers to shaders
+        glGenVertexArrays(1, &VAO);
+        glBindVertexArray(VAO);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO_vertices);
+        //vertex position
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
+        glEnableVertexAttribArray(1); // offsetof(Vertex, normal) = returns the byte offset of that variable from the start of the struct
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, Normal));
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, TexCoords));
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        //bones
+        glBindBuffer(GL_ARRAY_BUFFER, VBO_bones);
         glEnableVertexAttribArray(3);
-        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Tangent));
-        // vertex bitangent
+        glVertexAttribIPointer(3, 4, GL_INT, sizeof(VertexBoneData), (GLvoid*)0); // for INT Ipointer
         glEnableVertexAttribArray(4);
-        glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Bitangent));
-
+        glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(VertexBoneData), (GLvoid*)offsetof(VertexBoneData, Weights));
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        //indices
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
         glBindVertexArray(0);
     }
 };

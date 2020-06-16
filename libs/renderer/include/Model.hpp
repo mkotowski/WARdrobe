@@ -21,6 +21,9 @@
 #include <iostream>
 #include <map>
 #include <vector>
+
+#define MAX_BONES_IN_SHADER 32
+
 using namespace std;
 
 
@@ -29,12 +32,12 @@ class Model
 {
 public:
     /*  Model Data */
-    vector<Texture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
-    vector<Mesh> meshes;
-    string directory;
-    unsigned int textureID;
-    bool gammaCorrection;
-
+    map<string, unsigned int> mBoneMapping;
+    vector<BoneMatrix> mBoneMatrices;
+    aiMatrix4x4 mGlobalInverseTransform;
+    vector<aiMatrix4x4> transforms;
+    unsigned int mNumBones = 0;
+    GLuint mBoneLocation[MAX_BONES_IN_SHADER];
     /*  Functions   */
     // constructor, expects a filepath to a 3D model.
     Model()
@@ -43,7 +46,9 @@ public:
     }
     Model(string const &modelPath, string const &texturesPath,bool gamma = false) : gammaCorrection(gamma)
     {
+        
         loadModel(modelPath, texturesPath);
+        
         //textureID = TextureFromFile(texturesPath.c_str());
         
     }
@@ -52,11 +57,40 @@ public:
     void Draw(unsigned int shaderID)
     {
         
-        for(unsigned int i = 0; i < meshes.size(); i++)
+        InitShaders(shaderID);
+
+        for (unsigned int i = 0; i < meshes.size(); i++)
             meshes[i].Draw(shaderID);
+    }
+
+    void DrawAsRefractive(unsigned int shaderID)
+    {
+        for (unsigned int i = 0; i < meshes.size(); i++)
+            meshes[i].DrawAsRefractive(shaderID);
     }
     
 private:
+    vector<Texture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
+    vector<Mesh> meshes;
+    string directory;
+    unsigned int textureID;
+    bool gammaCorrection;
+    const aiScene* scene;
+    float currentAnimationTime = 0;
+
+
+
+    float ticksPerSecond = 0.0f;
+
+    void InitShaders(GLuint shaderID)
+    {
+        for (unsigned int i = 0; i < MAX_BONES_IN_SHADER; i++)
+        {
+            string name = "gBones[" + to_string(i) + "]";
+            mBoneLocation[i] = glGetUniformLocation(shaderID, name.c_str());
+        }
+    }
+
     unsigned int TextureFromFile(string path)
     {
         string filename = path;
@@ -102,17 +136,35 @@ private:
     {
         // read file via ASSIMP
         Assimp::Importer importer;
-        const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+        importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+        scene = importer.GetOrphanedScene();
         // check for errors
         if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
         {
             cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << endl;
             return;
         }
+        if (scene->mNumAnimations > 0)
+        {
+            mGlobalInverseTransform = scene->mRootNode->mTransformation;
+            mGlobalInverseTransform.Inverse();
+
+            if (scene->mAnimations[0]->mTicksPerSecond != 0.0)
+            {
+                ticksPerSecond = scene->mAnimations[0]->mTicksPerSecond;
+            }
+            else
+            {
+                ticksPerSecond = 25.0f;
+            }
+        }
+        
+
         
 
         // process ASSIMP's root node recursively
         processNode(scene->mRootNode, scene, texturePath);
+
     }
 
     // processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
@@ -126,6 +178,7 @@ private:
             aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
             meshes.push_back(processMesh(mesh, scene, texturePath));
         }
+        
         // after we've processed all of the meshes (if any) we then recursively process each of the children nodes
         for(unsigned int i = 0; i < node->mNumChildren; i++)
         {
@@ -140,6 +193,7 @@ private:
         vector<Vertex> vertices;
         vector<unsigned int> indices;
         vector<Texture> textures;
+        vector<VertexBoneData> boneData;
 
         // Walk through each of the mesh's vertices
         for(unsigned int i = 0; i < mesh->mNumVertices; i++)
@@ -190,14 +244,6 @@ private:
         }
         // process materials
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];    
-        // we assume a convention for sampler names in the shaders. Each diffuse texture should be named
-        // as 'texture_diffuseN' where N is a sequential number ranging from 1 to MAX_SAMPLER_NUMBER. 
-        // Same applies to other texture as the following list summarizes:
-        // diffuse: texture_diffuseN
-        // specular: texture_specularN
-        // normal: texture_normalN
-
-        // 1. diffuse maps
 
         Texture texture;
 
@@ -207,64 +253,42 @@ private:
         textures.push_back(texture);
         textures_loaded.push_back(texture);
 
-        /*
-        vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
-        textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-        // 2. specular maps
-        vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
-        textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-        // 3. normal maps
-        std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
-        textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
-        // 4. height maps
-        std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
-        textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
-        */
+        boneData.resize(mesh->mNumVertices);
+
+        for (unsigned int i = 0; i < mesh->mNumBones; i++)
+        {
+                unsigned int boneIndex = 0;
+                string boneName(mesh->mBones[i]->mName.data);
+
+                if (mBoneMapping.find(boneName) == mBoneMapping.end())
+                {
+                    
+                    boneIndex = mNumBones;
+                    mNumBones++;
+                    BoneMatrix boneMat;
+                    mBoneMatrices.push_back(boneMat);
+                    mBoneMatrices[boneIndex].offset_matrix = mesh->mBones[i]->mOffsetMatrix;
+                    mBoneMapping[boneName] = boneIndex;
+                }
+                else
+                {
+                    boneIndex = mBoneMapping[boneName];
+                }
+                    
+                for (unsigned int j = 0; j < mesh->mBones[i]->mNumWeights; j++)
+                {
+                    unsigned int vertexID = mesh->mBones[i]->mWeights[j].mVertexId;
+                    float weight = mesh->mBones[i]->mWeights[j].mWeight;
+                
+                    boneData[vertexID].addBoneData(boneIndex, weight);
+                
+                }                
+        }        
 
         // return a mesh object created from the extracted mesh data
-        return Mesh(vertices, indices, textures);
+        return Mesh(vertices, indices, textures, boneData);
     }
-
-    // checks all material textures of a given type and loads the textures if they're not loaded yet.
-    // the required info is returned as a Texture struct.
-    vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, string typeName)
-    {
-        /*
-        vector<Texture> textures;
-
-        Texture texture;
-        texture.id = TextureFromFile()
-        */
-        /*
-        for(unsigned int i = 0; i < mat->GetTextureCount(type); i++)
-        {
-            aiString str;
-            mat->GetTexture(type, i, &str);
-            // check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
-            bool skip = false;
-            for(unsigned int j = 0; j < textures_loaded.size(); j++)
-            {
-                if(std::strcmp(textures_loaded[j].path.data(), str.C_Str()) == 0)
-                {
-                    textures.push_back(textures_loaded[j]);
-                    skip = true; // a texture with the same filepath has already been loaded, continue to next one. (optimization)
-                    break;
-                }
-            }
-            if(!skip)
-            {   // if texture hasn't been loaded already, load it
-                
-                Texture texture;
-                texture.id = TextureFromFile(str.C_Str());
-                texture.type = typeName;
-                texture.path = str.C_Str();
-                textures.push_back(texture);
-                textures_loaded.push_back(texture);  // store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.
-            }
-        }
-        */
-        //return textures;
-    }
+    
 };
 
 
