@@ -7,6 +7,7 @@
 #include "stb_image.h"
 
 #include "AssetManager.hpp"
+#include "Animator.hpp"
 #include "Camera.hpp"
 #include "ModelArray.hpp"
 #include "Renderer.hpp"
@@ -75,6 +76,8 @@ RenderSystem::Update(float                             dt,
 		{
 			shader = componentManager->GetComponent<Shader>(shaders->at("animatedModelShader"));
 			shader.use();
+			auto& animator = componentManager->GetComponent<Animator>(entity);
+			animator.PlayCurrentAnimation(dt);
 		}
 		else if (renderer.drawingType == 3)
 		{

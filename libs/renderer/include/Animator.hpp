@@ -24,23 +24,25 @@ public:
 
     // Maybe set it after creating?
     // Needs to be secured tho
-    Animator(std::vector<std::pair<std::string, bool>> animations)
+    Animator(std::vector<std::pair<std::string, bool>> animations, std::vector<std::string> animationNames, std::string idleAnimationName)
     {
+        int iterator = 0;
         for (auto animation : animations)
         {
-            LoadAnimationFromFile(animation.first, animation.second);
+            LoadAnimationFromFile(animation.first, animation.second, animationNames.at(iterator));
+            iterator++;
         }
 
         this->currentAnimationName = animationsMap.begin()->first;
-        this->idleAnimationName = animationsMap.begin()->first;
+        this->idleAnimationName = idleAnimationName;
     }
 
-    void LoadAnimationFromFile(std::string path, bool isLooping)
+    void LoadAnimationFromFile(std::string path, bool isLooping, std::string name)
     {
 
         Assimp::Importer importer;
         importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
-        std::string animationName = importer.GetScene()->mAnimations[0]->mName.data;
+        std::string animationName = name;
         float ticksPerSecond = 25.0f;
 
         if (importer.GetScene()->mAnimations[0]->mTicksPerSecond != 0.0)
@@ -62,7 +64,6 @@ public:
 
     void PlayCurrentAnimation(float dt)
     {
-        CheckIfEnded();
         BoneTransform((double)dt, animatedModel->transforms, animationsMap.at(currentAnimationName));
         SetBoneTransforms();
         
@@ -89,7 +90,7 @@ private:
         if (!animationsMap.at(currentAnimationName).isLooping && this->currentAnimationTime >= animationsMap.at(currentAnimationName).scene->mAnimations[0]->mDuration)
         {
             this->currentAnimationName = this->idleAnimationName;
-            std::cout << "Changing to idle animation" << std::endl;
+            this->currentAnimationTime = 0.0f;
         }
     }
 
@@ -228,6 +229,7 @@ private:
 
         double timeInTicks = timeInSeconds * animation.ticksPerSecond;
         this->currentAnimationTime += timeInTicks;
+        CheckIfEnded();
         this->currentAnimationTime = fmod(currentAnimationTime, animation.scene->mAnimations[0]->mDuration);
 
         ReadNodeHierarchy(currentAnimationTime, animation.scene->mRootNode, identityMatrix, animation.scene);

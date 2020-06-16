@@ -26,7 +26,7 @@ ShaderSystem::Init(std::shared_ptr<ComponentManager> componentManager)
                         entity
                         });
         auto& shader = componentManager->GetComponent<Shader>(entity);
-        shader.currentSubroutine = "ColorWavy";
+        shader.currentSubroutine = "ColorWhite";
         std::cout << shader.currentSubroutine << std::endl;
     }
 }

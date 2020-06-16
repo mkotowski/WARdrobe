@@ -19,23 +19,43 @@
                 {
                     "ModelArray" : [0, "assets/models/model_tutorial.dae", "assets/textures/stone2.jpg"],
                     "Transform" : [ 0.0, -2.0, -4.0, 270.0, 0.0, -90.0, 1.0, 1.0, 1.0 ],
-                    "Renderer" : 2,
-                    "Animator" : [1, "IDLEANIMATIONNAME", 
-                                "assets/models/model_tutorial.dae", true],
+                    "Renderer" : 0,
                     "BoundingBox" : [1.0, 1.0, 0.7],
                     "Scripts" : ["character.lua"]
                 }
             ,
-    "testAnimationModel2" :            
+    "Drugman" :            
                 {
-                    "ModelArray" : [0, "assets/models/model_tutorial.dae", "assets/textures/stone2.jpg"],
-                    "Transform" : [ 1.0, -2.0, -4.0, 270.0, 0.0, -90.0, 1.0, 1.0, 1.0 ],
+                    "ModelArray" : [0, "assets/models/Drugman/DrugmanWalk.fbx", "assets/textures/Drugman.png"],
+                    "Transform" : [ 1.0, -2.0, -4.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001 ],
                     "Renderer" : 2,
-                    "Animator" : [1, "IDLEANIMATIONNAME", 
-                                "assets/models/model_tutorial.dae", true],
-                    "BoundingBox" : [1.0, 1.0, 0.7]
+                    "Animator" : [4, "Walking",
+                        "assets/models/Drugman/DrugmanWalk.fbx", true, "Walking",
+                        "assets/models/Drugman/DrugmanWindmill.fbx", false, "Windmill",
+                        "assets/models/Drugman/DrugmanLeftAttack.fbx", false, "LeftAttack",
+                        "assets/models/Drugman/DrugmanRightAttack.fbx", false, "RightAttack"]
                 }
             ,
+    "Lamp" :            
+            {
+                "ModelArray" : [0, "assets/models/Lamp/LampJump.fbx", "assets/textures/Lamp_Monster.png"],
+                "Transform" : [ -1.0, -2.0, -4.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001 ],
+                "Renderer" : 2,
+                "Animator" : [2, "Walking",
+                    "assets/models/Lamp/LampJump.fbx", true, "Walking",
+                    "assets/models/Lamp/LampSmack.fbx", false, "Attack"]
+            }
+        ,
+    "BatBulb" :            
+        {
+            "ModelArray" : [0, "assets/models/BatBulb/BatBulbFlight.fbx", "assets/textures/BatBulb.png"],
+            "Transform" : [ -2.0, -2.0, -4.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001 ],
+            "Renderer" : 2,
+            "Animator" : [2, "Walking",
+                "assets/models/BatBulb/BatBulbFlight.fbx", true, "Walking",
+                "assets/models/BatBulb/BatBulbSpin.fbx", false, "Attack"]
+        }
+    ,
     "rycerzModel" :
                 {
                     "ModelArray" : [1, "assets/models/nanosuit.obj", "assets/textures/stone2.jpg",

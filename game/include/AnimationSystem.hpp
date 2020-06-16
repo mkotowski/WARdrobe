@@ -27,9 +27,9 @@ void AnimationSystem::Init(std::shared_ptr<ComponentManager> componentManager)
 void AnimationSystem::Update(float                             dt,
 	            std::shared_ptr<ComponentManager> componentManager)
 {
-	for (auto& entity: entities)
-	{
-		auto& animator = componentManager->GetComponent<Animator>(entity);
-		animator.PlayCurrentAnimation(dt);
-	}
+	// for (auto& entity: entities)
+	// {
+	// 	auto& animator = componentManager->GetComponent<Animator>(entity);
+	// 	animator.PlayCurrentAnimation(dt);
+	// }
 }

@@ -414,19 +414,23 @@ Game::LoadLevel(std::string levelPath)
 				// 1 	- name of the IdleAnimation
 				// 2x	- path to animation file
 				// 3x	- looping option (true/false)
+				// 4x	- animation Name
 
 				std::vector<std::pair<std::string, bool>> animations;
+				std::vector<std::string> animationNames;
 				
 				int numOfAnimations = it2.value()[0];
+				std::string idleAnimationName = it2.value()[1];
 
-				for (int i = 0; i < numOfAnimations * 2; i += 2)
+				for (int i = 0; i < numOfAnimations * 3; i += 3)
 				{
 					std::pair<std::string, bool> animation (it2.value()[2+i], it2.value()[3+i]);
 					animations.push_back(animation);
+					animationNames.push_back(it2.value()[4+i]);
 				}
 				gameplayManager->AddComponent(
 							entity,
-							Animator(animations));
+							Animator(animations, animationNames, idleAnimationName));
 				
 			}
 			else if (it2.key() == "Skybox")
