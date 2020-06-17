@@ -613,6 +613,7 @@ DrawBoundingBox(BoundingBox box,
                 Shader*     ourShader,
                 Window*     window)
 {
+	return;
 	float vertices[] = {
 		(-box.width / 2.0f), box.height, (-box.depth / 2.0f), 0.0f, 0.0f,
 		(box.width / 2.0f),  box.height, (-box.depth / 2.0f), 1.0f, 0.0f,

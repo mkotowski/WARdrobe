@@ -5,14 +5,16 @@ globalComboRightHitStamp = 0.0
 minimalDistance = 3.5
 maximalDistance = 8.0
 unconsciousnessTime = 2.0
+timeBetweenAttacks = 5.0
 
 enemies = {}
 
 speed = 1.0
 
 function enemyStart()
-    local enemy = {health = 100.0, position = {x = 0.0, y = 0.0, z = 0.0}, velocity = {x = 0.0, y = 0.0, z = 0.0}, leftHitTimeStamp = 0.0, 
-    rightHitTimeStamp = 0.0, unconscious = false}
+    local enemy = {health = 100.0, position = {x = 0.0, y = 0.0, z = 0.0}, velocity = {x = 0.0, y = 0.0, z = 0.0}, 
+    leftHitTimeStamp = 0.0, rotation = {x = 0.0, y = 0.0, z = 0.0},
+    rightHitTimeStamp = 0.0, attackTimeStamp = 0.0, unconscious = false, colliderEntity = -1, attackCo = {}, attackCoFunc = {}}
     enemy.position.x, enemy.position.y, enemy.position.z = getTransform(entity, componentManager)
     enemy.velocity.x, enemy.velocity.y, enemy.velocity.z = getVelocity(entity, componentManager)
     enemies[entity] = enemy
@@ -22,13 +24,14 @@ function enemyUpdate(dt)
     enemy = enemies[entity]
     enemy.position.x, enemy.position.y, enemy.position.z = getTransform(entity, componentManager)
     enemy.velocity.x, enemy.velocity.y, enemy.velocity.z = getVelocity(entity, componentManager)
+    enemy.rotation.x, enemy.rotation.y, enemy.rotation.z = getRotation(entity, componentManager)
 
     if isUnconscious() == true then
         return
     end
 
     enemySetRotation()
-    handleBehaviour()
+    handleBehaviour(dt)
 end
 
 function isUnconscious()
@@ -57,7 +60,7 @@ function enemySetRotation()
     setRotation(entity, componentManager, 0.0, -angle + 90.0, 0.0)
 end
 
-function handleBehaviour()
+function handleBehaviour(dt)
     local xDir = player.position.x - enemy.position.x
     local yDir = 0.0
     local zDir = player.position.z - enemy.position.z
@@ -67,15 +70,28 @@ function handleBehaviour()
     local distance = math.sqrt( (xDir * xDir) + (zDir * zDir) )
     chasePlayer = distance < maximalDistance and true or false
 
+    if lamps[enemy.colliderEntity].attacking == true then
+        continueAttack(dt)
+        return
+    end
+
     if isPlayerClose == false then --idle behaviour
         xDir = 0.0
         zDir = 0.0
     elseif distance > minimalDistance then --chase behaviour
         xDir, yDir, zDir = normalize(xDir, yDir, zDir)
+        enemyPlayAnim("Walking")
     else --attack behaviour
         xDir = 0.0
         zDir = 0.0
 
+        if lamps[enemy.colliderEntity].attacking == false and time - enemy.attackTimeStamp > timeBetweenAttacks then
+            enemy.attackTimeStamp = time
+            enemyPlayAnim("Attack")
+            performAttack(dt)
+        else
+            continueAttack(dt)
+        end
     end
     
     moveObject(xDir * speed, yDir, zDir * speed)
@@ -141,9 +157,12 @@ function getHit( enemy, dmg )
 end
 
 function Die()
-    local enemyToDestroy = enemies[entity]
-
+    lamps[enemies[entity].colliderEntity] = nil
+    destroyEntity(gameplayManager, enemies[entity].colliderEntity)
     enemies[entity] = nil
-
     destroyEntity(gameplayManager, entity)
+end
+
+function enemyPlayAnim(name)
+    playAnimation(entity, componentManager, name)
 end

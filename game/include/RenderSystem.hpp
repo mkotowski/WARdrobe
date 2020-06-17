@@ -62,6 +62,19 @@ RenderSystem::Update(float                             dt,
 		auto& renderer = componentManager->GetComponent<Renderer>(entity);
 		
 		auto& shader = Shader();
+
+		if (renderer.drawingType == 7) {
+			shader = componentManager->GetComponent<Shader>(shaders->at("boxShader"));
+
+			auto& box = componentManager->GetComponent<BoundingBox>(entity);
+
+			DrawBoundingBox(box,
+			                &componentManager->GetComponent<Camera>(cameraEntity),
+			                &shader,
+			                this->window);
+			continue;
+		}
+
 		if (renderer.drawingType == 0 || renderer.drawingType == 6)
 		{
 			shader = componentManager->GetComponent<Shader>(shaders->at("modelShader"));

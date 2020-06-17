@@ -1,8 +1,11 @@
-player = {hp = 100, position = {x = 0.0, y = 0.0, z = 0.0}, rotation = {x = 0.0, y = 0.0, z = 0.0}}
+player = {entity = 0, health = 100.0, position = {x = 0.0, y = 0.0, z = 0.0}, rotation = {x = 0.0, y = 0.0, z = 0.0}}
 mouse = {x, y}
 
-function functionShadyXX()
-end
+highTimeStamp = 0.0
+highTime = 0.0
+isHigh = false
+dead = false
+hitTimeStamp = 0.0
 
 function characterStart()
     prevRightInput = 0.0
@@ -11,11 +14,24 @@ function characterStart()
     prevForwardInput = 0.0
     prevDirectionV = 0.0
     dirZeroVCounter = 0
+    player.entity = entity
 end
 
 function characterUpdate(dt)
+    if dead == true then
+        return
+    end
+
     player.position.x, player.position.y, player.position.z = getTransform(entity, componentManager)
     player.rotation.x, player.rotation.y, player.rotation.z = getRotation(entity, componentManager)
+
+    if isHigh == true and time - highTimeStamp > highTime then
+        isHigh = false
+        
+        leftFist.damage = lightDamage
+        rightFist.damage = lightDamage
+        setSubroutine(modelShader, animatedModelShader, componentManager, "ColorWhite")
+    end
 
     characterSetRotation()
 
@@ -61,4 +77,38 @@ function characterSetRotation()
     local angle = math.atan(deltaZ, deltaX) * 180.0 / 3.14;
 
     setRotation(entity, componentManager, 0.0, -angle + 90.0, 0.0)
+end
+
+function getHigh(type)
+    if type == "red" then
+        leftFist.damage = leftFist.damage * 2.0
+        rightFist.damage = rightFist.damage * 2.0
+        isHigh = true
+        highTimeStamp = time
+        highTime = 5.0
+        setSubroutine(modelShader, animatedModelShader, componentManager, "ColorRed")
+    end
+end
+
+function playerGetHit(dmg)
+
+    if time - hitTimeStamp < hitInterval then
+        return
+    end
+
+    hitTimeStamp = time
+    player.health = player.health - dmg
+
+    if player.health <= 0.0 then
+        playerDie()
+    end
+end
+
+function playerDie()
+    dead = true
+    setColor(entity, componentManager, 0.0, 0.0, 0.0)
+end
+
+function playerPlayAnim(name)
+    playAnimation(player.entity, componentManager, name)
 end

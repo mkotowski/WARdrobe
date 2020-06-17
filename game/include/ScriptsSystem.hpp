@@ -10,15 +10,19 @@ struct Scripts
 
 class ScriptsSystem : public System
 {
-	lua_State*             state;
-	std::list<std::string> uniqueScripts;
-	Window*                ourWindow;
+	lua_State*                     state;
+	std::list<std::string>         uniqueScripts;
+	Window*                        ourWindow;
+	std::shared_ptr<EntityManager> entityManager;
 
 	void ExecuteLuaFunction(int argsNr, int resNr);
 	bool IsScriptAlreadyInCollection(std::string name);
 
 public:
-	void Init(GameplayManager* gameplayManager, Window* w, Camera* c);
+	void Init(GameplayManager*              gameplayManager,
+	          std::shared_ptr<RenderSystem> rs,
+	          Window*                       w,
+	          Camera*                       c);
 	void Update(float                             dt,
 	            std::shared_ptr<ComponentManager> componentManager) override;
 	void CloseLuaState(std::shared_ptr<ComponentManager> componentManager);
@@ -37,7 +41,10 @@ ScriptsSystem::IsScriptAlreadyInCollection(std::string name)
 }
 
 void
-ScriptsSystem::Init(GameplayManager* gameplayManager, Window* w, Camera* c)
+ScriptsSystem::Init(GameplayManager*              gameplayManager,
+                    std::shared_ptr<RenderSystem> rs,
+                    Window*                       w,
+                    Camera*                       c)
 {
 	ourWindow = w;
 
@@ -68,8 +75,15 @@ ScriptsSystem::Init(GameplayManager* gameplayManager, Window* w, Camera* c)
 		}
 	}
 
+	lua_pushnumber(state, rs->shaders->at("modelShader"));
+	lua_setglobal(state, "modelShader");
+	lua_pushnumber(state, rs->shaders->at("animatedModelShader"));
+	lua_setglobal(state, "animatedModelShader");
+
 	lua_pushlightuserdata(state, &(*gameplayManager));
 	lua_setglobal(state, "gameplayManager");
+
+	entityManager = gameplayManager->GetEntityManager();
 
 	lua_pushlightuserdata(state, &(*componentManager));
 	lua_setglobal(state, "componentManager");
@@ -137,9 +151,15 @@ ScriptsSystem::Update(float                             dt,
 			lua_getglobal(state, onCollision.c_str());
 			bool exists = !lua_isnil(state, -1);
 			if (exists) {
-				for (auto i = 0; i < componentManager->GetComponent<BoundingBox>(entity)
-				                       .collisionEnterEntities.size();
-				     i++) {
+				int i = 0;
+				for (auto entityCollided :
+				     componentManager->GetComponent<BoundingBox>(entity)
+				       .collisionEnterEntities) {
+
+					if (entityManager->GetSignature(entityCollided) == 0) {
+						i++;
+						continue;
+					}
 
 					if (i != 0) {
 						lua_getglobal(state, onCollision.c_str());
@@ -147,14 +167,14 @@ ScriptsSystem::Update(float                             dt,
 
 					lua_pushlightuserdata(
 					  state,
-					  &componentManager->GetComponent<BoundingBox>(
-					    componentManager->GetComponent<BoundingBox>(entity)
-					      .collisionEnterEntities[i]));
+					  &componentManager->GetComponent<BoundingBox>(entityCollided));
 					ExecuteLuaFunction(1, 0);
 
 					if (entity > 2000) {
 						return;
 					}
+
+					i++;
 				}
 			} else {
 				lua_pop(state, 1);
