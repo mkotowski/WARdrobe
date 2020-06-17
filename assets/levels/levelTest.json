@@ -11,17 +11,8 @@
             ,
     "mainCamera" :            
                 {
-                    "Transform" : [0.0, 0.0, 3.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
-                    "Camera" : [0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 1.0, 0.0, 80.0]
-                }
-            ,
-    "testAnimationModel" :            
-                {
-                    "ModelArray" : [0, "assets/models/model_tutorial.dae", "assets/textures/stone2.jpg"],
-                    "Transform" : [ 0.0, -2.0, -4.0, 270.0, 0.0, -90.0, 1.0, 1.0, 1.0 ],
-                    "Renderer" : 0,
-                    "BoundingBox" : [1.0, 1.0, 0.7],
-                    "Scripts" : ["character.lua"]
+                    "Transform" : [0.0, 50.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+                    "Camera" : [0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 1.0, 80.0]
                 }
             ,
     "Drugman" :            
@@ -69,21 +60,146 @@
                     "Scripts" : ["character.lua"]
                 }
             ,
-    "rycerzModel2" :
-            {
-                "ModelArray" : [0, "assets/models/chr_knight.obj", "assets/textures/chr_knight.png"],
-                "Transform" : [ 2.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
-                "Renderer" : 4,
-                "BoundingBox" : [1.0, 1.0, 0.7]
-            }
-        ,
     "levelModel" :
                 {
-                    "ModelArray" : [0, "assets/models/levelPrototype.obj", "assets/textures/levelPrototype.png"],
-                    "Transform" : [ -5.0, -5.0, -5.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
-                    "Renderer" : 0
+                    "ModelArray" : [0, "assets/models/Levels/1x1_green.obj", "assets/textures/1x1_green.png"],
+                    "Transform" : [ 0.0, -2.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
+                    "Renderer" : 0,
+                    "BoundingBox" : [1.0, 1.0, 1.0]
                 }
             ,
+    "1wall1":
+                {
+                    "Transform" : [-20.0, -3.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+                    "BoundingBox" : [1.5, 20.0, 40.0]
+                }
+            ,
+    "1wall2":
+            {
+                "Transform" : [20.0, -3.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+                "BoundingBox" : [1.5, 20.0, 40.0]
+            }
+        ,
+    "1wall3_A":
+        {
+            "Transform" : [7.0, -3.0, 20.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+            "BoundingBox" : [27, 20.0, 1.5]
+        }
+    ,
+    "1wall3_B":
+        {
+            "Transform" : [-16.5, -3.0, 20.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+            "BoundingBox" : [6.0, 20.0, 1.5]
+        }
+    ,
+    "1wall4":
+            {
+                "Transform" : [0.0, -3.0, -20.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+                "BoundingBox" : [40.0, 20.0, 1.5]
+            }
+        ,
+    "levelModel2" :
+            {
+                "ModelArray" : [0, "assets/models/Levels/1x1_red.obj", "assets/textures/1x1_red.png"],
+                "Transform" : [ 0.0, -2.0, 20.5, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
+                "Renderer" : 0,
+                "BoundingBox" : [1.0, 1.0, 1.0]
+            }
+        ,
+    "2wall1":
+                {
+                    "Transform" : [-20.0, -3.0, 40.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+                    "BoundingBox" : [1.5, 20.0, 40.0]
+                }
+            ,
+    "2wall2":
+                {
+                    "Transform" : [20.0, -3.0, 40.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+                    "BoundingBox" : [1.5, 20.0, 40.0]
+                }
+            ,
+    "2wall3_A":
+                {
+                    "Transform" : [16.5, -3.0, 60.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+                    "BoundingBox" : [6.0, 20.0, 1.5]
+                }
+            ,
+    "2wall3_B":
+                {
+                    "Transform" : [-7, -3.0, 60.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+                    "BoundingBox" : [27.0, 20.0, 1.5]
+                }
+            ,
+    "levelModel3" :
+            {
+                "ModelArray" : [0, "assets/models/Levels/2x1_red.obj", "assets/textures/2x1_red.png"],
+                "Transform" : [ 10.25, -2.0, 41.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
+                "Renderer" : 0,
+                "BoundingBox" : [1.0, 1.0, 1.0]
+            }
+        ,
+    "3wall1":
+            {
+                "Transform" : [-20.0, -3.0, 80.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+                "BoundingBox" : [1.5, 20.0, 40.0]
+            }
+        ,
+    "3wall2":
+            {
+                "Transform" : [60.0, -3.0, 80.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+                "BoundingBox" : [1.5, 20.0, 40.0]
+            }
+        ,
+    "3wall3_A":
+            {
+                "Transform" : [40.0, -3.0, 100.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+                "BoundingBox" : [80.0, 20.0, 1.5]
+            }
+        ,
+    "3wall4":
+            {
+                "Transform" : [27.5, -3.0, 60.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+                "BoundingBox" : [10.0, 20.0, 1.5]
+            }
+        ,
+    "levelModel4" :
+    {
+        "ModelArray" : [0, "assets/models/Levels/4x4_blue.obj", "assets/textures/4x4_blue.png"],
+        "Transform" : [ 30.75, -2.0, 10.25, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
+        "Renderer" : 0,
+        "BoundingBox" : [1.0, 1.0, 1.0]
+    }
+    ,
+    "4wall1":
+    {
+        "Transform" : [62.0, -3.0, -20.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+        "BoundingBox" : [80.0, 20.0, 1.5]
+    }
+,
+"4wall2":
+    {
+        "Transform" : [102.0, -3.0, 20.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+        "BoundingBox" : [1.5, 20.0, 80.0]
+    }
+,
+"4wall3_A":
+    {
+        "Transform" : [62.0, -3.0, 60.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+        "BoundingBox" : [25.0, 20.0, 1.5]
+    }
+,
+"4wall4":
+    {
+        "Transform" : [94.5, -3.0, 60.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+        "BoundingBox" : [10.0, 20.0, 1.5]
+    }
+,
+"4pillar":
+    {
+        "Transform" : [61.0, -3.0, 20.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+        "BoundingBox" : [4.0, 20.0, 4.0]
+    }
+,
     "skyboxCube" :
                 {
                     "Skybox" : ["assets/textures/skybox/right.jpg",
