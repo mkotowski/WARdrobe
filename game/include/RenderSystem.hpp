@@ -62,7 +62,7 @@ RenderSystem::Update(float                             dt,
 		auto& renderer = componentManager->GetComponent<Renderer>(entity);
 		
 		auto& shader = Shader();
-		if (renderer.drawingType == 0 || renderer.drawingType == 3)
+		if (renderer.drawingType == 0 || renderer.drawingType == 5)
 		{
 			shader = componentManager->GetComponent<Shader>(shaders->at("modelShader"));
 			shader.use();
@@ -124,9 +124,9 @@ RenderSystem::Update(float                             dt,
 		              this->window->GetWindowWidth(),
 		              this->window->GetWindowHeight());
 
-			if (renderer.drawingType == 3) {
+			if (renderer.drawingType == 5) {
 				shader =
-				  componentManager->GetComponent<Shader>(shaders["boxShader"]);
+				  componentManager->GetComponent<Shader>(shaders->at("boxShader"));
 
 				auto& box = componentManager->GetComponent<BoundingBox>(entity);
 

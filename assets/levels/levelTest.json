@@ -19,9 +19,9 @@
     "testAnimationModel" :            
                 {
                     "ModelArray" : [0, "assets/models/model_tutorial.dae", "assets/textures/stone2.jpg"],
-                    "Transform" : [ 0.0, -2.0, -4.0, 270.0, 0.0, -90.0, 1.0, 1.0, 1.0 ],
+                    "Transform" : [ 0.0, 0.0, -4.0, 270.0, 0.0, -90.0, 1.0, 1.0, 1.0 ],
                     "Renderer" : 0,
-                    "BoundingBox" : [1.0, 1.0, 0.7],
+                    "BoundingBox" : [1.0, 1.0, 0.7, 0, "player"],
                     "Scripts" : ["character.lua"]
                 }
             ,

@@ -245,7 +245,12 @@ Game::LoadLevel(std::string levelPath)
 	std::ifstream rawLevelData(levelPath);
 	// Write that data to JSON object
 	nlohmann::json jsonLevelData;
-	rawLevelData >> jsonLevelData;
+	
+	try {
+		rawLevelData >> jsonLevelData;
+	} catch (std::exception& e) {
+		std::cerr << e.what() << std::endl;
+	}
 	
 	for (auto& it : jsonLevelData.items()) {
 		Entity entity = gameplayManager->CreateEntity();
