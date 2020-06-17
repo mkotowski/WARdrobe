@@ -48,7 +48,7 @@ RenderSystem::Update(float                             dt,
 
 	auto& cameraComponent = componentManager->GetComponent<Camera>(cameraEntity);
 	// Setup all neded entities so they dont have to be searched and/or attached to renderSystem at the start
-	for (auto& const entity: entities)
+	for (auto& entity: entities)
 	{
 		if (componentManager->GetComponent<Renderer>(entity).drawingType == 3)
 		{
@@ -56,7 +56,7 @@ RenderSystem::Update(float                             dt,
 		}
 	}
 
-	for (auto const& entity : entities) 
+	for (auto& entity : entities) 
 	{
 		auto& renderer = componentManager->GetComponent<Renderer>(entity);
 		
