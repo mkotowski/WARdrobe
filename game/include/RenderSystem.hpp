@@ -62,7 +62,7 @@ RenderSystem::Update(float                             dt,
 		auto& renderer = componentManager->GetComponent<Renderer>(entity);
 		
 		auto& shader = Shader();
-		if (renderer.drawingType == 0 || renderer.drawingType == 5)
+		if (renderer.drawingType == 0 || renderer.drawingType == 6)
 		{
 			shader = componentManager->GetComponent<Shader>(shaders->at("modelShader"));
 			shader.use();
@@ -73,7 +73,7 @@ RenderSystem::Update(float                             dt,
 			shader = componentManager->GetComponent<Shader>(shaders->at("billboardShader"));
 			shader.use();
 		}
-		else if (renderer.drawingType == 2)
+		else if (renderer.drawingType == 2 || renderer.drawingType == 5)
 		{
 			shader = componentManager->GetComponent<Shader>(shaders->at("animatedModelShader"));
 			shader.use();
@@ -124,7 +124,7 @@ RenderSystem::Update(float                             dt,
 		              this->window->GetWindowWidth(),
 		              this->window->GetWindowHeight());
 
-			if (renderer.drawingType == 5) {
+			if (renderer.drawingType == 6 || renderer.drawingType == 5) {
 				shader =
 				  componentManager->GetComponent<Shader>(shaders->at("boxShader"));
 
@@ -178,7 +178,7 @@ RenderSystem::Update(float                             dt,
 			else	// Model outside of the view
 			{
 				// What do you expect should be here huh?
-			}			
+			}
 		}		
 	}
 }

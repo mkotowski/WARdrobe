@@ -11,6 +11,7 @@ struct BoundingBox
 	float       height;
 	float       depth;
 	bool        trigger;
+	bool        unmovable;
 	std::string tag;
 	bool        enabled;
 	glm::vec3   origin;
@@ -73,21 +74,21 @@ struct BoundingBox
 			orgScale = scale;
 		}
 
-		if (e == 6) {
-			/*cout << "minX " << minX << ", maxX " << maxX << ", minY " << minY
-			     << ", maxY " << maxY << ", minZ " << minZ << ", maxZ " << maxZ
-			     << "\n"
-			     << origin[0] << ", " << origin[1] << ", " << origin[2] << "\n";*/
-			cout << "pre transformation\n";
-			cout << "0 " << AABBVertices[0].x << " " << AABBVertices[0].y << " "
-			     << AABBVertices[0].z << endl;
-			cout << "3 " << AABBVertices[3].x << " " << AABBVertices[3].y << " "
-			     << AABBVertices[3].z << endl;
-			cout << "4 " << AABBVertices[4].x << " " << AABBVertices[4].y << " "
-			     << AABBVertices[4].z << endl;
-			cout << "6 " << AABBVertices[6].x << " " << AABBVertices[6].y << " "
-			     << AABBVertices[6].z << endl;
-		}
+		// if (e == 6) {
+		//	/*cout << "minX " << minX << ", maxX " << maxX << ", minY " << minY
+		//	     << ", maxY " << maxY << ", minZ " << minZ << ", maxZ " << maxZ
+		//	     << "\n"
+		//	     << origin[0] << ", " << origin[1] << ", " << origin[2] << "\n";*/
+		//	cout << "pre transformation\n";
+		//	cout << "0 " << AABBVertices[0].x << " " << AABBVertices[0].y << " "
+		//	     << AABBVertices[0].z << endl;
+		//	cout << "3 " << AABBVertices[3].x << " " << AABBVertices[3].y << " "
+		//	     << AABBVertices[3].z << endl;
+		//	cout << "4 " << AABBVertices[4].x << " " << AABBVertices[4].y << " "
+		//	     << AABBVertices[4].z << endl;
+		//	cout << "6 " << AABBVertices[6].x << " " << AABBVertices[6].y << " "
+		//	     << AABBVertices[6].z << endl;
+		//}
 
 		// meshes = componentManager->GetComponent<Model>(e).meshes;
 		// GetVertices();
@@ -140,21 +141,21 @@ struct BoundingBox
 		minZ = minZLoc + origin.z;
 		maxZ = maxZLoc + origin.z;
 
-		if (e == 6) {
-			/*cout << "minX " << minX << ", maxX " << maxX << ", minY " << minY
-			     << ", maxY " << maxY << ", minZ " << minZ << ", maxZ " << maxZ
-			     << "\n"
-			     << origin[0] << ", " << origin[1] << ", " << origin[2] << "\n";*/
+		// if (e == 6) {
+		//	/*cout << "minX " << minX << ", maxX " << maxX << ", minY " << minY
+		//	     << ", maxY " << maxY << ", minZ " << minZ << ", maxZ " << maxZ
+		//	     << "\n"
+		//	     << origin[0] << ", " << origin[1] << ", " << origin[2] << "\n";*/
 
-			cout << "0 " << AABBVertices[0].x << " " << AABBVertices[0].y << " "
-			     << AABBVertices[0].z << endl;
-			cout << "3 " << AABBVertices[3].x << " " << AABBVertices[3].y << " "
-			     << AABBVertices[3].z << endl;
-			cout << "4 " << AABBVertices[4].x << " " << AABBVertices[4].y << " "
-			     << AABBVertices[4].z << endl;
-			cout << "6 " << AABBVertices[6].x << " " << AABBVertices[6].y << " "
-			     << AABBVertices[6].z << endl;
-		}
+		//	cout << "0 " << AABBVertices[0].x << " " << AABBVertices[0].y << " "
+		//	     << AABBVertices[0].z << endl;
+		//	cout << "3 " << AABBVertices[3].x << " " << AABBVertices[3].y << " "
+		//	     << AABBVertices[3].z << endl;
+		//	cout << "4 " << AABBVertices[4].x << " " << AABBVertices[4].y << " "
+		//	     << AABBVertices[4].z << endl;
+		//	cout << "6 " << AABBVertices[6].x << " " << AABBVertices[6].y << " "
+		//	     << AABBVertices[6].z << endl;
+		//}
 	}
 
 	void SetNewBounds()
@@ -495,9 +496,17 @@ ColliderSystem::CheckCollision(
 		auto& bounds1 =
 		  componentManager->GetComponent<BoundingBox>(entitiesToCollide[i]);
 
+		if (!bounds1.enabled) {
+			continue;
+		}
+
 		for (int j = i + 1; j < entitiesToCollide.size(); j++) {
 			auto& bounds2 =
 			  componentManager->GetComponent<BoundingBox>(entitiesToCollide[j]);
+
+			if (!bounds2.enabled) {
+				continue;
+			}
 
 			glm::vec3 mtv = getMtv(bounds1, bounds2);
 
@@ -514,12 +523,22 @@ ColliderSystem::CheckCollision(
 
 			// std::cout << "Collision detected\n";
 
-			componentManager->GetComponent<Transform>(entitiesToCollide[i])
-			  .position -= mtv / 2.0f;
-			bounds1.origin -= mtv / 2.0f;
-			componentManager->GetComponent<Transform>(entitiesToCollide[j])
-			  .position += mtv / 2.0f;
-			bounds2.origin += mtv / 2.0f;
+			if (bounds1.unmovable == true) {
+				componentManager->GetComponent<Transform>(entitiesToCollide[j])
+				  .position += mtv;
+				bounds2.origin += mtv;
+			} else if (bounds2.unmovable == true) {
+				componentManager->GetComponent<Transform>(entitiesToCollide[i])
+				  .position -= mtv;
+				bounds1.origin -= mtv;
+			} else {
+				componentManager->GetComponent<Transform>(entitiesToCollide[i])
+				  .position -= mtv / 2.0f;
+				bounds1.origin -= mtv / 2.0f;
+				componentManager->GetComponent<Transform>(entitiesToCollide[j])
+				  .position += mtv / 2.0f;
+				bounds2.origin += mtv / 2.0f;
+			}
 
 			// if (bounds1.minX < bounds2.maxX && bounds1.maxX > bounds2.minX &&
 			//    bounds1.minY < bounds2.maxY && bounds1.maxY > bounds2.minY &&
@@ -662,49 +681,57 @@ DrawBoundingBox(BoundingBox box,
 	}
 
 	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(box.origin.x, box.origin.y, box.origin.z));
-	
-	model = glm::rotate(
-	  model, glm::radians(box.rotation[0]), glm::vec3(1.0f, 0.0f, 0.0f)); // X axis
-	model = glm::rotate(
-	  model, glm::radians(box.rotation[1]), glm::vec3(0.0f, 1.0f, 0.0f)); // Y axis
-	model = glm::rotate(
-	  model, glm::radians(box.rotation[2]), glm::vec3(0.0f, 0.0f, 1.0f)); // Z axis
+	model =
+	  glm::translate(model, glm::vec3(box.origin.x, box.origin.y, box.origin.z));
 
-	//model = glm::scale(model, box.scale);
-	
-	glm::mat4 view = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-    glm::mat4 projection = glm::mat4(1.0f);
-	//https://community.khronos.org/t/application-crashes-with-the-window-resize-event/72684
-	  /*
-	  It�s complaining that you�re passing zero for the �aspect� parameter of glm::perspective.
+	model = glm::rotate(model,
+	                    glm::radians(box.rotation[0]),
+	                    glm::vec3(1.0f, 0.0f, 0.0f)); // X axis
+	model = glm::rotate(model,
+	                    glm::radians(box.rotation[1]),
+	                    glm::vec3(0.0f, 1.0f, 0.0f)); // Y axis
+	model = glm::rotate(model,
+	                    glm::radians(box.rotation[2]),
+	                    glm::vec3(0.0f, 0.0f, 1.0f)); // Z axis
 
-		This will occur if winWidth and winHeight are both integers 
-		and winWidth is less than winHeight. If you want the ratio as 
-		a floating-point value, you have to convert at least one of them 
-		to floating point prior to division. Your existing code divides 
-		to integers which produces an integer result (in this case, zero),
-		which you then convert to floating point.*/
-	  if (window->GetWindowWidth() > 0 && window->GetWindowHeight() > 0)
-		  {
-	projection = glm::perspective(glm::radians(camera->fieldOfView),
-	                              (float)window->GetWindowWidth() /
-	                                (float)window->GetWindowHeight(),
-	                              0.1f,
-	                              100.0f);
-	  } else {
-		  projection = glm::perspective(glm::radians(camera->fieldOfView),
-		                                1.0f /
-		                                  1.0f,
-		                                0.1f,
-		                                100.0f);
-	  }
-    view = glm::lookAt(camera->cameraPos,
-	              camera->cameraPos + camera->cameraFront,
-	              camera->cameraUp);
-    // pass transformation matrices to the shader
-    ourShader->setMat4("projection", projection); // note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
-    ourShader->setMat4("view", view);
+	model = glm::scale(model, box.scale);
+
+	// model = glm::scale(model, box.scale);
+
+	glm::mat4 view =
+	  glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+	glm::mat4 projection = glm::mat4(1.0f);
+	// https://community.khronos.org/t/application-crashes-with-the-window-resize-event/72684
+	/*
+	It�s complaining that you�re passing zero for the �aspect� parameter of
+	glm::perspective.
+
+	This will occur if winWidth and winHeight are both integers
+	and winWidth is less than winHeight. If you want the ratio as
+	a floating-point value, you have to convert at least one of them
+	to floating point prior to division. Your existing code divides
+	to integers which produces an integer result (in this case, zero),
+	which you then convert to floating point.*/
+	if (window->GetWindowWidth() > 0 && window->GetWindowHeight() > 0) {
+		projection = glm::perspective(glm::radians(camera->fieldOfView),
+		                              (float)window->GetWindowWidth() /
+		                                (float)window->GetWindowHeight(),
+		                              0.1f,
+		                              100.0f);
+	} else {
+		projection = glm::perspective(
+		  glm::radians(camera->fieldOfView), 1.0f / 1.0f, 0.1f, 100.0f);
+	}
+	view = glm::lookAt(camera->cameraPos,
+	                   camera->cameraPos + camera->cameraFront,
+	                   camera->cameraUp);
+	// pass transformation matrices to the shader
+	ourShader->setMat4(
+	  "projection",
+	  projection); // note: currently we set the projection matrix each frame, but
+	               // since the projection matrix rarely changes it's often best
+	               // practice to set it outside the main loop only once.
+	ourShader->setMat4("view", view);
 	ourShader->setMat4("model", model);
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 36);

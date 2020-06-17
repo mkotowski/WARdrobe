@@ -260,7 +260,7 @@ l_cppgetBoxPosition(lua_State* l)
 }
 #pragma endregion
 
-#pragma region Model
+#pragma region Renderer
 int
 l_cppsetColor(lua_State* l)
 {
@@ -270,9 +270,8 @@ l_cppsetColor(lua_State* l)
 	float r = luaL_checknumber(l, 3);
 	float g = luaL_checknumber(l, 4);
 	float b = luaL_checknumber(l, 5);
-	float a = luaL_checknumber(l, 6);
 
-	cm->GetComponent<ModelArray>(e).zeroLevelModel.color = glm::vec4(r, g, b, a);
+	cm->GetComponent<Renderer>(e).newColor = glm::vec3(r, g, b);
 
 	return 1;
 }
@@ -290,6 +289,22 @@ l_cppdestroyEntity(lua_State* l)
 	return 1;
 }
 #pragma endregion
+
+#pragma region Animator
+int
+l_cppplayAnimation(lua_State* l)
+{
+	Entity           e = luaL_checknumber(l, 1);
+	ComponentManager* cm = (ComponentManager*)lua_touserdata(l, 2);
+
+	std::string a = lua_tostring(l, 3);
+
+	cm->GetComponent<Animator>(e).ChangeAnimation(a);
+
+	return 1;
+}
+#pragma endregion
+
 
 void
 setAllFunctions(lua_State* state)
@@ -347,4 +362,8 @@ setAllFunctions(lua_State* state)
 	// Entity
 	lua_pushcfunction(state, l_cppdestroyEntity);
 	lua_setglobal(state, "destroyEntity");
+
+	// Animator
+	lua_pushcfunction(state, l_cppplayAnimation);
+	lua_setglobal(state, "playAnimation");
 }
