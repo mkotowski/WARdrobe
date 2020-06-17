@@ -1,4 +1,3 @@
-print("Movement")
 
 function movementStart()
     

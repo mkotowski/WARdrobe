@@ -12,11 +12,11 @@ defaultDepth = 0.0
 combos = { ["whirlwind"] = {"SA", "LA", "LD"}}
 currentCombination = {}
 detectedCombo = "none"
-comboDamage = 100.0
+comboDamage = 50.0
 
 loadFistTime = 0.4
-lightDamage = 10.0
-strongDamage = 100.0
+lightDamage = 5.0
+strongDamage = 10.0
 
 timeForComboDecrease = 5.0
 comboDecreaseTimeStamp = 0.0
@@ -147,6 +147,11 @@ function handleCombos(dt)
         local combo = checkCombos()
         if combo ~= "none" then
             detectedCombo = combo
+
+            for i, move in ipairs(currentCombination) do
+                currentCombination[i] = nil
+            end
+
             comboCo = coroutine.create(whirlwindCoroutine)
             if leftFist.isAttacking == false and rightFist.isAttacking == false then
                 coroutine.resume(comboCo, dt)
@@ -210,7 +215,6 @@ function whirlwindCoroutine(dt)
         currentDepth = currentDepth - (1.0 * dt)
         setBoundingBoxDepth(fists[1], componentManager, defaultDepth, currentDepth)
         setBoundingBoxDepth(fists[2], componentManager, defaultDepth, currentDepth)
-        print("current depth", currentDepth)
         dt = coroutine.yield()
     end
 

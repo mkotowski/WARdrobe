@@ -164,7 +164,7 @@ Game::Loop()
 	renderSystem->Init();
 
 	scriptsSystem->Init(
-	  gameplayManager->GetComponentManager(),
+	  gameplayManager,
 	  this->gameWindow,
 	  &gameplayManager->GetComponentManager()->GetComponent<Camera>(
 	    cameraSystem->cameraEntity));

@@ -117,6 +117,19 @@ l_cppsetTransformRelToRotatingParent(lua_State* l)
 
 #pragma region Rigidbody
 int
+l_cppgetRBVelocity(lua_State* l)
+{
+	Entity            e = luaL_checknumber(l, 1);
+	ComponentManager* cm = (ComponentManager*)lua_touserdata(l, 2);
+
+	lua_pushnumber(l, cm->GetComponent<RigidBody>(e).velocity.x);
+	lua_pushnumber(l, cm->GetComponent<RigidBody>(e).velocity.y);
+	lua_pushnumber(l, cm->GetComponent<RigidBody>(e).velocity.z);
+
+	return 3;
+}
+
+int
 l_cppsetRBVelocity(lua_State* l)
 {
 	Entity            e = luaL_checknumber(l, 1);
@@ -265,6 +278,19 @@ l_cppsetColor(lua_State* l)
 }
 #pragma endregion
 
+#pragma region Entity
+int
+l_cppdestroyEntity(lua_State* l)
+{
+	GameplayManager* gm = (GameplayManager*)lua_touserdata(l, 1);
+	Entity           e = luaL_checknumber(l, 2);
+
+	gm->DestroyEntity(e);
+
+	return 1;
+}
+#pragma endregion
+
 void
 setAllFunctions(lua_State* state)
 {
@@ -285,6 +311,9 @@ setAllFunctions(lua_State* state)
 	lua_setglobal(state, "setTransformRelToRotatingParent");
 
 	// Rigidbody
+	lua_pushcfunction(state, l_cppgetRBVelocity);
+	lua_setglobal(state, "getVelocity");
+
 	lua_pushcfunction(state, l_cppsetRBVelocity);
 	lua_setglobal(state, "setVelocity");
 
@@ -314,4 +343,8 @@ setAllFunctions(lua_State* state)
 	// Model
 	lua_pushcfunction(state, l_cppsetColor);
 	lua_setglobal(state, "setColor");
+
+	// Entity
+	lua_pushcfunction(state, l_cppdestroyEntity);
+	lua_setglobal(state, "destroyEntity");
 }
