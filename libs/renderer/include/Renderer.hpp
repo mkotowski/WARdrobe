@@ -5,6 +5,7 @@
 #include "Shader.hpp"
 #include "Skybox.hpp"
 #include "glm/gtc/type_ptr.hpp"
+#include "glm/glm.hpp"
 
 class Renderer
 {
@@ -22,6 +23,7 @@ public:
 	void Init();
 
 	unsigned int drawingType;
+	glm::vec3 newColor = glm::vec3(1.0f, 1.0f, 1.0f);
 
 private:
 };

@@ -50,6 +50,8 @@ uniform sampler2D texture1;
 uniform sampler2D shadowMap;
 
 uniform vec3 viewPos;
+// Changing specific color of the object via Renderer
+uniform vec3 newColor;
 uniform DirLight dirLight;
 uniform PointLight pointLight;
 
@@ -119,7 +121,7 @@ void main()
 		result += ResultSpotLight(spotLights[i], norm, FragPos, viewDir);
 	
 	result += ResultDirLight(dirLight, norm, viewDir);
-	
+	result = result * newColor;
 	FragColor = Color(vec4(result, 1.0));
 	
 }
