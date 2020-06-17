@@ -27,14 +27,11 @@
             ,
     "Drugman" :            
                 {
-                    "ModelArray" : [0, "assets/models/Drugman/DrugmanWalk.fbx", "assets/textures/Drugman.png"],
+                    "ModelArray" : [0, "assets/models/Drugman/DrugmanWalkArmless.fbx", "assets/textures/Drugman.png"],
                     "Transform" : [ 1.0, -2.0, -4.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001 ],
                     "Renderer" : 2,
-                    "Animator" : [4, "Walking",
-                        "assets/models/Drugman/DrugmanWalk.fbx", true, "Walking",
-                        "assets/models/Drugman/DrugmanWindmill.fbx", false, "Windmill",
-                        "assets/models/Drugman/DrugmanLeftAttack.fbx", false, "LeftAttack",
-                        "assets/models/Drugman/DrugmanRightAttack.fbx", false, "RightAttack"]
+                    "Animator" : [1, "Walking",
+                        "assets/models/Drugman/DrugmanWalkArmless.fbx", true, "Walking"]
                 }
             ,
     "Lamp" :            
@@ -50,11 +47,12 @@
     "BatBulb" :            
         {
             "ModelArray" : [0, "assets/models/BatBulb/BatBulbFlight.fbx", "assets/textures/BatBulb.png"],
-            "Transform" : [ -2.0, -2.0, -4.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001 ],
+            "Transform" : [ -5.0, -2.0, -4.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001 ],
             "Renderer" : 2,
             "Animator" : [2, "Walking",
                 "assets/models/BatBulb/BatBulbFlight.fbx", true, "Walking",
-                "assets/models/BatBulb/BatBulbSpin.fbx", false, "Attack"]
+                "assets/models/BatBulb/BatBulbSpin.fbx", false, "Attack"],
+            "BoundingBox" : [1.0, 1.0, 1.0]
         }
     ,
     "rycerzModel" :
@@ -200,6 +198,22 @@
                     "BoundingBox" : [27.0, 20.0, 1.5]
                 }
             ,
+    "Shelf1" :
+            {
+                "ModelArray" : [0, "assets/models/Interior/Scanning.fbx", "assets/textures/Interior/Scanning.png"],
+                "Transform" : [ 0.0, -2.0, 10.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
+                "Renderer" : 0,
+                "BoundingBox" : [10.0, 5.0, 2.0]
+            }
+        ,
+    "Shelf2" :
+        {
+            "ModelArray" : [0, "assets/models/Interior/Shelf1.fbx", "assets/textures/Interior/Shelf1.png"],
+            "Transform" : [ -3.0, -2.0, 20.0, 0.0, 0.0, 0.0, 0.75, 0.75, 0.75 ],
+            "Renderer" : 0,
+            "BoundingBox" : [3.0, 3.0, 3.0]
+        }
+    ,
     "levelModel3" :
             {
                 "ModelArray" : [0, "assets/models/Levels/2x1_red.obj", "assets/textures/2x1_red.png"],
