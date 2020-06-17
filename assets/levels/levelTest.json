@@ -99,7 +99,7 @@
     "levelModel2" :
             {
                 "ModelArray" : [0, "assets/models/Levels/1x1_red.obj", "assets/textures/1x1_red.png"],
-                "Transform" : [ 0.0, -2.0, 20.5, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
+                "Transform" : [ 0.0, -2.0, 40.5, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
                 "Renderer" : 0,
                 "BoundingBox" : [1.0, 1.0, 1.0]
             }
@@ -147,20 +147,20 @@
     "levelModel3" :
             {
                 "ModelArray" : [0, "assets/models/Levels/2x1_red.obj", "assets/textures/2x1_red.png"],
-                "Transform" : [ 10.25, -2.0, 41.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
+                "Transform" : [ 20.0, -2.0, 81.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
                 "Renderer" : 0,
                 "BoundingBox" : [1.0, 1.0, 1.0]
             }
         ,
     "3wall1":
             {
-                "Transform" : [-20.0, -3.0, 80.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+                "Transform" : [-20.0, -3.0, 81.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
                 "BoundingBox" : [1.5, 20.0, 40.0]
             }
         ,
     "3wall2":
             {
-                "Transform" : [60.0, -3.0, 80.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+                "Transform" : [60.0, -3.0, 81.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
                 "BoundingBox" : [1.5, 20.0, 40.0]
             }
         ,
@@ -179,7 +179,7 @@
     "levelModel4" :
     {
         "ModelArray" : [0, "assets/models/Levels/4x4_blue.obj", "assets/textures/4x4_blue.png"],
-        "Transform" : [ 30.75, -2.0, 10.25, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
+        "Transform" : [ 62.0, -2.0, 21.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
         "Renderer" : 0,
         "BoundingBox" : [1.0, 1.0, 1.0]
     }
