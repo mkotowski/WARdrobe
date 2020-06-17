@@ -134,7 +134,7 @@ CameraSystem::Update(float                             dt,
 			forwardInput += 0.01f;
 		if (rightInput < 0.0f)
 			rightInput += 0.01f;
-		// poœlizg
+		// poÅ›lizg
 		if (abs(forwardInput) < 0.2f)
 			forwardInput = 0.0f;
 		if (abs(rightInput) < 0.2f)

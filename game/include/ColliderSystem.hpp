@@ -662,57 +662,49 @@ DrawBoundingBox(BoundingBox box,
 	}
 
 	glm::mat4 model = glm::mat4(1.0f);
-	model =
-	  glm::translate(model, glm::vec3(box.origin.x, box.origin.y, box.origin.z));
+	model = glm::translate(model, glm::vec3(box.origin.x, box.origin.y, box.origin.z));
+	
+	model = glm::rotate(
+	  model, glm::radians(box.rotation[0]), glm::vec3(1.0f, 0.0f, 0.0f)); // X axis
+	model = glm::rotate(
+	  model, glm::radians(box.rotation[1]), glm::vec3(0.0f, 1.0f, 0.0f)); // Y axis
+	model = glm::rotate(
+	  model, glm::radians(box.rotation[2]), glm::vec3(0.0f, 0.0f, 1.0f)); // Z axis
 
-	model = glm::rotate(model,
-	                    glm::radians(box.rotation[0]),
-	                    glm::vec3(1.0f, 0.0f, 0.0f)); // X axis
-	model = glm::rotate(model,
-	                    glm::radians(box.rotation[1]),
-	                    glm::vec3(0.0f, 1.0f, 0.0f)); // Y axis
-	model = glm::rotate(model,
-	                    glm::radians(box.rotation[2]),
-	                    glm::vec3(0.0f, 0.0f, 1.0f)); // Z axis
+	//model = glm::scale(model, box.scale);
+	
+	glm::mat4 view = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+    glm::mat4 projection = glm::mat4(1.0f);
+	//https://community.khronos.org/t/application-crashes-with-the-window-resize-event/72684
+	  /*
+	  Itï¿½s complaining that youï¿½re passing zero for the ï¿½aspectï¿½ parameter of glm::perspective.
 
-	model = glm::scale(model, box.scale);
-
-	// model = glm::scale(model, box.scale);
-
-	glm::mat4 view =
-	  glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-	glm::mat4 projection = glm::mat4(1.0f);
-	// https://community.khronos.org/t/application-crashes-with-the-window-resize-event/72684
-	/*
-	It’s complaining that you’re passing zero for the “aspect” parameter of
-	glm::perspective.
-
-	This will occur if winWidth and winHeight are both integers
-	and winWidth is less than winHeight. If you want the ratio as
-	a floating-point value, you have to convert at least one of them
-	to floating point prior to division. Your existing code divides
-	to integers which produces an integer result (in this case, zero),
-	which you then convert to floating point.*/
-	if (window->GetWindowWidth() > 0 && window->GetWindowHeight() > 0) {
-		projection = glm::perspective(glm::radians(camera->fieldOfView),
-		                              (float)window->GetWindowWidth() /
-		                                (float)window->GetWindowHeight(),
-		                              0.1f,
-		                              100.0f);
-	} else {
-		projection = glm::perspective(
-		  glm::radians(camera->fieldOfView), 1.0f / 1.0f, 0.1f, 100.0f);
-	}
-	view = glm::lookAt(camera->cameraPos,
-	                   camera->cameraPos + camera->cameraFront,
-	                   camera->cameraUp);
-	// pass transformation matrices to the shader
-	ourShader->setMat4(
-	  "projection",
-	  projection); // note: currently we set the projection matrix each frame, but
-	               // since the projection matrix rarely changes it's often best
-	               // practice to set it outside the main loop only once.
-	ourShader->setMat4("view", view);
+		This will occur if winWidth and winHeight are both integers 
+		and winWidth is less than winHeight. If you want the ratio as 
+		a floating-point value, you have to convert at least one of them 
+		to floating point prior to division. Your existing code divides 
+		to integers which produces an integer result (in this case, zero),
+		which you then convert to floating point.*/
+	  if (window->GetWindowWidth() > 0 && window->GetWindowHeight() > 0)
+		  {
+	projection = glm::perspective(glm::radians(camera->fieldOfView),
+	                              (float)window->GetWindowWidth() /
+	                                (float)window->GetWindowHeight(),
+	                              0.1f,
+	                              100.0f);
+	  } else {
+		  projection = glm::perspective(glm::radians(camera->fieldOfView),
+		                                1.0f /
+		                                  1.0f,
+		                                0.1f,
+		                                100.0f);
+	  }
+    view = glm::lookAt(camera->cameraPos,
+	              camera->cameraPos + camera->cameraFront,
+	              camera->cameraUp);
+    // pass transformation matrices to the shader
+    ourShader->setMat4("projection", projection); // note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
+    ourShader->setMat4("view", view);
 	ourShader->setMat4("model", model);
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 36);

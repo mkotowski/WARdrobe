@@ -16,6 +16,11 @@
 #include "ScriptsCommunicationFunctions.hpp"
 #include "ScriptsSystem.hpp"
 
+#include "LightningSystem.hpp"
+#include "AnimationSystem.hpp"
+#include "ScriptsSystem.hpp"
+
+
 #include "ecs.hpp"
 
 
@@ -78,13 +83,15 @@ Game::Loop()
 	gameplayManager->RegisterComponent<Gravity>();
 	gameplayManager->RegisterComponent<RigidBody>();
 	gameplayManager->RegisterComponent<Transform>();
-	gameplayManager->RegisterComponent<Model>();
 	gameplayManager->RegisterComponent<Shader>();
 	gameplayManager->RegisterComponent<Renderer>();
 	gameplayManager->RegisterComponent<Camera>();
+	gameplayManager->RegisterComponent<Light>();
+	gameplayManager->RegisterComponent<Animator>();
 	gameplayManager->RegisterComponent<BoundingBox>();
 	gameplayManager->RegisterComponent<Scripts>();
 	gameplayManager->RegisterComponent<ModelArray>();
+	gameplayManager->RegisterComponent<Skybox>();
 
 	// Register the systems used during the gameplay
 	auto cameraSystem = gameplayManager->RegisterSystem<CameraSystem>();
@@ -92,6 +99,10 @@ Game::Loop()
 	auto shaderSystem = gameplayManager->RegisterSystem<ShaderSystem>();
 
 	auto physicsSystem = gameplayManager->RegisterSystem<PhysicsSystem>();
+	
+	auto lightningSystem = gameplayManager->RegisterSystem<LightningSystem>();
+
+	auto animationSystem = gameplayManager->RegisterSystem<AnimationSystem>();
 
 	auto colliderSystem = gameplayManager->RegisterSystem<ColliderSystem>();
 
@@ -132,10 +143,19 @@ Game::Loop()
 	//RenderSystem
 	gameplayManager->SetRequiredComponent<RenderSystem>(
 	  gameplayManager->GetComponentType<Renderer>());
-	gameplayManager->SetRequiredComponent<ModelArray>(
-	   gameplayManager->GetComponentType<Renderer>());
-	gameplayManager->SetRequiredComponent<RenderSystem>(
-	  gameplayManager->GetComponentType<Transform>());
+
+	// LightningSystem
+	gameplayManager->SetRequiredComponent<LightningSystem>(
+	  gameplayManager->GetComponentType<Light>());
+
+	// AnimationSystem
+	gameplayManager->SetRequiredComponent<AnimationSystem>(
+	   gameplayManager->GetComponentType<ModelArray>());
+	gameplayManager->SetRequiredComponent<AnimationSystem>(
+		gameplayManager->GetComponentType<Animator>());
+	// ScriptsSystem
+	gameplayManager->SetRequiredComponent<ScriptsSystem>(
+	  gameplayManager->GetComponentType<Scripts>());
 
 	// ScriptsSystem
 	gameplayManager->SetRequiredComponent<ScriptsSystem>(
@@ -143,25 +163,42 @@ Game::Loop()
 
 	// Load levelData from JSON file
 	LoadLevel("assets/levels/levelTest.json");
-
+	std::cout << "Level has been loaded" << std::endl;
 	float dt = 0.0f;
 	
 	// Initialize CameraSystem and bound mainCamera to RenderSystem
 	cameraSystem->Init();
 	renderSystem->cameraEntity = cameraSystem->cameraEntity;
+	std::cout << "CameraSystem has been initialized" << std::endl;
 
-	// Initialize ShaderSystem and bound map of shaders to RenderSystem
+	// Initialize LightningSystem
+	lightningSystem->Init(gameplayManager->GetComponentManager());
+	std::cout << "LightningSystem has been initialized" << std::endl;
+	// Bind light to RenderSystem
+	renderSystem->lightEntity = lightningSystem->dirLight;
+
+	// Initialize ShaderSystem and bound map of shaders to RenderSystem and LightningSystem
 	shaderSystem->Init(gameplayManager->GetComponentManager());
-	renderSystem->shaders = shaderSystem->shaders;
+	std::cout << "ShaderSystem has been initialized" << std::endl;
 
+	shaderSystem->cameraEntity = cameraSystem->cameraEntity;
+	renderSystem->shaders = &shaderSystem->shaders;
+	lightningSystem->shaders = &shaderSystem->shaders;
+	
+	std::cout << "Here" << std::endl;	
+	animationSystem->Init(gameplayManager->GetComponentManager());
+	std::cout << "AnimationSystem has been initialized" << std::endl;	
+	
 	colliderSystem->window = this->gameWindow;
 	colliderSystem->camera = &gameplayManager->GetComponentManager()->GetComponent<Camera>(cameraSystem->cameraEntity);
-
+	
 	colliderSystem->ourShader = &gameplayManager->GetComponentManager()->GetComponent<Shader>(shaderSystem->shaders.at("boxShader"));
-
+	
 	colliderSystem->Initiate(gameplayManager->GetComponentManager());
+	std::cout << "ColliderSystem has been initialized" << std::endl;
 
 	renderSystem->Init();
+	std::cout << "RenderSystem has been initialized" << std::endl;
 
 	scriptsSystem->Init(
 	  gameplayManager,
@@ -180,7 +217,6 @@ Game::Loop()
 		gameWindow->GetInputManager()->Call();
 		gameWindow->UpdateViewport();
 		gameWindow->ClearScreen();
-
 		gameplayManager->Update(dt);
 		gameWindow->TestGUI();
 #if INCLUDE_DEBUG_UI
@@ -274,7 +310,7 @@ Game::LoadLevel(std::string levelPath)
 
 			} 
 			else if (it2.key() == "Gravity") 
-			{;
+			{
 				// 0 - 2: Gravity X Y Z
 				gameplayManager->AddComponent(
 				  entity,
@@ -284,7 +320,6 @@ Game::LoadLevel(std::string levelPath)
 			{
 				// Render Component
 				gameplayManager->AddComponent(entity, Renderer(it2.value()));
-
 			} 
 			else if (it2.key() == "Camera") 
 			{
@@ -319,6 +354,115 @@ Game::LoadLevel(std::string levelPath)
 
 				gameplayManager->AddComponent(entity, Scripts{ scripts });
 			}
+			else if (it2.key() == "Light")
+			{
+				// 0 - type of the light
+				// Directional Light
+				if (it2.value()[0] == "directionalLight")
+				{
+					// 1  - 3:  - direction
+					// 4  - 6:  - ambient
+					// 7  - 9:  - diffuse
+					// 10 - 12: - specular
+					gameplayManager->AddComponent(
+						entity,
+						Light(glm::vec3(it2.value()[1], it2.value()[2], it2.value()[3]),
+							  glm::vec3(it2.value()[4], it2.value()[5], it2.value()[6]),
+							  glm::vec3(it2.value()[7], it2.value()[8], it2.value()[9]),
+							  glm::vec3(it2.value()[10], it2.value()[11], it2.value()[12]),
+							  glm::vec3(it2.value()[13], it2.value()[14], it2.value()[15]))
+					);
+				}
+				else if(it2.value()[0] == "pointLight")
+				{
+					// 1  - 3:  - position
+					// 4 		- constant
+					// 5 		- linear
+					// 6 		- quadratic
+					// 7  - 9:  - ambient
+					// 10 - 12: - diffuse
+					// 13 - 15: - specular
+					gameplayManager->AddComponent(
+						entity,
+						Light(glm::vec3(it2.value()[1], it2.value()[2], it2.value()[3]),
+							  it2.value()[4],
+							  it2.value()[5],
+							  it2.value()[6],
+							  glm::vec3(it2.value()[7], it2.value()[8], it2.value()[9]),
+							  glm::vec3(it2.value()[10], it2.value()[11], it2.value()[12]),
+							  glm::vec3(it2.value()[13], it2.value()[14], it2.value()[15]))
+					);
+				}
+				else if (it2.value()[0] == "spotLight")
+				{
+					// 1  - 3:  - direction
+					// 4  - 6:  - position
+					// 7 		- constant
+					// 8 		- linear
+					// 9 		- quadratic
+					// 10 - 12:  - ambient
+					// 13 - 15: - diffuse
+					// 16 - 18: - specular
+					// 19 		- cutOff
+					// 20 		- outerCutOff
+					gameplayManager->AddComponent(
+						entity,
+						Light(glm::vec3(it2.value()[1], it2.value()[2], it2.value()[3]),
+							  glm::vec3(it2.value()[4], it2.value()[5], it2.value()[6]),
+							  it2.value()[7],
+							  it2.value()[8],
+							  it2.value()[9],
+							  glm::vec3(it2.value()[10], it2.value()[11], it2.value()[12]),
+							  glm::vec3(it2.value()[13], it2.value()[14], it2.value()[15]),
+							  glm::vec3(it2.value()[16], it2.value()[17], it2.value()[18]),
+							  it2.value()[19],
+							  it2.value()[20])
+					);
+				}		
+				
+			}
+			else if (it2.key() == "Animator")
+			{
+				// 0 	- number of Animations
+				// 1 	- name of the IdleAnimation
+				// 2x	- path to animation file
+				// 3x	- looping option (true/false)
+				// 4x	- animation Name
+
+				std::vector<std::pair<std::string, bool>> animations;
+				std::vector<std::string> animationNames;
+				
+				int numOfAnimations = it2.value()[0];
+				std::string idleAnimationName = it2.value()[1];
+
+				for (int i = 0; i < numOfAnimations * 3; i += 3)
+				{
+					std::pair<std::string, bool> animation (it2.value()[2+i], it2.value()[3+i]);
+					animations.push_back(animation);
+					animationNames.push_back(it2.value()[4+i]);
+				}
+				gameplayManager->AddComponent(
+							entity,
+							Animator(animations, animationNames, idleAnimationName));
+				
+			}
+			else if (it2.key() == "Skybox")
+			{
+				// 0 - 5: - paths to cubemaps 
+				std::vector<std::string> faces
+				{
+					it2.value()[0],
+					it2.value()[1],
+					it2.value()[2],
+					it2.value()[3],
+					it2.value()[4],
+					it2.value()[5],
+				};
+				gameplayManager->AddComponent(
+							entity,
+							Skybox(faces));
+			}
+			
 		}
 	}
 }

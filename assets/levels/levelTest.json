@@ -1,6 +1,5 @@
 {
     "billboard" :
-            
                 {
                     "ModelArray" : [0, "assets/models/square.obj", "assets/textures/container.jpg"],
                     "Transform" : [ 0.0, 0.0, -3.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1 ],
@@ -8,11 +7,57 @@
                     "Gravity" : [ 0.0, 0.0, 0.0 ],
                     "Renderer" : 1,
                     "Scripts" : ["movement.lua"]
-                }
-                
+                }                
             ,
+    "mainCamera" :            
+                {
+                    "Transform" : [0.0, 0.0, 3.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+                    "Camera" : [0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 1.0, 0.0, 80.0],
+                    "Scripts" : ["camera.lua"]
+                }
+            ,
+    "testAnimationModel" :            
+                {
+                    "ModelArray" : [0, "assets/models/model_tutorial.dae", "assets/textures/stone2.jpg"],
+                    "Transform" : [ 0.0, -2.0, -4.0, 270.0, 0.0, -90.0, 1.0, 1.0, 1.0 ],
+                    "Renderer" : 0,
+                    "BoundingBox" : [1.0, 1.0, 0.7],
+                    "Scripts" : ["character.lua"]
+                }
+            ,
+    "Drugman" :            
+                {
+                    "ModelArray" : [0, "assets/models/Drugman/DrugmanWalk.fbx", "assets/textures/Drugman.png"],
+                    "Transform" : [ 1.0, -2.0, -4.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001 ],
+                    "Renderer" : 2,
+                    "Animator" : [4, "Walking",
+                        "assets/models/Drugman/DrugmanWalk.fbx", true, "Walking",
+                        "assets/models/Drugman/DrugmanWindmill.fbx", false, "Windmill",
+                        "assets/models/Drugman/DrugmanLeftAttack.fbx", false, "LeftAttack",
+                        "assets/models/Drugman/DrugmanRightAttack.fbx", false, "RightAttack"]
+                }
+            ,
+    "Lamp" :            
+            {
+                "ModelArray" : [0, "assets/models/Lamp/LampJump.fbx", "assets/textures/Lamp_Monster.png"],
+                "Transform" : [ -1.0, -2.0, -4.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001 ],
+                "Renderer" : 2,
+                "Animator" : [2, "Walking",
+                    "assets/models/Lamp/LampJump.fbx", true, "Walking",
+                    "assets/models/Lamp/LampSmack.fbx", false, "Attack"]
+            }
+        ,
+    "BatBulb" :            
+        {
+            "ModelArray" : [0, "assets/models/BatBulb/BatBulbFlight.fbx", "assets/textures/BatBulb.png"],
+            "Transform" : [ -2.0, -2.0, -4.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001 ],
+            "Renderer" : 2,
+            "Animator" : [2, "Walking",
+                "assets/models/BatBulb/BatBulbFlight.fbx", true, "Walking",
+                "assets/models/BatBulb/BatBulbSpin.fbx", false, "Attack"]
+        }
+    ,
     "rycerzModel" :
-            
                 {
                     "ModelArray" : [0, "assets/models/nanosuit.obj", "assets/textures/stone2.jpg",
                                         "assets/models/chr_knight.obj", "assets/textures/chr_knight.png",
@@ -83,37 +128,114 @@
                     "Renderer" : 3,
                     "BoundingBox" : [2.0, 7.0, 2.0, 0, "enemy"],
                     "Scripts" : ["enemy.lua"]
-                }
             ,
-    "mainCamera" :
-            
-                {
-                    "Transform" : [0.0, 10.0, 0.0, 0.0, 0.0, 90.0, 1.0, 1.0, 1.0],
-                    "Camera" : [0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 1.0, 80.0],
-                    "Scripts" : ["camera.lua"]
-                }
-            ,
+    "rycerzModel2" :
+            {
+                "ModelArray" : [0, "assets/models/chr_knight.obj", "assets/textures/chr_knight.png"],
+                "Transform" : [ 2.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+                "Renderer" : 4,
+                "BoundingBox" : [1.0, 1.0, 0.7]
+            }
+        ,
     "levelModel" :
-
                 {
                     "ModelArray" : [0, "assets/models/levelPrototype.obj", "assets/textures/levelPrototype.png"],
-                    "Transform" : [ -5.0, -10.0, -5.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
+                    "Transform" : [ -5.0, -5.0, -5.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
                     "Renderer" : 0
+                }
+            ,
+    "skyboxCube" :
+                {
+                    "Skybox" : ["assets/textures/skybox/right.jpg",
+                                "assets/textures/skybox/left.jpg",
+                                "assets/textures/skybox/top.jpg",
+                                "assets/textures/skybox/bottom.jpg",
+                                "assets/textures/skybox/front.jpg",
+                                "assets/textures/skybox/back.jpg"],
+                    "Renderer" : 3
                 }
             ,
     "billboardShader" :
 
                 {
-                    "Shader" : ["assets/shaders/vertex1.glsl", "assets/shaders/fragment.glsl", "billboardShader"]
+                    "Shader" : ["assets/shaders/billboardVertex.glsl", "assets/shaders/billboardFragment.glsl", "billboardShader"]
+                }
+            ,
+    "animatedModelShader" :
+                {
+                    "Shader" : ["assets/shaders/animatedModelVertex.glsl", "assets/shaders/modelFragment.glsl", "animatedModelShader"]
                 }
             ,
     "modelShader" :
                 {
-                    "Shader" : ["assets/shaders/vertex.glsl", "assets/shaders/fragment.glsl", "modelShader"]
+                    "Shader" : ["assets/shaders/plainModelVertex.glsl", "assets/shaders/modelFragment.glsl", "modelShader"]
                 }
             ,
     "boundingBoxShader" :
                 {
                     "Shader" : ["assets/shaders/boxVertex.glsl", "assets/shaders/boxFragment.glsl", "boxShader"]
                 }
+            ,
+    "skyBoxShader" :
+                {
+                "Shader" : ["assets/shaders/skyboxVertex.glsl", "assets/shaders/skyboxFragment.glsl", "skyBoxShader"]
+                }
+            ,
+    "cubemapShader" :
+                {
+                "Shader" : ["assets/shaders/cubemapVertex.glsl", "assets/shaders/cubemapFragment.glsl", "cubemapShader"]
+                }
+            ,
+    "directionalLight" :
+                {
+                    "Light" : ["directionalLight",
+                                -2.0, 10.0, 0.0,  
+                                0.0, 0.0, 0.0,                             
+                                0.5, 0.5, 0.5,
+                                0.8, 0.0, 0.0,
+                                0.1, 0.1, 0.1]
+                }
+            ,
+    "pointLight" :
+                {
+                    "Light" : ["pointLight",
+                                0.0, 30.0, 0.0,
+                                1.0,
+                                0.2,
+                                0.032,
+                                0.0, 0.0, 0.0,
+                                0.0, 0.0, 0.0,
+                                0.0, 0.0, 0.0]
+                }
+            ,
+    "spotLight1" :
+                {
+                    "Light" : ["spotLight",
+                                10.0, 0.0, -5.0,
+                                10.0, 0.0, 2.0,
+                                1.0,
+                                0.09,
+                                0.032,
+                                0.1, 0.1, 0.1,
+                                1.0, 1.0, 1.0,
+                                0.3, 0.3, 1.3,
+                                20.5,
+                                17.5]
+                }
+            ,
+    "spotLight2" :
+            {
+                    "Light" : ["spotLight",
+                                -20.0, 0.0, 2.0,
+                                -10.0, 0.0, 0.0,
+                                1.0,
+                                0.09,
+                                0.032,
+                                0.1, 0.1, 0.1,
+                                1.0, 1.0, 1.0,
+                                0.1, 0.1, 0.1,
+                                12.5,
+                                15.0]
+            }
+            
 }
