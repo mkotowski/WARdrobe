@@ -44,68 +44,79 @@
                     "BoundingBox" : [20.0, 20.0, 20.0, 1, false, "pill"],
                     "Scripts" : ["pillRed.lua"]
                 }
-            ,
-    "Lamp" :            
-            {
-                "ModelArray" : [0, "assets/models/Lamp/LampJump.fbx", "assets/textures/Lamp_Monster.png"],
-                "Transform" : [ -5.0, 0.0, -4.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001 ],
-                "Renderer" : 5,
-                "Rigidbody" : [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                "Gravity" : [0.0, 0.0, 0.0],
-                "Animator" : [2, "Walking",
-                    "assets/models/Lamp/LampJump.fbx", true, "Walking",
-                    "assets/models/Lamp/LampSmack.fbx", false, "Attack"],
-                "BoundingBox" : [1000, 4000, 1000, 0, false, "enemy"],
-                "Scripts" : ["enemy.lua"]
-            }
-        ,
-    "LampAttackCollider" :            
-            {
-                "Transform" : [ 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0 ],
-                "Renderer" : 7,
-                "BoundingBox" : [0.33, 0.33, 0.33, 1, false, "enemyWeapon"],
-                "Scripts" : ["lampAttack.lua"]
-            }
-        ,
-        "Lamp1" :            
-            {
-                "ModelArray" : [0, "assets/models/Lamp/LampJump.fbx", "assets/textures/Lamp_Monster.png"],
-                "Transform" : [ -5.0, 0.0, -4.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001 ],
-                "Renderer" : 5,
-                "Rigidbody" : [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                "Gravity" : [0.0, 0.0, 0.0],
-                "Animator" : [2, "Walking",
-                    "assets/models/Lamp/LampJump.fbx", true, "Walking",
-                    "assets/models/Lamp/LampSmack.fbx", false, "Attack"],
-                "BoundingBox" : [1000, 4000, 1000, 0, false, "enemy"],
-                "Scripts" : ["enemy.lua"]
-            }
-        ,
-    "Lamp1AttackCollider" :            
-            {
-                "Transform" : [ 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0 ],
-                "Renderer" : 7,
-                "BoundingBox" : [0.33, 0.33, 0.33, 1, false, "enemyWeapon"],
-                "Scripts" : ["lampAttack.lua"]
-            }
-        ,
+                ,
+"ALamp" :            
+        {
+            "ModelArray" : [0, "assets/models/Lamp/LampJump.fbx", "assets/textures/Lamp_Monster.png"],
+            "Transform" : [ -5.0, 0.0, -4.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001 ],
+            "Renderer" : 5,
+            "Rigidbody" : [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            "Gravity" : [0.0, 0.0, 0.0],
+            "Animator" : [2, "Walking",
+                "assets/models/Lamp/LampJump.fbx", true, "Walking",
+                "assets/models/Lamp/LampSmack.fbx", false, "Attack"],
+            "BoundingBox" : [1000, 4000, 1000, 0, false, "enemy"],
+            "Scripts" : ["enemy.lua"]
+        }
+    ,
+"ALampAttackCollider" :            
+        {
+            "Transform" : [ 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0 ],
+            "Renderer" : 7,
+            "BoundingBox" : [0.33, 0.33, 0.33, 1, false, "enemyWeapon"],
+            "Scripts" : ["lampAttack.lua"]
+        }
+    ,
+    "ALamp1" :            
+        {
+            "ModelArray" : [0, "assets/models/Lamp/LampJump.fbx", "assets/textures/Lamp_Monster.png"],
+            "Transform" : [ -5.0, 0.0, -4.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001 ],
+            "Renderer" : 5,
+            "Rigidbody" : [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            "Gravity" : [0.0, 0.0, 0.0],
+            "Animator" : [2, "Walking",
+                "assets/models/Lamp/LampJump.fbx", true, "Walking",
+                "assets/models/Lamp/LampSmack.fbx", false, "Attack"],
+            "BoundingBox" : [1000, 4000, 1000, 0, false, "enemy"],
+            "Scripts" : ["enemy.lua"]
+        }
+    ,
+"ALamp1AttackCollider" :            
+        {
+            "Transform" : [ 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0 ],
+            "Renderer" : 7,
+            "BoundingBox" : [0.33, 0.33, 0.33, 1, false, "enemyWeapon"],
+            "Scripts" : ["lampAttack.lua"]
+        }
+    ,
     "BatBulb" :            
         {
             "ModelArray" : [0, "assets/models/BatBulb/BatBulbFlight.fbx", "assets/textures/BatBulb.png"],
-            "Transform" : [ -2.0, -2.0, -4.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001 ],
-            "Renderer" : 2,
+            "Transform" : [ 0.0, 3.0, -8.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001 ],
+            "Renderer" : 5,
+            "Rigidbody" : [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            "Gravity" : [0.0, 0.0, 0.0],
             "Animator" : [2, "Walking",
                 "assets/models/BatBulb/BatBulbFlight.fbx", true, "Walking",
-                "assets/models/BatBulb/BatBulbSpin.fbx", false, "Attack"]
-        }
-    ,
+                "assets/models/BatBulb/BatBulbSpin.fbx", false, "Attack"],
+            "BoundingBox" : [1000.0, 1000.0, 1000.0, 0, false, "enemy"],
+            "Scripts" : ["enemy.lua"]
+        },
+    "BatBulbAttackCollider" :            
+            {
+                "Transform" : [ 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0 ],
+                "Renderer" : 7,
+                "BoundingBox" : [0.33, 0.33, 0.33, 1, false, "enemyWeapon"],
+                "Scripts" : ["bulbAttack.lua"]
+            }
+        ,
     "playerFistLeft" :
 
                 {
                     "ModelArray" : [0, "assets/models/Hand.obj", "assets/textures/Hand.png"],
                     "Transform" : [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1],
                     "Renderer" : 6,
-                    "BoundingBox" : [7.0, 7.0, 7.0, 1, false, "playerWeaponLeft"],
+                    "BoundingBox" : [7.0, 35.0, 7.0, 1, false, "playerWeaponLeft"],
                     "Scripts" : ["weapon.lua"]
                 }
 
@@ -116,7 +127,7 @@
                     "ModelArray" : [0, "assets/models/Hand.obj", "assets/textures/Hand.png"],
                     "Transform" : [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1],
                     "Renderer" : 6,
-                    "BoundingBox" : [7.0, 7.0, 7.0, 1, false, "playerWeaponRight"],
+                    "BoundingBox" : [7.0, 35.0, 7.0, 1, false, "playerWeaponRight"],
                     "Scripts" : ["weapon.lua"]
                 }
 

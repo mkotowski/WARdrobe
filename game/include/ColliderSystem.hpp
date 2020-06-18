@@ -369,9 +369,7 @@ ColliderSystem::Update(float                             dt,
 {
 	// entitiesToCollide.clear();
 	for (auto const& entity : entities) {
-		if (componentManager->GetComponent<BoundingBox>(entity).enabled) {
-			entitiesToCollide.push_back(entity);
-		}
+		entitiesToCollide.push_back(entity);
 		componentManager->GetComponent<BoundingBox>(entity).Assign(
 		  entity, componentManager);
 		componentManager->GetComponent<BoundingBox>(entity).origin =

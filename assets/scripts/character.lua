@@ -1,4 +1,4 @@
-player = {entity = 0, health = 100.0, position = {x = 0.0, y = 0.0, z = 0.0}, rotation = {x = 0.0, y = 0.0, z = 0.0}}
+player = {entity = 0, health = 500.0, position = {x = 0.0, y = 0.0, z = 0.0}, rotation = {x = 0.0, y = 0.0, z = 0.0}}
 mouse = {x, y}
 
 highTimeStamp = 0.0
@@ -6,6 +6,8 @@ highTime = 0.0
 isHigh = false
 dead = false
 hitTimeStamp = 0.0
+
+playerSpeed = 10.0
 
 function characterStart()
     prevRightInput = 0.0
@@ -63,7 +65,7 @@ function characterUpdate(dt)
 
     prevDirectionV = directionV
     
-    moveObject(-directionH * 5.0, 0.0, directionV * 5.0)
+    moveObject(-directionH * playerSpeed, 0.0, directionV * playerSpeed)
     prevRightInput = rightInput
     prevForwardInput = forwardInput
 end
@@ -91,11 +93,6 @@ function getHigh(type)
 end
 
 function playerGetHit(dmg)
-
-    if time - hitTimeStamp < hitInterval then
-        return
-    end
-
     hitTimeStamp = time
     player.health = player.health - dmg
 
