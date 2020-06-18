@@ -13,6 +13,7 @@
 #include "CameraSystem.hpp"
 #include "ColliderSystem.hpp"
 #include "ShaderSystem.hpp"
+#include "ScriptsCommunicationFunctions.hpp"
 #include "ScriptsSystem.hpp"
 
 #include "LightningSystem.hpp"
@@ -93,21 +94,21 @@ Game::Loop()
 	gameplayManager->RegisterComponent<Skybox>();
 
 	// Register the systems used during the gameplay
-	auto physicsSystem = gameplayManager->RegisterSystem<PhysicsSystem>();
-
 	auto cameraSystem = gameplayManager->RegisterSystem<CameraSystem>();
 
 	auto shaderSystem = gameplayManager->RegisterSystem<ShaderSystem>();
 
+	auto physicsSystem = gameplayManager->RegisterSystem<PhysicsSystem>();
+	
 	auto lightningSystem = gameplayManager->RegisterSystem<LightningSystem>();
-
-	auto renderSystem = gameplayManager->RegisterSystem<RenderSystem>();
 
 	auto animationSystem = gameplayManager->RegisterSystem<AnimationSystem>();
 
 	auto colliderSystem = gameplayManager->RegisterSystem<ColliderSystem>();
 
 	auto scriptsSystem = gameplayManager->RegisterSystem<ScriptsSystem>();
+	
+	auto renderSystem = gameplayManager->RegisterSystem<RenderSystem>();
 	// Add reference to a window
 	renderSystem->window = this->gameWindow;
 
@@ -199,7 +200,12 @@ Game::Loop()
 	renderSystem->Init();
 	std::cout << "RenderSystem has been initialized" << std::endl;
 
-	scriptsSystem->Init(gameplayManager->GetComponentManager());
+	scriptsSystem->Init(
+	  gameplayManager,
+		renderSystem,
+	  this->gameWindow,
+	  &gameplayManager->GetComponentManager()->GetComponent<Camera>(
+	    cameraSystem->cameraEntity));
 
 	gameWindow->CloseSplashScreen();
 	// avoid displaying empty window
@@ -240,7 +246,12 @@ Game::LoadLevel(std::string levelPath)
 	std::ifstream rawLevelData(levelPath);
 	// Write that data to JSON object
 	nlohmann::json jsonLevelData;
-	rawLevelData >> jsonLevelData;
+	
+	try {
+		rawLevelData >> jsonLevelData;
+	} catch (std::exception& e) {
+		std::cerr << e.what() << std::endl;
+	}
 	
 	for (auto& it : jsonLevelData.items()) {
 		Entity entity = gameplayManager->CreateEntity();
@@ -333,9 +344,17 @@ Game::LoadLevel(std::string levelPath)
 				// 0 - width
 				// 1 - height
 				// 2 - depth
-				gameplayManager->AddComponent(
-					entity,
-					BoundingBox{ it2.value()[0], it2.value()[1], it2.value()[2]});
+				// 3 - 0-collider, 1-trigger
+				// 4 - true/false - unmovable
+				// 5 - tag (optional)
+				std::string tag = it2.value()[5] != nullptr ? it2.value()[5] : "none";
+				gameplayManager->AddComponent(entity,
+				                              BoundingBox{ it2.value()[0],
+				                                           it2.value()[1],
+				                                           it2.value()[2],
+				                                           it2.value()[3] == 1,
+				                                           it2.value()[4],
+				                                           tag });
 			
 			} else if (it2.key() == "Scripts") {
 				std::list<std::string> scripts;

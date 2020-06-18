@@ -16,6 +16,7 @@
 #include "Window.hpp"
 #include "Light.hpp"
 #include "ecs.hpp"
+#include "ColliderSystem.hpp"
 
 
 
@@ -48,7 +49,7 @@ RenderSystem::Update(float                             dt,
 
 	auto& cameraComponent = componentManager->GetComponent<Camera>(cameraEntity);
 	// Setup all neded entities so they dont have to be searched and/or attached to renderSystem at the start
-	for (auto& const entity: entities)
+	for (auto& entity: entities)
 	{
 		if (componentManager->GetComponent<Renderer>(entity).drawingType == 3)
 		{
@@ -56,12 +57,25 @@ RenderSystem::Update(float                             dt,
 		}
 	}
 
-	for (auto const& entity : entities) 
+	for (auto& entity : entities) 
 	{
 		auto& renderer = componentManager->GetComponent<Renderer>(entity);
 		
 		auto& shader = Shader();
-		if (renderer.drawingType == 0)
+
+		if (renderer.drawingType == 7) {
+			shader = componentManager->GetComponent<Shader>(shaders->at("boxShader"));
+
+			auto& box = componentManager->GetComponent<BoundingBox>(entity);
+
+			DrawBoundingBox(box,
+			                &componentManager->GetComponent<Camera>(cameraEntity),
+			                &shader,
+			                this->window);
+			continue;
+		}
+
+		if (renderer.drawingType == 0 || renderer.drawingType == 6)
 		{
 			shader = componentManager->GetComponent<Shader>(shaders->at("modelShader"));
 			shader.use();
@@ -72,7 +86,7 @@ RenderSystem::Update(float                             dt,
 			shader = componentManager->GetComponent<Shader>(shaders->at("billboardShader"));
 			shader.use();
 		}
-		else if (renderer.drawingType == 2)
+		else if (renderer.drawingType == 2 || renderer.drawingType == 5)
 		{
 			shader = componentManager->GetComponent<Shader>(shaders->at("animatedModelShader"));
 			shader.use();
@@ -122,6 +136,18 @@ RenderSystem::Update(float                             dt,
 		              transform.scale,
 		              this->window->GetWindowWidth(),
 		              this->window->GetWindowHeight());
+
+			if (renderer.drawingType == 6 || renderer.drawingType == 5) {
+				shader =
+				  componentManager->GetComponent<Shader>(shaders->at("boxShader"));
+
+				auto& box = componentManager->GetComponent<BoundingBox>(entity);
+
+				DrawBoundingBox(box,
+				                &componentManager->GetComponent<Camera>(cameraEntity),
+				                &shader,
+				                this->window);
+			}
 		}
 		else
 		{
@@ -165,7 +191,7 @@ RenderSystem::Update(float                             dt,
 			else	// Model outside of the view
 			{
 				// What do you expect should be here huh?
-			}			
+			}
 		}		
 	}
 }
