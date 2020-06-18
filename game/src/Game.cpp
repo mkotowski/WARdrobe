@@ -214,20 +214,50 @@ Game::Loop()
 	// avoid displaying empty window
 	gameWindow->ShowWindow();
 
+	// double       previous = glfwGetTime();
+	// double       lag = 0.0;
+	/*std::chrono::milliseconds previous =
+	  std::chrono::duration_cast<std::chrono::milliseconds>(
+	    std::chrono::system_clock::now().time_since_epoch());*/
+
+	const float SEC_PER_UPDATE = 0.016;
+
+	auto startTime = std::chrono::high_resolution_clock::now();
+	auto stopTime = std::chrono::high_resolution_clock::now();
+
 	while (!gameWindow->ShouldClose()) {
-		auto startTime = std::chrono::high_resolution_clock::now();
+		startTime = std::chrono::high_resolution_clock::now();
+
+		// EVENT AND INPUT PROCESSING
 		gameWindow->PollEvents();
 		gameWindow->ProcessInput();
 		gameWindow->GetInputManager()->Call();
+
+		// GAME LOGIC
+
+		// gameplayManager->Update(dt);
+		scriptsSystem->Update(dt, gameplayManager->GetComponentManager());
+
+		physicsSystem->Update(dt, gameplayManager->GetComponentManager());
+		colliderSystem->Update(dt, gameplayManager->GetComponentManager());
+
+		// GAMEPLAY RENDERING
 		gameWindow->UpdateViewport();
 		gameWindow->ClearScreen();
-		gameplayManager->Update(dt);
+
+		cameraSystem->Update(dt, gameplayManager->GetComponentManager());
+		lightningSystem->Update(dt, gameplayManager->GetComponentManager());
+		shaderSystem->Update(dt, gameplayManager->GetComponentManager());
+
+		renderSystem->Draw(dt, gameplayManager->GetComponentManager());
+
+		// USER INTERFACE RENDERING
 		gameWindow->TestGUI();
 #if INCLUDE_DEBUG_UI
 		gameWindow->RenderDebugUI();
 #endif // INCLUDE_DEBUG_UI
 
-		auto stopTime = std::chrono::high_resolution_clock::now();
+		stopTime = std::chrono::high_resolution_clock::now();
 		dt = std::chrono::duration<float, std::chrono::seconds::period>(stopTime -
 		                                                                startTime)
 		       .count();
