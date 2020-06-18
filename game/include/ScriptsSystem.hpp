@@ -3,24 +3,6 @@
 #include <iostream>
 #include <map>
 
-#include "ecs.hpp"
-
-extern "C"
-{
-#include "lauxlib.h"
-#include "lua.h"
-#include "lualib.h"
-}
-
-#include "Character.hpp"
-
-int
-l_cppgetTransform(lua_State* l);
-int
-l_cppsetTransform(lua_State* l);
-
-int a = 1, b = 2, c = 3;
-
 struct Scripts
 {
 	std::list<std::string> names;
@@ -28,40 +10,23 @@ struct Scripts
 
 class ScriptsSystem : public System
 {
-	std::shared_ptr<ComponentManager> componentManager;
-	lua_State*                        state;
-	std::list<std::string>            uniqueScripts;
+	lua_State*                     state;
+	std::list<std::string>         uniqueScripts;
+	Window*                        ourWindow;
+	std::shared_ptr<EntityManager> entityManager;
 
-	void ExecuteLuaFunction(std::string name, Entity e, int argsNr, int resNr);
+	void ExecuteLuaFunction(int argsNr, int resNr);
 	bool IsScriptAlreadyInCollection(std::string name);
-	bool flag = false;
 
 public:
-	void Init(std::shared_ptr<ComponentManager> componentManager);
+	void Init(GameplayManager*              gameplayManager,
+	          std::shared_ptr<RenderSystem> rs,
+	          Window*                       w,
+	          Camera*                       c);
 	void Update(float                             dt,
 	            std::shared_ptr<ComponentManager> componentManager) override;
 	void CloseLuaState(std::shared_ptr<ComponentManager> componentManager);
 };
-
-int
-func(lua_State* l)
-{
-	lua_pushnumber(l, a);
-	lua_pushnumber(l, b);
-	lua_pushnumber(l, c);
-
-	return 3;
-}
-
-int
-funcU(lua_State* l)
-{
-	a = lua_tonumber(l, 1);
-	b = lua_tonumber(l, 2);
-	c = lua_tonumber(l, 3);
-
-	return 1;
-}
 
 bool
 ScriptsSystem::IsScriptAlreadyInCollection(std::string name)
@@ -76,10 +41,17 @@ ScriptsSystem::IsScriptAlreadyInCollection(std::string name)
 }
 
 void
-ScriptsSystem::Init(std::shared_ptr<ComponentManager> componentManager)
+ScriptsSystem::Init(GameplayManager*              gameplayManager,
+                    std::shared_ptr<RenderSystem> rs,
+                    Window*                       w,
+                    Camera*                       c)
 {
+	ourWindow = w;
+
 	state = luaL_newstate();
 	luaL_openlibs(state);
+
+	auto componentManager = gameplayManager->GetComponentManager();
 
 	for (auto const& entity : entities) {
 		auto& scripts = componentManager->GetComponent<Scripts>(entity);
@@ -103,31 +75,26 @@ ScriptsSystem::Init(std::shared_ptr<ComponentManager> componentManager)
 		}
 	}
 
-	// std::string filePath = "assets/scripts/main.lua";
+	lua_pushnumber(state, rs->shaders->at("modelShader"));
+	lua_setglobal(state, "modelShader");
+	lua_pushnumber(state, rs->shaders->at("animatedModelShader"));
+	lua_setglobal(state, "animatedModelShader");
 
-	// if (luaL_loadfile(state, filePath.c_str())) {
-	//	std::cerr << "Something went wrong loading the chunk (syntax error?)"
-	//	          << std::endl;
-	//	std::cerr << lua_tostring(state, -1) << std::endl;
-	//	lua_pop(state, 1);
-	//}
+	lua_pushlightuserdata(state, &(*gameplayManager));
+	lua_setglobal(state, "gameplayManager");
 
-	// if (lua_pcall(state, 0, LUA_MULTRET, 0)) {
-	//	std::cerr << "Something went wrong during execution" << std::endl;
-	//	std::cerr << lua_tostring(state, -1) << std::endl;
-	//	lua_pop(state, 1);
-	//}
-
-	this->componentManager = componentManager;
+	entityManager = gameplayManager->GetEntityManager();
 
 	lua_pushlightuserdata(state, &(*componentManager));
 	lua_setglobal(state, "componentManager");
 
-	lua_pushcfunction(state, l_cppgetTransform);
-	lua_setglobal(state, "getTransform");
+	lua_pushlightuserdata(state, &(*w));
+	lua_setglobal(state, "window");
 
-	lua_pushcfunction(state, l_cppsetTransform);
-	lua_setglobal(state, "setTransform");
+	lua_pushlightuserdata(state, &(*c));
+	lua_setglobal(state, "camera");
+
+	setAllFunctions(state);
 
 	for (auto const& entity : entities) {
 		auto& scripts = componentManager->GetComponent<Scripts>(entity);
@@ -137,10 +104,10 @@ ScriptsSystem::Init(std::shared_ptr<ComponentManager> componentManager)
 
 		for (auto script : scripts.names) {
 
-			std::string name = "";
+			std::string start = script.substr(0, script.length() - 4) + "Start";
 
-			lua_getglobal(state, "start");
-			ExecuteLuaFunction(name, entity, 0, 0);
+			lua_getglobal(state, start.c_str());
+			ExecuteLuaFunction(0, 0);
 		}
 	}
 }
@@ -149,15 +116,22 @@ void
 ScriptsSystem::Update(float                             dt,
                       std::shared_ptr<ComponentManager> componentManager)
 {
+	lua_pushnumber(state, playerInputHorizontal);
+	lua_setglobal(state, "rightInput");
+	lua_pushnumber(state, playerInputVertical);
+	lua_setglobal(state, "forwardInput");
+	lua_pushboolean(state, leftMousePressed);
+	lua_setglobal(state, "leftMousePressed");
+	lua_pushboolean(state, rightMousePressed);
+	lua_setglobal(state, "rightMousePressed");
+	lua_pushnumber(state, glfwGetTime());
+	lua_setglobal(state, "time");
+
 	for (auto const& entity : entities) {
 		auto& scripts = componentManager->GetComponent<Scripts>(entity);
 
 		lua_pushnumber(state, entity);
 		lua_setglobal(state, "entity");
-		lua_pushnumber(state, playerInputHorizontal);
-		lua_setglobal(state, "rightInput");
-		lua_pushnumber(state, playerInputVertical);
-		lua_setglobal(state, "forwardInput");
 
 		for (auto script : scripts.names) {
 
@@ -165,16 +139,52 @@ ScriptsSystem::Update(float                             dt,
 
 			lua_getglobal(state, update.c_str());
 			lua_pushnumber(state, dt);
-			ExecuteLuaFunction("update", entity, 1, 0);
+			ExecuteLuaFunction(1, 0);
+
+			if (entity > 2000) {
+				return;
+			}
+
+			std::string onCollision =
+			  script.substr(0, script.length() - 4) + "OnCollisionEnter";
+
+			lua_getglobal(state, onCollision.c_str());
+			bool exists = !lua_isnil(state, -1);
+			if (exists) {
+				int i = 0;
+				for (auto entityCollided :
+				     componentManager->GetComponent<BoundingBox>(entity)
+				       .collisionEnterEntities) {
+
+					if (entityManager->GetSignature(entityCollided) == 0) {
+						i++;
+						continue;
+					}
+
+					if (i != 0) {
+						lua_getglobal(state, onCollision.c_str());
+					}
+
+					lua_pushlightuserdata(
+					  state,
+					  &componentManager->GetComponent<BoundingBox>(entityCollided));
+					ExecuteLuaFunction(1, 0);
+
+					if (entity > 2000) {
+						return;
+					}
+
+					i++;
+				}
+			} else {
+				lua_pop(state, 1);
+			}
 		}
 	}
 }
 
 void
-ScriptsSystem::ExecuteLuaFunction(std::string name,
-                                  Entity      e,
-                                  int         argsNr,
-                                  int         resNr)
+ScriptsSystem::ExecuteLuaFunction(int argsNr, int resNr)
 {
 	if (lua_pcall(state, argsNr, resNr, 0)) {
 		std::cerr << "Something went wrong during execution" << std::endl;
@@ -188,37 +198,4 @@ ScriptsSystem::CloseLuaState(std::shared_ptr<ComponentManager> componentManager)
 {
 	lua_close(state);
 	state = nullptr;
-}
-
-int
-l_cppgetTransform(lua_State* l)
-{
-	Entity e = luaL_checknumber(l, 1);
-	ComponentManager* cm = (ComponentManager*)lua_touserdata(l, 2);
-
-	Transform t = cm->GetComponent<Transform>(e);
-
-	lua_pushnumber(l, t.position.x);
-	lua_pushnumber(l, t.position.y);
-	lua_pushnumber(l, t.position.z);
-
-	return 3;
-}
-
-int
-l_cppsetTransform(lua_State* l)
-{
-	Entity            e = luaL_checknumber(l, 1);
-	ComponentManager* cm = (ComponentManager*)lua_touserdata(l, 2);
-
-	float x = luaL_checknumber(l, 3);
-	float y = luaL_checknumber(l, 4);
-	float z = luaL_checknumber(l, 5);
-
-	Transform* t = &cm->GetComponent<Transform>(e);
-	t->position.x = x;
-	t->position.y = y;
-	t->position.z = z;
-
-	return 1;
 }

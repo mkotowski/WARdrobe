@@ -26,7 +26,6 @@ Renderer::Draw(Shader*   ourShader,
 				sceneCamera->cameraPos + sceneCamera->cameraFront,
 				sceneCamera->cameraUp);
 
-
 	glm::mat4 model = glm::mat4(1.0f);
 
 	model = glm::translate(model, position);

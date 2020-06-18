@@ -16,6 +16,8 @@ float forwardInput = 0.0f;
 float rightInput = 0.0f;
 float playerInputHorizontal = 0.0f;
 float playerInputVertical = 0.0f;
+bool  leftMousePressed = false;
+bool  rightMousePressed = false;
 
 class CameraSystem : public System
 {
@@ -112,10 +114,10 @@ CameraSystem::Update(float                             dt,
 		camera.cameraPos = glm::vec3(rotate * glm::vec4(camera.cameraPos, 1.0f));
 		camera.cameraUp = glm::vec3(rotate * glm::vec4(camera.cameraUp, 1.0f));*/
 
-		camera.cameraPos += forwardInput * cameraSpeed * camera.cameraFront;
-		camera.cameraPos = glm::vec3(camera.cameraPos[0] + rightInput,
-		                             camera.cameraPos[1],
-		                             camera.cameraPos[2]); // camZ
+		//camera.cameraPos += forwardInput * cameraSpeed * camera.cameraFront;
+		//camera.cameraPos = glm::vec3(camera.cameraPos[0] + rightInput,
+		//                             camera.cameraPos[1],
+		//                             camera.cameraPos[2]); // camZ
 		/*camera.cameraPos += 
 		  glm::normalize(glm::cross(camera.cameraFront, camera.cameraUp)) *
 		  cameraSpeed;*/

@@ -46,7 +46,6 @@ public:
     }
     Model(string const &modelPath, string const &texturesPath,bool gamma = false) : gammaCorrection(gamma)
     {
-        
         loadModel(modelPath, texturesPath);
         
         //textureID = TextureFromFile(texturesPath.c_str());
