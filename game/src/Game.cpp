@@ -285,9 +285,13 @@ Game::LoadLevel(std::string levelPath)
 	} catch (std::exception& e) {
 		std::cerr << e.what() << std::endl;
 	}
-
+	
+	//int entityNr = 0;
 	for (auto& it : jsonLevelData.items()) {
 		Entity entity = gameplayManager->CreateEntity();
+
+		/*std::cout << "Key " << entityNr << ": " << it.key() << std::endl;
+		entityNr++;*/
 
 		for (auto& it2 : it.value().items()) {
 			if (it2.key() == "ModelArray") {

@@ -1,4 +1,5 @@
-player = {entity = 0, health = 100.0, position = {x = 0.0, y = 0.0, z = 0.0}, rotation = {x = 0.0, y = 0.0, z = 0.0}}
+maxHealth = 500.0
+player = {entity = 0, health = maxHealth, position = {x = 0.0, y = 0.0, z = 0.0}, rotation = {x = 0.0, y = 0.0, z = 0.0}}
 mouse = {x, y}
 
 highTimeStamp = 0.0
@@ -6,6 +7,9 @@ highTime = 0.0
 isHigh = false
 dead = false
 hitTimeStamp = 0.0
+
+normalPlayerSpeed = 10.0
+playerSpeed = normalPlayerSpeed
 
 function characterStart()
     prevRightInput = 0.0
@@ -30,6 +34,7 @@ function characterUpdate(dt)
         
         leftFist.damage = lightDamage
         rightFist.damage = lightDamage
+        playerSpeed = normalPlayerSpeed
         setSubroutine(modelShader, animatedModelShader, componentManager, "ColorWhite")
     end
 
@@ -63,7 +68,7 @@ function characterUpdate(dt)
 
     prevDirectionV = directionV
     
-    moveObject(-directionH * 5.0, 0.0, directionV * 5.0)
+    moveObject(-directionH * playerSpeed, 0.0, directionV * playerSpeed)
     prevRightInput = rightInput
     prevForwardInput = forwardInput
 end
@@ -87,15 +92,22 @@ function getHigh(type)
         highTimeStamp = time
         highTime = 5.0
         setSubroutine(modelShader, animatedModelShader, componentManager, "ColorRed")
+    elseif type == "green" then
+        player.health = player.health + (maxHealth - player.health)
+        isHigh = true
+        highTimeStamp = time
+        highTime = 5.0
+        setSubroutine(modelShader, animatedModelShader, componentManager, "ColorWavy")
+    elseif type == "blue" then
+        playerSpeed = playerSpeed * 2.0
+        isHigh = true
+        highTimeStamp = time
+        highTime = 5.0
+        setSubroutine(modelShader, animatedModelShader, componentManager, "ColorCustom")
     end
 end
 
 function playerGetHit(dmg)
-
-    if time - hitTimeStamp < hitInterval then
-        return
-    end
-
     hitTimeStamp = time
     player.health = player.health - dmg
 

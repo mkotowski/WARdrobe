@@ -3,8 +3,6 @@
 lampDamage = 15.0
 lampHitInterval = 3.0
 
-lamps = {}
-
 function lampAttackStart()
     setBoundingBox(entity, componentManager, false)
     local enemyEntity = -1
@@ -17,7 +15,7 @@ function lampAttackStart()
         end
     end
 
-    local lamp = {attacking = false, enemyEntity = enemyEntity, attackTimeStamp = 0.0}
+    local lamp = {attacking = false, enemyEntity = enemyEntity, attackTimeStamp = 0.0, hitTimeStamp = 0.0, hitInterval = 5.0}
     lamps[entity] = lamp
 end
 
@@ -25,17 +23,6 @@ function lampAttackUpdate(dt)
     if lamps[entity].attacking == false then
         setPositionRelativeToEnemy(0.0, 0.0, 0.0, enemies[lamps[entity].enemyEntity])
     end
-end
-
-function performAttack(dt)
-    local enemy = enemies[entity]
-    enemy.attackCo = coroutine.create(enemy.attackCoFunc)
-    coroutine.resume(enemy.attackCo, dt)
-end
-
-function continueAttack(dt)
-    local enemy = enemies[entity]
-    coroutine.resume(enemy.attackCo, dt)
 end
 
 function lampAttackCoroutine(dt)
@@ -71,15 +58,9 @@ function lampAttackCoroutine(dt)
     setBoundingBox(enemy.colliderEntity, componentManager, false)
 end
 
-function setPositionRelativeToEnemy(x, y, z, enemy)
-    setTransformRelToRotatingParent(enemy.colliderEntity, componentManager, enemy.position.x, enemy.position.y, enemy.position.z, 
-    x, y, z,
-    enemy.rotation.x, enemy.rotation.y, enemy.rotation.z)
-end
-
 function lampAttackOnCollisionEnter(box)
-    if time - lamps[entity].attackTimeStamp >= lampHitInterval and getTag(box) == "player" then
-        lamps[entity].attackTimeStamp = time
+    if time - lamps[entity].hitTimeStamp >= damageInterval and getTag(box) == "player" then
+        lamps[entity].hitTimeStamp = time
         playerGetHit(lampDamage)
     end
 end

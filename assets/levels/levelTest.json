@@ -11,22 +11,15 @@
             ,
     "mainCamera" :            
                 {
-                    "Transform" : [0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+                    "Transform" : [0.0, 30.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
                     "Camera" : [0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 1.0, 80.0],
                     "Scripts" : ["camera.lua"]
-                }
-            ,
-    "testAnimationModel" :            
-                {
-                    "ModelArray" : [0, "assets/models/model_tutorial.dae", "assets/textures/stone2.jpg"],
-                    "Transform" : [ 0.0, 0.0, 0.0, 270.0, 0.0, -90.0, 1.0, 1.0, 1.0 ],
-                    "Renderer" : 0
                 }
             ,
     "Drugman" :            
                 {
                     "ModelArray" : [0, "assets/models/Drugman/DrugmanWalkArmless.fbx", "assets/textures/Drugman.png"],
-                    "Transform" : [ 1.0, 0.0, -4.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001 ],
+                    "Transform" : [ 10.0, 0.0, 10.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001 ],
                     "Renderer" : 5,
                     "Rigidbody" : [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
                     "Gravity" : [0.0, 0.0, 0.0],
@@ -45,10 +38,28 @@
                     "Scripts" : ["pillRed.lua"]
                 }
             ,
-    "Lamp" :            
+    "Pill02" :            
+                {
+                    "ModelArray" : [0, "assets/models/Pills/GreenPill.obj", "assets/textures/Pills/GreenPill.png"],
+                    "Transform" : [ 8.0, 0.0, -4.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1 ],
+                    "Renderer" : 6,
+                    "BoundingBox" : [20.0, 20.0, 20.0, 1, false, "pill"],
+                    "Scripts" : ["pillGreen.lua"]
+                }
+            ,
+    "Pill03" :            
+                {
+                    "ModelArray" : [0, "assets/models/Pills/BluePill.obj", "assets/textures/Pills/BluePill.png"],
+                    "Transform" : [ 6.0, 0.0, -4.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1 ],
+                    "Renderer" : 6,
+                    "BoundingBox" : [20.0, 20.0, 20.0, 1, false, "pill"],
+                    "Scripts" : ["pillBlue.lua"]
+                }
+            ,
+    "ALamp" :            
             {
                 "ModelArray" : [0, "assets/models/Lamp/LampJump.fbx", "assets/textures/Lamp_Monster.png"],
-                "Transform" : [ -5.0, 0.0, -4.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001 ],
+                "Transform" : [ 10.0, 0.0, -2.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001 ],
                 "Renderer" : 5,
                 "Rigidbody" : [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
                 "Gravity" : [0.0, 0.0, 0.0],
@@ -59,18 +70,18 @@
                 "Scripts" : ["enemy.lua"]
             }
         ,
-    "LampAttackCollider" :            
+    "ALampAttackCollider" :            
             {
                 "Transform" : [ 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0 ],
                 "Renderer" : 7,
                 "BoundingBox" : [0.33, 0.33, 0.33, 1, false, "enemyWeapon"],
                 "Scripts" : ["lampAttack.lua"]
             }
-        ,
-        "Lamp1" :            
+    ,
+    "ALamp1" :            
             {
                 "ModelArray" : [0, "assets/models/Lamp/LampJump.fbx", "assets/textures/Lamp_Monster.png"],
-                "Transform" : [ -5.0, 0.0, -4.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001 ],
+                "Transform" : [ 10.0, 0.0, -10.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001 ],
                 "Renderer" : 5,
                 "Rigidbody" : [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
                 "Gravity" : [0.0, 0.0, 0.0],
@@ -81,31 +92,87 @@
                 "Scripts" : ["enemy.lua"]
             }
         ,
-    "Lamp1AttackCollider" :            
+    "ALamp1AttackCollider" :            
             {
                 "Transform" : [ 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0 ],
                 "Renderer" : 7,
                 "BoundingBox" : [0.33, 0.33, 0.33, 1, false, "enemyWeapon"],
                 "Scripts" : ["lampAttack.lua"]
             }
+    ,
+    "ALamp2" :            
+            {
+                "ModelArray" : [0, "assets/models/Lamp/LampJump.fbx", "assets/textures/Lamp_Monster.png"],
+                "Transform" : [ -10.0, 0.0, 8.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001 ],
+                "Renderer" : 5,
+                "Rigidbody" : [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                "Gravity" : [0.0, 0.0, 0.0],
+                "Animator" : [2, "Walking",
+                    "assets/models/Lamp/LampJump.fbx", true, "Walking",
+                    "assets/models/Lamp/LampSmack.fbx", false, "Attack"],
+                "BoundingBox" : [1000, 4000, 1000, 0, false, "enemy"],
+                "Scripts" : ["enemy.lua"]
+            }
         ,
+    "ALamp2AttackCollider" :            
+            {
+                "Transform" : [ 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0 ],
+                "Renderer" : 7,
+                "BoundingBox" : [0.33, 0.33, 0.33, 1, false, "enemyWeapon"],
+                "Scripts" : ["lampAttack.lua"]
+            }
+    ,
+    "ALamp3" :            
+            {
+                "ModelArray" : [0, "assets/models/Lamp/LampJump.fbx", "assets/textures/Lamp_Monster.png"],
+                "Transform" : [ -10.0, 0.0, 5.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001 ],
+                "Renderer" : 5,
+                "Rigidbody" : [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                "Gravity" : [0.0, 0.0, 0.0],
+                "Animator" : [2, "Walking",
+                    "assets/models/Lamp/LampJump.fbx", true, "Walking",
+                    "assets/models/Lamp/LampSmack.fbx", false, "Attack"],
+                "BoundingBox" : [1000, 4000, 1000, 0, false, "enemy"],
+                "Scripts" : ["enemy.lua"]
+            }
+        ,
+    "ALamp3AttackCollider" :            
+            {
+                "Transform" : [ 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0 ],
+                "Renderer" : 7,
+                "BoundingBox" : [0.33, 0.33, 0.33, 1, false, "enemyWeapon"],
+                "Scripts" : ["lampAttack.lua"]
+            }
+    ,
     "BatBulb" :            
         {
             "ModelArray" : [0, "assets/models/BatBulb/BatBulbFlight.fbx", "assets/textures/BatBulb.png"],
-            "Transform" : [ -2.0, -2.0, -4.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001 ],
-            "Renderer" : 2,
+            "Transform" : [ 10.0, 3.0, -8.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001 ],
+            "Renderer" : 5,
+            "Rigidbody" : [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            "Gravity" : [0.0, 0.0, 0.0],
             "Animator" : [2, "Walking",
                 "assets/models/BatBulb/BatBulbFlight.fbx", true, "Walking",
-                "assets/models/BatBulb/BatBulbSpin.fbx", false, "Attack"]
+                "assets/models/BatBulb/BatBulbSpin.fbx", false, "Attack"],
+            "BoundingBox" : [1000.0, 1000.0, 1000.0, 0, false, "enemy"],
+            "Scripts" : ["enemy.lua"]
         }
     ,
+    "BatBulbAttackCollider" :            
+        {
+            "Transform" : [ 0.0, 3.0, -8.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001 ],
+            "Renderer" : 7,
+            "BoundingBox" : [0.33, 0.33, 0.33, 1, false, "enemyWeapon"],
+            "Scripts" : ["bulbAttack.lua"]
+        }
+        ,
     "playerFistLeft" :
 
                 {
                     "ModelArray" : [0, "assets/models/Hand.obj", "assets/textures/Hand.png"],
                     "Transform" : [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1],
                     "Renderer" : 6,
-                    "BoundingBox" : [7.0, 7.0, 7.0, 1, false, "playerWeaponLeft"],
+                    "BoundingBox" : [7.0, 35.0, 7.0, 1, false, "playerWeaponLeft"],
                     "Scripts" : ["weapon.lua"]
                 }
 
@@ -116,7 +183,7 @@
                     "ModelArray" : [0, "assets/models/Hand.obj", "assets/textures/Hand.png"],
                     "Transform" : [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1],
                     "Renderer" : 6,
-                    "BoundingBox" : [7.0, 7.0, 7.0, 1, false, "playerWeaponRight"],
+                    "BoundingBox" : [7.0, 35.0, 7.0, 1, false, "playerWeaponRight"],
                     "Scripts" : ["weapon.lua"]
                 }
 
@@ -125,10 +192,41 @@
                 {
                     "ModelArray" : [0, "assets/models/Levels/1x1_green.obj", "assets/textures/1x1_green.png"],
                     "Transform" : [ 0.0, -2.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
-                    "Renderer" : 0,
-                    "BoundingBox" : [1.0, 1.0, 1.0, 0, true]
+                    "Renderer" : 0
                 }
             ,
+    "box1" :
+            {
+                "ModelArray" : [0, "assets/models/Interior/BigBox.fbx", "assets/textures/Interior/BigBox.png"],
+                "Transform" : [ 0.0, 0.0, 15.0, 0.0, 90.0, 0.0, 0.5, 0.5, 0.5 ],
+                "BoundingBox" : [12.0, 10.0, 12.0, 0, true],
+                "Renderer" : 0
+            }
+        ,
+    "box2" :
+        {
+            "ModelArray" : [0, "assets/models/Interior/BigBox.fbx", "assets/textures/Interior/BigBox.png"],
+            "Transform" : [ 0.0, 0.0, 8.0, 0.0, 90.0, 0.0, 0.5, 0.5, 0.5 ],
+            "BoundingBox" : [12.0, 10.0, 12.0, 0, true],
+            "Renderer" : 0
+        }
+    ,
+    "box3" :
+        {
+            "ModelArray" : [0, "assets/models/Interior/BigBox.fbx", "assets/textures/Interior/BigBox.png"],
+            "Transform" : [ 0.0, 0.0, 1.0, 0.0, 90.0, 0.0, 0.5, 0.5, 0.5 ],
+            "BoundingBox" : [12.0, 10.0, 12.0, 0, true],
+            "Renderer" : 0
+        }
+    ,
+    "box4" :
+        {
+            "ModelArray" : [0, "assets/models/Interior/BigBox.fbx", "assets/textures/Interior/BigBox.png"],
+            "Transform" : [ 0.0, 0.0, -7.0, 0.0, 90.0, 0.0, 0.5, 0.5, 0.5 ],
+            "BoundingBox" : [12.0, 10.0, 12.0, 0, true],
+            "Renderer" : 0
+        }
+    ,
     "1wall1":
                 {
                     "Transform" : [-20.0, -3.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
@@ -162,11 +260,194 @@
     "levelModel2" :
             {
                 "ModelArray" : [0, "assets/models/Levels/1x1_red.obj", "assets/textures/1x1_red.png"],
-                "Transform" : [ 0.0, -2.0, 20.5, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
-                "Renderer" : 0,
-                "BoundingBox" : [1.0, 1.0, 1.0, 0, true]
+                "Transform" : [ 0.0, -2.0, 40.5, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
+                "Renderer" : 0
             }
         ,
+    "shelf1" :
+        {
+            "ModelArray" : [0, "assets/models/Interior/Shelf1.fbx", "assets/textures/Interior/Shelf1.png"],
+            "Transform" : [ 0.0, -2.0, 40.5, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+            "BoundingBox" : [3.0, 3.0, 3.0, 0, true],
+            "Renderer" : 0
+        }
+    ,
+    "shelf2" :
+        {
+            "ModelArray" : [0, "assets/models/Interior/Shelf1.fbx", "assets/textures/Interior/Shelf1.png"],
+            "Transform" : [ 5.0, -2.0, 40.5, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+            "BoundingBox" : [5.0, 3.0, 5.0, 0, true],
+            "Renderer" : 0
+        }
+    ,
+    "shelf3" :
+        {
+            "ModelArray" : [0, "assets/models/Interior/Shelf1.fbx", "assets/textures/Interior/Shelf1.png"],
+            "Transform" : [ 10.0, -2.0, 40.5, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+            "BoundingBox" : [5.0, 3.0, 5.0, 0, true],
+            "Renderer" : 0
+        }
+    ,
+    "shelf4" :
+        {
+            "ModelArray" : [0, "assets/models/Interior/Shelf1.fbx", "assets/textures/Interior/Shelf1.png"],
+            "Transform" : [ -5.0, -2.0, 40.5, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+            "BoundingBox" : [5.0, 3.0, 5.0, 0, true],
+            "Renderer" : 0
+        }
+    ,
+    "shelf5" :
+        {
+            "ModelArray" : [0, "assets/models/Interior/Shelf1.fbx", "assets/textures/Interior/Shelf1.png"],
+            "Transform" : [ -10.0, -2.0, 40.5, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+            "BoundingBox" : [5.0, 3.0, 5.0, 0, true],
+            "Renderer" : 0
+        }
+    ,
+    "shelf6" :
+        {
+            "ModelArray" : [0, "assets/models/Interior/Shelf1.fbx", "assets/textures/Interior/Shelf1.png"],
+            "Transform" : [ -15.0, -2.0, 40.5, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+            "BoundingBox" : [5.0, 3.0, 5.0, 0, true],
+            "Renderer" : 0
+        }
+    ,
+    "shelf7" :
+        {
+            "ModelArray" : [0, "assets/models/Interior/Shelf1.fbx", "assets/textures/Interior/Shelf1.png"],
+            "Transform" : [ -20.0, -2.0, 40.5, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+            "BoundingBox" : [5.0, 3.0, 5.0, 0, true],
+            "Renderer" : 0
+        }
+    ,
+    "shelf8" :
+        {
+            "ModelArray" : [0, "assets/models/Interior/Shelf1.fbx", "assets/textures/Interior/Shelf1.png"],
+            "Transform" : [ 0.0, -2.0, 37.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+            "BoundingBox" : [3.0, 3.0, 3.0, 0, true],
+            "Renderer" : 0
+        }
+    ,
+    "shelf9" :
+        {
+            "ModelArray" : [0, "assets/models/Interior/Shelf1.fbx", "assets/textures/Interior/Shelf1.png"],
+            "Transform" : [ 5.0, -2.0, 37.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+            "BoundingBox" : [5.0, 3.0, 5.0, 0, true],
+            "Renderer" : 0
+        }
+    ,
+    "shelf10" :
+        {
+            "ModelArray" : [0, "assets/models/Interior/Shelf1.fbx", "assets/textures/Interior/Shelf1.png"],
+            "Transform" : [ 10.0, -2.0, 37.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+            "BoundingBox" : [5.0, 3.0, 5.0, 0, true],
+            "Renderer" : 0
+        }
+    ,
+    "shelf11" :
+        {
+            "ModelArray" : [0, "assets/models/Interior/Shelf1.fbx", "assets/textures/Interior/Shelf1.png"],
+            "Transform" : [ -5.0, -2.0, 37.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+            "BoundingBox" : [5.0, 3.0, 5.0, 0, true],
+            "Renderer" : 0
+        }
+    ,
+    "shelf12" :
+        {
+            "ModelArray" : [0, "assets/models/Interior/Shelf1.fbx", "assets/textures/Interior/Shelf1.png"],
+            "Transform" : [ -10.0, -2.0, 37.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+            "BoundingBox" : [5.0, 3.0, 5.0, 0, true],
+            "Renderer" : 0
+        }
+    ,
+    "shelf13" :
+        {
+            "ModelArray" : [0, "assets/models/Interior/Shelf1.fbx", "assets/textures/Interior/Shelf1.png"],
+            "Transform" : [ -15.0, -2.0, 37.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+            "BoundingBox" : [5.0, 3.0, 5.0, 0, true],
+            "Renderer" : 0
+        }
+    ,
+    "shelf14" :
+        {
+            "ModelArray" : [0, "assets/models/Interior/Shelf1.fbx", "assets/textures/Interior/Shelf1.png"],
+            "Transform" : [ -20.0, -2.0, 37.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+            "BoundingBox" : [5.0, 3.0, 5.0, 0, true],
+            "Renderer" : 0
+        }
+    ,
+    "shelf15" :
+        {
+            "ModelArray" : [0, "assets/models/Interior/Shelf1.fbx", "assets/textures/Interior/Shelf1.png"],
+            "Transform" : [ 0.0, -2.0, 23.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+            "BoundingBox" : [3.0, 3.0, 3.0, 0, true],
+            "Renderer" : 0
+        }
+    ,
+    "shelf16" :
+        {
+            "ModelArray" : [0, "assets/models/Interior/Shelf1.fbx", "assets/textures/Interior/Shelf1.png"],
+            "Transform" : [ 5.0, -2.0, 23.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+            "BoundingBox" : [5.0, 3.0, 5.0, 0, true],
+            "Renderer" : 0
+        }
+    ,
+    "shelf17" :
+        {
+            "ModelArray" : [0, "assets/models/Interior/Shelf1.fbx", "assets/textures/Interior/Shelf1.png"],
+            "Transform" : [ 10.0, -2.0, 23.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+            "BoundingBox" : [5.0, 3.0, 5.0, 0, true],
+            "Renderer" : 0
+        }
+    ,
+    "shelf18" :
+        {
+            "ModelArray" : [0, "assets/models/Interior/Shelf1.fbx", "assets/textures/Interior/Shelf1.png"],
+            "Transform" : [ -5.0, -2.0, 23.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+            "BoundingBox" : [5.0, 3.0, 5.0, 0, true],
+            "Renderer" : 0
+        }
+    ,
+    "shelf19" :
+        {
+            "ModelArray" : [0, "assets/models/Interior/Shelf1.fbx", "assets/textures/Interior/Shelf1.png"],
+            "Transform" : [ -5.0, -2.0, 42.0, 0.0, 90.0, 0.0, 0.5, 0.5, 0.5 ],
+            "BoundingBox" : [5.0, 3.0, 5.0, 0, true],
+            "Renderer" : 0
+        }
+    ,
+    "shelf20" :
+        {
+            "ModelArray" : [0, "assets/models/Interior/Shelf1.fbx", "assets/textures/Interior/Shelf1.png"],
+            "Transform" : [ -5.0, -2.0, 47.0, 0.0, 90.0, 0.0, 0.5, 0.5, 0.5 ],
+            "BoundingBox" : [5.0, 3.0, 5.0, 0, true],
+            "Renderer" : 0
+        }
+    ,
+    "shelf21" :
+        {
+            "ModelArray" : [0, "assets/models/Interior/Shelf1.fbx", "assets/textures/Interior/Shelf1.png"],
+            "Transform" : [ -5.0, -2.0, 53.0, 0.0, 90.0, 0.0, 0.5, 0.5, 0.5 ],
+            "BoundingBox" : [5.0, 3.0, 5.0, 0, true],
+            "Renderer" : 0
+        }
+    ,
+    "smallForklift1" :
+        {
+            "ModelArray" : [0, "assets/models/Interior/SmallForklift.fbx", "assets/textures/Interior/SmallForklift.png"],
+            "Transform" : [ 5.0, 0.0, 50.0, 0.0, 90.0, 0.0, 0.5, 0.5, 0.5 ],
+            "BoundingBox" : [5.0, 3.0, 5.0, 0, true],
+            "Renderer" : 0
+        }
+    ,
+    "bigBox1" :
+        {
+            "ModelArray" : [0, "assets/models/Interior/BigBox.fbx", "assets/textures/Interior/BigBox.png"],
+            "Transform" : [ 5.0, 0.0, 45.0, 0.0, 90.0, 0.0, 0.5, 0.5, 0.5 ],
+            "BoundingBox" : [12.0, 10.0, 12.0, 0, true],
+            "Renderer" : 0
+        }
+    ,
     "2wall1":
                 {
                     "Transform" : [-20.0, -3.0, 40.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
@@ -194,20 +475,115 @@
     "levelModel3" :
             {
                 "ModelArray" : [0, "assets/models/Levels/2x1_red.obj", "assets/textures/2x1_red.png"],
-                "Transform" : [ 10.25, -2.0, 41.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
-                "Renderer" : 0,
-                "BoundingBox" : [1.0, 1.0, 1.0, 0, true]
+                "Transform" : [ 20.5, -2.0, 81.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
+                "Renderer" : 0
             }
         ,
+    "bigBox2" :
+        {
+            "ModelArray" : [0, "assets/models/Interior/BigBox.fbx", "assets/textures/Interior/BigBox.png"],
+            "Transform" : [ -15.0, 0.0, 88.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+            "BoundingBox" : [12.0, 10.0, 12.0, 0, true],
+            "Renderer" : 0
+        }
+    ,
+    "bigBox3" :
+    {
+        "ModelArray" : [0, "assets/models/Interior/BigBox.fbx", "assets/textures/Interior/BigBox.png"],
+        "Transform" : [ -15.0, 0.0, 81.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+        "BoundingBox" : [12.0, 10.0, 12.0, 0, true],
+        "Renderer" : 0
+    }
+    ,
+    "bigBox4" :
+    {
+        "ModelArray" : [0, "assets/models/Interior/BigBox.fbx", "assets/textures/Interior/BigBox.png"],
+        "Transform" : [ -15.0, 0.0, 74.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+        "BoundingBox" : [12.0, 10.0, 12.0, 0, true],
+        "Renderer" : 0
+    }
+    ,
+    "bigBox5" :
+    {
+        "ModelArray" : [0, "assets/models/Interior/BigBox.fbx", "assets/textures/Interior/BigBox.png"],
+        "Transform" : [ -15.0, 0.0, 67.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+        "BoundingBox" : [12.0, 10.0, 12.0, 0, true],
+        "Renderer" : 0
+    }
+    ,
+    "bigBox6" :
+    {
+        "ModelArray" : [0, "assets/models/Interior/BigBox.fbx", "assets/textures/Interior/BigBox.png"],
+        "Transform" : [ 20.0, 0.0, 66.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+        "BoundingBox" : [12.0, 10.0, 12.0, 0, true],
+        "Renderer" : 0
+    }
+    ,
+    "bigBox7" :
+    {
+        "ModelArray" : [0, "assets/models/Interior/BigBox.fbx", "assets/textures/Interior/BigBox.png"],
+        "Transform" : [ 20.0, 0.0, 74.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+        "BoundingBox" : [12.0, 10.0, 12.0, 0, true],
+        "Renderer" : 0
+    }
+    ,
+    "bigBox8" :
+    {
+        "ModelArray" : [0, "assets/models/Interior/BigBox.fbx", "assets/textures/Interior/BigBox.png"],
+        "Transform" : [ 20.0, 0.0, 81.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+        "BoundingBox" : [12.0, 10.0, 12.0, 0, true],
+        "Renderer" : 0
+    }
+    ,
+    "bigBox9" :
+    {
+        "ModelArray" : [0, "assets/models/Interior/BigBox.fbx", "assets/textures/Interior/BigBox.png"],
+        "Transform" : [ 27.0, 0.0, 81.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+        "BoundingBox" : [12.0, 10.0, 12.0, 0, true],
+        "Renderer" : 0
+    }
+    ,
+    "bigBox10" :
+    {
+        "ModelArray" : [0, "assets/models/Interior/BigBox.fbx", "assets/textures/Interior/BigBox.png"],
+        "Transform" : [ 34.0, 0.0, 81.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+        "BoundingBox" : [12.0, 10.0, 12.0, 0, true],
+        "Renderer" : 0
+    }
+    ,
+    "bigBox11" :
+    {
+        "ModelArray" : [0, "assets/models/Interior/BigBox.fbx", "assets/textures/Interior/BigBox.png"],
+        "Transform" : [ 13.0, 0.0, 81.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+        "BoundingBox" : [12.0, 10.0, 12.0, 0, true],
+        "Renderer" : 0
+    }
+    ,
+    "bigBox12" :
+    {
+        "ModelArray" : [0, "assets/models/Interior/BigBox.fbx", "assets/textures/Interior/BigBox.png"],
+        "Transform" : [ 6.0, 0.0, 81.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+        "BoundingBox" : [12.0, 10.0, 12.0, 0, true],
+        "Renderer" : 0
+    }
+    ,
+    "forklift1" :
+    {
+        "ModelArray" : [0, "assets/models/Interior/Forklift.fbx", "assets/textures/Interior/Forklift.png"],
+        "Transform" : [ 6.0, 0.0, 95.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5 ],
+        "BoundingBox" : [12.0, 10.0, 12.0, 0, true],
+        "Renderer" : 0
+    }
+    ,
     "3wall1":
             {
-                "Transform" : [-20.0, -3.0, 80.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+                "Transform" : [-20.0, -3.0, 81.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
                 "BoundingBox" : [1.5, 20.0, 40.0, 0, true]
             }
         ,
     "3wall2":
             {
-                "Transform" : [60.0, -3.0, 80.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+                "Transform" : [60.0, -3.0, 81.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
                 "BoundingBox" : [1.5, 20.0, 40.0, 0, true]
             }
         ,
@@ -226,9 +602,8 @@
     "levelModel4" :
     {
         "ModelArray" : [0, "assets/models/Levels/4x4_blue.obj", "assets/textures/4x4_blue.png"],
-        "Transform" : [ 30.75, -2.0, 10.25, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
-        "Renderer" : 0,
-        "BoundingBox" : [1.0, 1.0, 1.0, 0, true]
+        "Transform" : [ 61.0, -2.0, 20.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ],
+        "Renderer" : 0
     }
     ,
     "4wall1":
