@@ -38,6 +38,24 @@
                     "Scripts" : ["pillRed.lua"]
                 }
             ,
+    "Pill02" :            
+                {
+                    "ModelArray" : [0, "assets/models/Pills/GreenPill.obj", "assets/textures/Pills/GreenPill.png"],
+                    "Transform" : [ 8.0, 0.0, -4.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1 ],
+                    "Renderer" : 6,
+                    "BoundingBox" : [20.0, 20.0, 20.0, 1, false, "pill"],
+                    "Scripts" : ["pillGreen.lua"]
+                }
+            ,
+    "Pill03" :            
+                {
+                    "ModelArray" : [0, "assets/models/Pills/BluePill.obj", "assets/textures/Pills/BluePill.png"],
+                    "Transform" : [ 6.0, 0.0, -4.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1 ],
+                    "Renderer" : 6,
+                    "BoundingBox" : [20.0, 20.0, 20.0, 1, false, "pill"],
+                    "Scripts" : ["pillBlue.lua"]
+                }
+            ,
     "ALamp" :            
             {
                 "ModelArray" : [0, "assets/models/Lamp/LampJump.fbx", "assets/textures/Lamp_Monster.png"],
@@ -129,7 +147,7 @@
     "BatBulb" :            
         {
             "ModelArray" : [0, "assets/models/BatBulb/BatBulbFlight.fbx", "assets/textures/BatBulb.png"],
-            "Transform" : [ 0.0, 3.0, -8.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001 ],
+            "Transform" : [ 10.0, 3.0, -8.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001 ],
             "Renderer" : 5,
             "Rigidbody" : [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
             "Gravity" : [0.0, 0.0, 0.0],
