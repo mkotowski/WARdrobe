@@ -7,7 +7,6 @@ extern "C"
 #include "lualib.h"
 }
 
-
 #pragma region Animator
 int
 l_cppplayAnimation(lua_State* l)
@@ -18,6 +17,31 @@ l_cppplayAnimation(lua_State* l)
 	std::string a = lua_tostring(l, 3);
 
 	cm->GetComponent<Animator>(e).ChangeAnimation(a);
+
+	return 1;
+}
+
+int
+isAnyAnimationPlaying(lua_State* l)
+{
+	Entity            e = luaL_checknumber(l, 1);
+	ComponentManager* cm = (ComponentManager*)lua_touserdata(l, 2);
+
+	lua_pushboolean(l,
+	                cm->GetComponent<Animator>(e).currentAnimationTime != 0.0f);
+
+	return 1;
+}
+
+int
+isAnimationPlaying(lua_State* l)
+{
+	Entity            e = luaL_checknumber(l, 1);
+	ComponentManager* cm = (ComponentManager*)lua_touserdata(l, 2);
+
+	std::string n = lua_tostring(l, 3);
+
+	lua_pushboolean(l, cm->GetComponent<Animator>(e).currentAnimationName == n);
 
 	return 1;
 }
@@ -330,10 +354,16 @@ setAllFunctions(lua_State* state)
 	lua_pushcfunction(state, l_cppplayAnimation);
 	lua_setglobal(state, "playAnimation");
 
+	lua_pushcfunction(state, isAnyAnimationPlaying);
+	lua_setglobal(state, "isAnyAnimationPlaying");
+
+	lua_pushcfunction(state, isAnimationPlaying);
+	lua_setglobal(state, "isAnimationPlaying");
+
 	// BoundingBox
 	lua_pushcfunction(state, l_cppsetBoundingBox);
 	lua_setglobal(state, "setBoundingBox");
-	
+
 	lua_pushcfunction(state, l_cppgetBoundingBoxDepth);
 	lua_setglobal(state, "getBoundingBoxDepth");
 

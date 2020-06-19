@@ -2,19 +2,19 @@ hitInterval = 0.1
 globalComboLeftHitStamp = 0.0
 globalComboRightHitStamp = 0.0
 
-minimalDistance = 3.5
+minimalDistance = 1.5
 maximalDistance = 8.0
 unconsciousnessTime = 2.0
-timeBetweenAttacks = 5.0
 
 enemies = {}
+lamps = {}
 
-speed = 1.0
+enemySpeed = 1.0
 
 function enemyStart()
     local enemy = {health = 100.0, position = {x = 0.0, y = 0.0, z = 0.0}, velocity = {x = 0.0, y = 0.0, z = 0.0}, 
     leftHitTimeStamp = 0.0, rotation = {x = 0.0, y = 0.0, z = 0.0},
-    rightHitTimeStamp = 0.0, attackTimeStamp = 0.0, unconscious = false, colliderEntity = -1, attackCo = {}, attackCoFunc = {}}
+    rightHitTimeStamp = 0.0, unconscious = false, colliderEntity = -1, attackCo = {}, attackCoFunc = {}}
     enemy.position.x, enemy.position.y, enemy.position.z = getTransform(entity, componentManager)
     enemy.velocity.x, enemy.velocity.y, enemy.velocity.z = getVelocity(entity, componentManager)
     enemies[entity] = enemy
@@ -75,30 +75,38 @@ function handleBehaviour(dt)
         return
     end
 
-    if isPlayerClose == false then --idle behaviour
+    if chasePlayer == false then --idle behaviour
         xDir = 0.0
         zDir = 0.0
     elseif distance > minimalDistance then --chase behaviour
         xDir, yDir, zDir = normalize(xDir, yDir, zDir)
-        enemyPlayAnim("Walking")
+        if isAnyAnimationPlaying(entity, componentManager) == false then
+            enemyPlayAnim("Walking")
+        end
     else --attack behaviour
         xDir = 0.0
         zDir = 0.0
 
-        if lamps[enemy.colliderEntity].attacking == false and time - enemy.attackTimeStamp > timeBetweenAttacks then
-            enemy.attackTimeStamp = time
+        if lamps[enemy.colliderEntity].attacking == false and 
+        time - lamps[enemy.colliderEntity].attackTimeStamp > lamps[enemy.colliderEntity].hitInterval then
             enemyPlayAnim("Attack")
             performAttack(dt)
-        else
+            return
+        elseif time > 5.0 then
             continueAttack(dt)
+            return
         end
     end
     
-    moveObject(xDir * speed, yDir, zDir * speed)
+    moveObject(xDir * enemySpeed, yDir, zDir * enemySpeed)
 end
 
 function normalize(x, y, z)
     local length = math.sqrt( (x * x) + (y * y) + (z * z) )
+
+    if length == 0.0 then
+        return 0.0, 0.0, 0.0
+    end
 
     return x / length, y / length, z / length
 end
@@ -150,7 +158,7 @@ function getHit( enemy, dmg )
     end
 
     if detectedCombo ~= "none" and enemy.unconscious == false then
-        applyForce(entity, componentManager, (player.position.x - enemy.position.x), (player.position.y - enemy.position.y), 
+        applyForce(entity, componentManager, (player.position.x - enemy.position.x), 0.0, 
         (player.position.z - enemy.position.z), -600.0)
         enemy.unconscious = true
     end
