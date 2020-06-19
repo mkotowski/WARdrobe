@@ -75,7 +75,7 @@ function handleBehaviour(dt)
         return
     end
 
-    if isPlayerClose == false then --idle behaviour
+    if chasePlayer == false then --idle behaviour
         xDir = 0.0
         zDir = 0.0
     elseif distance > minimalDistance then --chase behaviour
