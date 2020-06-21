@@ -5,6 +5,8 @@
 #include <iostream>
 #include <vector>
 
+constexpr auto MIN_DIST = 20.0f;
+
 struct BoundingBox
 {
 	float       width;
@@ -355,6 +357,7 @@ public:
 	Shader*             ourShader;
 	Window*             window;
 	Camera*             camera;
+	glm::vec3*           playerPos;
 
 	void Update(float                             dt,
 	            std::shared_ptr<ComponentManager> componentManager) override;
@@ -369,6 +372,18 @@ ColliderSystem::Update(float                             dt,
 {
 	// entitiesToCollide.clear();
 	for (auto const& entity : entities) {
+
+		for (int i = 0; i < entitiesToCollide.size(); i++) {
+			componentManager->GetComponent<BoundingBox>(entitiesToCollide[i])
+			  .collisionEnterEntities.clear();
+		}
+
+		glm::vec3 objectPos =
+		  componentManager->GetComponent<Transform>(entity).position;
+		objectPos.y = 0.0f;
+		if (glm::distance(*playerPos, objectPos) >= MIN_DIST) {
+			continue;
+		}
 		entitiesToCollide.push_back(entity);
 		componentManager->GetComponent<BoundingBox>(entity).Assign(
 		  entity, componentManager);
@@ -401,24 +416,51 @@ getMtv(BoundingBox bounds1, BoundingBox bounds2)
 
 	axis[6] = glm::normalize(
 	  glm::cross(b1Corners[1] - b1Corners[0], b2Corners[1] - b2Corners[0]));
+	if (axis[6] == glm::vec3(0.0f, 0.0f, 0.0f)) {
+		return glm::vec3(0.0f, 0.0f, 0.0f);
+	}
 	axis[7] = glm::normalize(
 	  glm::cross(b1Corners[1] - b1Corners[0], b2Corners[3] - b2Corners[0]));
+	if (axis[7] == glm::vec3(0.0f, 0.0f, 0.0f)) {
+		return glm::vec3(0.0f, 0.0f, 0.0f);
+	}
 	axis[8] = glm::normalize(
 	  glm::cross(b1Corners[1] - b1Corners[0], b2Corners[5] - b2Corners[0]));
+	if (axis[8] == glm::vec3(0.0f, 0.0f, 0.0f)) {
+		return glm::vec3(0.0f, 0.0f, 0.0f);
+	}
 
 	axis[9] = glm::normalize(
 	  glm::cross(b1Corners[3] - b1Corners[0], b2Corners[1] - b2Corners[0]));
+	if (axis[9] == glm::vec3(0.0f, 0.0f, 0.0f)) {
+		return glm::vec3(0.0f, 0.0f, 0.0f);
+	}
 	axis[10] = glm::normalize(
 	  glm::cross(b1Corners[3] - b1Corners[0], b2Corners[3] - b2Corners[0]));
+	if (axis[10] == glm::vec3(0.0f, 0.0f, 0.0f)) {
+		return glm::vec3(0.0f, 0.0f, 0.0f);
+	}
 	axis[11] = glm::normalize(
 	  glm::cross(b1Corners[3] - b1Corners[0], b2Corners[5] - b2Corners[0]));
+	if (axis[11] == glm::vec3(0.0f, 0.0f, 0.0f)) {
+		return glm::vec3(0.0f, 0.0f, 0.0f);
+	}
 
 	axis[12] = glm::normalize(
 	  glm::cross(b1Corners[5] - b1Corners[0], b2Corners[1] - b2Corners[0]));
+	if (axis[12] == glm::vec3(0.0f, 0.0f, 0.0f)) {
+		return glm::vec3(0.0f, 0.0f, 0.0f);
+	}
 	axis[13] = glm::normalize(
 	  glm::cross(b1Corners[5] - b1Corners[0], b2Corners[3] - b2Corners[0]));
+	if (axis[13] == glm::vec3(0.0f, 0.0f, 0.0f)) {
+		return glm::vec3(0.0f, 0.0f, 0.0f);
+	}
 	axis[14] = glm::normalize(
 	  glm::cross(b1Corners[5] - b1Corners[0], b2Corners[5] - b2Corners[0]));
+	if (axis[14] == glm::vec3(0.0f, 0.0f, 0.0f)) {
+		return glm::vec3(0.0f, 0.0f, 0.0f);
+	}
 
 	glm::vec3 mtv;
 	float     scalar1min, scalar1max, scalar2min, scalar2max;
@@ -459,11 +501,8 @@ getMtv(BoundingBox bounds1, BoundingBox bounds2)
 		}
 
 		if (scalar2min > scalar1max || scalar2max < scalar1min) {
-			notFound = true;
-			break;
+			return glm::vec3(0.0f, 0.0f, 0.0f);
 		}
-
-		notFound = false;
 
 		float overlap = scalar1max > scalar2max ? -(scalar2max - scalar1min)
 		                                        : (scalar1max - scalar2min);
@@ -477,18 +516,13 @@ getMtv(BoundingBox bounds1, BoundingBox bounds2)
 		}
 	}
 
-	return notFound ? glm::vec3(0.0f, 0.0f, 0.0f) : mtv;
+	return mtv;
 }
 
 void
 ColliderSystem::CheckCollision(
   std::shared_ptr<ComponentManager> componentManager)
 {
-
-	for (int i = 0; i < entitiesToCollide.size(); i++) {
-		componentManager->GetComponent<BoundingBox>(entitiesToCollide[i])
-		  .collisionEnterEntities.clear();
-	}
 
 	for (int i = 0; i < entitiesToCollide.size() - 1; i++) {
 		auto& bounds1 =
@@ -602,6 +636,10 @@ ColliderSystem::Initiate(std::shared_ptr<ComponentManager> componentManager)
 {
 	for (auto const& entity : entities) {
 		componentManager->GetComponent<BoundingBox>(entity).StartAABB();
+
+		if (componentManager->GetComponent<BoundingBox>(entity).tag == "player") {
+			playerPos = &componentManager->GetComponent<Transform>(entity).position;
+		}
 	}
 }
 

@@ -1,15 +1,28 @@
 maxHealth = 500.0
 player = {entity = 0, health = maxHealth, position = {x = 0.0, y = 0.0, z = 0.0}, rotation = {x = 0.0, y = 0.0, z = 0.0}}
-mouse = {x, y}
+mouse = {x, z}
 
-highTimeStamp = 0.0
-highTime = 0.0
-isHigh = false
+bluePillPower = 2.0
+redPillPower = 2.0
+
+damageHighTimeStamp = 0.0
+speedHighTimeStamp = 0.0
+healHighTimeStamp = 0.0
+damageHighTime = 20.0
+speedHighTime = 10.0
+healHighTime = 3.0
+isHighDamage = false
+isHighSpeed = false
+isHighHeal = false
 dead = false
-hitTimeStamp = 0.0
 
 normalPlayerSpeed = 10.0
 playerSpeed = normalPlayerSpeed
+
+brainDamage = 0.0
+
+damageMultiplier = 1.0
+speedMultiplier = 1.0
 
 function characterStart()
     prevRightInput = 0.0
@@ -29,14 +42,7 @@ function characterUpdate(dt)
     player.position.x, player.position.y, player.position.z = getTransform(entity, componentManager)
     player.rotation.x, player.rotation.y, player.rotation.z = getRotation(entity, componentManager)
 
-    if isHigh == true and time - highTimeStamp > highTime then
-        isHigh = false
-        
-        leftFist.damage = lightDamage
-        rightFist.damage = lightDamage
-        playerSpeed = normalPlayerSpeed
-        setSubroutine(modelShader, animatedModelShader, componentManager, "ColorWhite")
-    end
+    handleBrain(dt)
 
     characterSetRotation()
 
@@ -67,17 +73,62 @@ function characterUpdate(dt)
     end
 
     prevDirectionV = directionV
+
+    if detectedCombo == "dash" then
+        return
+    end
     
     moveObject(-directionH * playerSpeed, 0.0, directionV * playerSpeed)
     prevRightInput = rightInput
     prevForwardInput = forwardInput
 end
 
-function characterSetRotation()
-    local mouseWorldX, mouseWorldZ = getMouseWorldPos(window, camera)
+function handleBrain(dt)
+    if brainDamage > 0.0 then
+        if brainDamage >= 100.0 then
+            playerGetHit(0.005 * maxHealth * dt)
+        end
 
-    local deltaX = mouseWorldX
-    local deltaZ = mouseWorldZ
+        brainDamage = brainDamage - (5.0 * dt)
+
+        if brainDamage < 0.0 then
+            brainDamage = 0.0
+        end
+
+        --updateBrainUI
+    end
+
+    if isHighHeal == true and time - healHighTimeStamp > healHighTime then
+        isHighHeal = false
+    end
+
+    if isHighDamage == true and time - damageHighTimeStamp > damageHighTime then
+        isHighDamage = false
+        damageMultiplier = 1.0
+    end
+
+    if isHighSpeed == true and time - speedHighTimeStamp > speedHighTime then
+        isHighSpeed = false
+        speedMultiplier = 1.0
+        playerSpeed = normalPlayerSpeed
+    end
+
+    if isHighDamage == false and isHighHeal == false and isHighSpeed == false then
+        setSubroutine(modelShader, animatedModelShader, componentManager, "ColorWhite")
+    elseif isHighDamage == true and isHighHeal == false and isHighSpeed == false then
+        setSubroutine(modelShader, animatedModelShader, componentManager, "ColorRed")
+    elseif isHighDamage == false and isHighHeal == true and isHighSpeed == false then
+        setSubroutine(modelShader, animatedModelShader, componentManager, "ColorWavy")
+    elseif isHighDamage == false and isHighHeal == false and isHighSpeed == true then
+        setSubroutine(modelShader, animatedModelShader, componentManager, "ColorCustom")
+    end
+end
+
+function characterSetRotation()
+    mouse.x, mouse.z = getMouseWorldPos(window, camera)
+
+    local deltaX = mouse.x
+    local deltaZ = mouse.z
 
     local angle = math.atan(deltaZ, deltaX) * 180.0 / 3.14;
 
@@ -86,30 +137,32 @@ end
 
 function getHigh(type)
     if type == "red" then
-        leftFist.damage = leftFist.damage * 2.0
-        rightFist.damage = rightFist.damage * 2.0
-        isHigh = true
-        highTimeStamp = time
-        highTime = 5.0
+        isHighDamage = true
+        damageMultiplier = redPillPower * damageMultiplier
+        leftFist.damage = leftFist.damage * damageMultiplier
+        rightFist.damage = rightFist.damage * damageMultiplier
+        brainDamage = brainDamage + 25.0
+        damageHighTimeStamp = time
         setSubroutine(modelShader, animatedModelShader, componentManager, "ColorRed")
     elseif type == "green" then
+        isHighHeal = true
         player.health = player.health + (maxHealth - player.health)
-        isHigh = true
-        highTimeStamp = time
-        highTime = 5.0
+        healHighTimeStamp = time
         setSubroutine(modelShader, animatedModelShader, componentManager, "ColorWavy")
     elseif type == "blue" then
-        playerSpeed = playerSpeed * 2.0
-        isHigh = true
-        highTimeStamp = time
-        highTime = 5.0
+        isHighSpeed = true
+        speedMultiplier = bluePillPower * speedMultiplier
+        playerSpeed = playerSpeed * speedMultiplier
+        brainDamage = brainDamage + 25.0
+        speedHighTimeStamp = time
         setSubroutine(modelShader, animatedModelShader, componentManager, "ColorCustom")
     end
 end
 
 function playerGetHit(dmg)
-    hitTimeStamp = time
     player.health = player.health - dmg
+
+    --updateHealthUI
 
     if player.health <= 0.0 then
         playerDie()
@@ -118,6 +171,7 @@ end
 
 function playerDie()
     dead = true
+    print("RIP")
     setColor(entity, componentManager, 0.0, 0.0, 0.0)
 end
 

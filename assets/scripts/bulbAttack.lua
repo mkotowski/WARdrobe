@@ -79,13 +79,17 @@ function continueAttack(dt)
 end
 
 function bulbAttackOnCollisionEnter(box)
-    if time - lamps[entity].hitTimeStamp >= damageInterval and getTag(box) == "player" then
+    local tag = getTag(box)
+
+    if time - lamps[entity].hitTimeStamp >= damageInterval and tag == "player" then
         lamps[entity].hitTimeStamp = time
         playerGetHit(bulbDamage)
     end
 
-    if getTag(box) == "playerWeaponLeft" or getTag(box) == "playerWeaponRight" then
+    if tag == "playerWeaponLeft" or tag == "playerWeaponRight" then
+        local orgEntity = entity
         entity = lamps[entity].enemyEntity
         enemyOnCollisionEnter(box)
+        entity = orgEntity
     end
 end

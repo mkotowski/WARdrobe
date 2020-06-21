@@ -124,6 +124,10 @@ ScriptsSystem::Update(float                             dt,
 	lua_setglobal(state, "leftMousePressed");
 	lua_pushboolean(state, rightMousePressed);
 	lua_setglobal(state, "rightMousePressed");
+	lua_pushboolean(state, ePressed);
+	lua_setglobal(state, "ePressed");
+	lua_pushboolean(state, qPressed);
+	lua_setglobal(state, "qPressed");
 	lua_pushnumber(state, glfwGetTime());
 	lua_setglobal(state, "time");
 

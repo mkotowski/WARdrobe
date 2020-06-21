@@ -6,13 +6,15 @@ end
 function pillRedUpdate(dt)
 end
 
-function consume(type)
-    getHigh(type)
-    destroyEntity(gameplayManager, entity)
+function addToEQ(type)
+    if eqFull() == false then
+        addToEquipment(type)
+        destroyEntity(gameplayManager, entity)
+    end
 end
 
 function pillRedOnCollisionEnter(box)
     if getTag(box) == "player" then
-        consume("red")
+        addToEQ("red")
     end
 end

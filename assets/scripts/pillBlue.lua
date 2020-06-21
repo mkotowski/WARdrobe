@@ -8,6 +8,6 @@ end
 
 function pillBlueOnCollisionEnter(box)
     if getTag(box) == "player" then
-        consume("blue")
+        addToEQ("blue")
     end
 end

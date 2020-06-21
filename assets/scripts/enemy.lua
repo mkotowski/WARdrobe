@@ -37,7 +37,7 @@ end
 function isUnconscious()
     if enemy.unconscious == false then
         return false
-    elseif time - enemy.leftHitTimeStamp > unconsciousnessTime then
+    elseif time - enemy.leftHitTimeStamp > unconsciousnessTime and time - enemy.rightHitTimeStamp > unconsciousnessTime then
         enemy.unconscious = false
         return false
     else 
@@ -113,14 +113,18 @@ end
 
 function enemyOnCollisionEnter(box)
     local enemy = enemies[entity]
-    if getTag(box) == "playerWeaponLeft" and time - enemy.leftHitTimeStamp > hitInterval 
+    local tag = getTag(box)
+
+    if tag == "playerWeaponLeft" and time - enemy.leftHitTimeStamp > hitInterval 
     and leftFist.attackTimeStamp ~= enemy.leftHitTimeStamp then
         enemy.leftHitTimeStamp = leftFist.attackTimeStamp
+
+        --print("LEFT")
 
         if globalComboLeftHitStamp ~= leftFist.attackTimeStamp then
             globalComboLeftHitStamp = leftFist.attackTimeStamp
 
-            table.insert( currentCombination, leftFist.damage == strongDamage and "SL" or "LL" )
+            table.insert( currentCombination, leftFist.isStrong == true and "SL" or "LL" )
 
             if #currentCombination == 4 then
                 table.remove( currentCombination, 1 )
@@ -131,13 +135,15 @@ function enemyOnCollisionEnter(box)
         getHit(enemy, leftFist.damage)
     end
 
-    if getTag(box) == "playerWeaponRight" and time - enemy.rightHitTimeStamp > hitInterval 
+    if tag == "playerWeaponRight" and time - enemy.rightHitTimeStamp > hitInterval 
     and rightFist.attackTimeStamp ~= enemy.rightHitTimeStamp then
         enemy.rightHitTimeStamp = rightFist.attackTimeStamp
 
+        --print("RIGHT")
+
         if globalComboRightHitStamp ~= rightFist.attackTimeStamp then
             globalComboRightHitStamp = rightFist.attackTimeStamp
-            table.insert( currentCombination, rightFist.damage == strongDamage and "SR" or "LR" )
+            table.insert( currentCombination, rightFist.isStrong == true and "SR" or "LR" )
 
             if #currentCombination == 4 then
                 table.remove( currentCombination, 1 )
@@ -150,17 +156,34 @@ function enemyOnCollisionEnter(box)
 end
 
 function getHit( enemy, dmg )
-    enemy.health = enemy.health - dmg
+    
+    if detectedCombo == "none" or detectedCombo == "detected" then
+        --print("NO COMBO HIT", dmg, enemy.unconscious, detectedCombo)
+        enemy.health = enemy.health - dmg
+    elseif detectedCombo == "whirlwind" then
+        applyForce(entity, componentManager, (player.position.x - enemy.position.x), 0.0, 
+        (player.position.z - enemy.position.z), -600.0)
+
+        if enemy.unconscious == false then
+            enemy.unconscious = true
+            enemy.health = enemy.health - dmg
+            --print("COMBOHIT", dmg)
+        end
+    else
+        if enemy.unconscious == false then
+            enemy.unconscious = true
+            enemy.health = enemy.health - dmg
+            --print("COMBOHIT", dmg)
+        end
+    end
+
+    if detectedCombo ~= "dash" then
+        shake()
+    end
 
     if enemy.health <= 0.0 then
         Die()
         return
-    end
-
-    if detectedCombo ~= "none" and enemy.unconscious == false then
-        applyForce(entity, componentManager, (player.position.x - enemy.position.x), 0.0, 
-        (player.position.z - enemy.position.z), -600.0)
-        enemy.unconscious = true
     end
 end
 

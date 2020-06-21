@@ -49,6 +49,18 @@ isAnimationPlaying(lua_State* l)
 
 #pragma region BoundingBox
 int
+l_cppsetTriggerBoundingBox(lua_State* l)
+{
+	Entity            e = luaL_checknumber(l, 1);
+	ComponentManager* cm = (ComponentManager*)lua_touserdata(l, 2);
+	bool              set = lua_toboolean(l, 3);
+
+	cm->GetComponent<BoundingBox>(e).trigger = set;
+
+	return 1;
+}
+
+int
 l_cppsetBoundingBox(lua_State* l)
 {
 	Entity            e = luaL_checknumber(l, 1);
@@ -361,6 +373,9 @@ setAllFunctions(lua_State* state)
 	lua_setglobal(state, "isAnimationPlaying");
 
 	// BoundingBox
+	lua_pushcfunction(state, l_cppsetTriggerBoundingBox);
+	lua_setglobal(state, "setTrigger");
+
 	lua_pushcfunction(state, l_cppsetBoundingBox);
 	lua_setglobal(state, "setBoundingBox");
 
