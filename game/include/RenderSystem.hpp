@@ -132,6 +132,7 @@ RenderSystem::Draw(float dt, std::shared_ptr<ComponentManager> componentManager)
 			                              transform.scale,
 			                              this->window->GetWindowWidth(),
 			                              this->window->GetWindowHeight());
+			continue;
 		}
 
 		auto& modelArray = componentManager->GetComponent<ModelArray>(entity);
