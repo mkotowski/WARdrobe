@@ -92,7 +92,7 @@ vec4 ColorInverse(vec4 tempColor)
 subroutine(colorTemplate)
 vec4 ColorWavy(vec4 tempColor)
 {
-	return tempColor * vec4(0.1, sinX, 0.1, 1.0);
+	return tempColor * vec4(0.1, clamp(sinX, 0.3, 1.0), 0.1, 1.0);
 }
 
 subroutine(colorTemplate)
