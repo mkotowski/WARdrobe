@@ -236,10 +236,10 @@ Game::Loop()
 		// GAME LOGIC
 
 		// gameplayManager->Update(dt);
-		scriptsSystem->Update(dt, gameplayManager->GetComponentManager());
 
 		physicsSystem->Update(dt, gameplayManager->GetComponentManager());
 		colliderSystem->Update(dt, gameplayManager->GetComponentManager());
+		scriptsSystem->Update(dt, gameplayManager->GetComponentManager());
 
 		// GAMEPLAY RENDERING
 		gameWindow->UpdateViewport();
