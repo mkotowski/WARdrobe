@@ -60,6 +60,8 @@ public:
 		isVisible = true;
 	}
 
+	GuiWidget() = default;
+
 	~GuiWidget()
 	{
 		glDeleteVertexArrays(1, &VAO);
@@ -411,21 +413,89 @@ public:
 	std::shared_ptr<GuiWidget> AddWidget(const char*                label,
 	                                     std::shared_ptr<GuiWidget> widget)
 	{
-		widgets.insert(std::make_pair(label, widget));
-		return widgets[label];
+		std::string str_label = label;
+		widgets.insert(std::make_pair(str_label, widget));
+		return widgets[str_label];
 	}
 
 	std::shared_ptr<GuiWidget> GetWidget(const char* label)
 	{
-		if (widgets.find(label) == widgets.end()) {
+		std::string str_label = label;
+
+		if (widgets.find(str_label) == widgets.end()) {
 			return std::shared_ptr<GuiWidget>(nullptr);
 		} else {
-			return widgets[label];
+			return widgets[str_label];
 		}
 	}
 
 private:
-	std::map<const char*, std::shared_ptr<GuiWidget>> widgets;
+	std::map<std::string, std::shared_ptr<GuiWidget>> widgets;
+};
+
+class HeadManager
+{
+public:
+	HeadManager(std::shared_ptr<GuiWidget> head0,
+	            std::shared_ptr<GuiWidget> head20,
+	            std::shared_ptr<GuiWidget> head40,
+	            std::shared_ptr<GuiWidget> head60,
+	            std::shared_ptr<GuiWidget> head80,
+	            std::shared_ptr<GuiWidget> head100,
+	            std::shared_ptr<GuiWidget> headHit)
+	  : head0(head0)
+	  , head20(head20)
+	  , head40(head40)
+	  , head60(head60)
+	  , head80(head80)
+	  , head100(head100)
+	  , headHit(headHit)
+	{}
+
+	~HeadManager() = default;
+
+	void SetHead(int hp, bool hit = false)
+	{
+		headHit->SetVisible(false);
+		head100->SetVisible(false);
+		head80->SetVisible(false);
+		head60->SetVisible(false);
+		head40->SetVisible(false);
+		head20->SetVisible(false);
+		head0->SetVisible(false);
+
+		if (hit) {
+			headHit->SetVisible(true);
+		} else {
+			if (hp == 100) {
+				head100->SetVisible(true);
+			}
+			if (hp >= 80 && hp <= 99) {
+				head80->SetVisible(true);
+			}
+			if (hp >= 60 && hp <= 79) {
+				head60->SetVisible(true);
+			}
+			if (hp >= 40 && hp <= 59) {
+				head40->SetVisible(true);
+			}
+			if (hp >= 20 && hp <= 39) {
+				head20->SetVisible(true);
+			}
+			if (hp >= 0 && hp <= 19) {
+				head0->SetVisible(true);
+			}
+		}
+	}
+
+private:
+	std::shared_ptr<GuiWidget> head0;
+	std::shared_ptr<GuiWidget> head20;
+	std::shared_ptr<GuiWidget> head40;
+	std::shared_ptr<GuiWidget> head60;
+	std::shared_ptr<GuiWidget> head80;
+	std::shared_ptr<GuiWidget> head100;
+	std::shared_ptr<GuiWidget> headHit;
 };
 
 class Window
@@ -530,6 +600,7 @@ public:
 	static Window* mainWindowPtr;
 
 	std::shared_ptr<GuiManager> guiManager;
+	std::shared_ptr<HeadManager> headManager;
 
 private:
 	GLFWwindow* window;
