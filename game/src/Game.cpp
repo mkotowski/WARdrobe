@@ -210,47 +210,36 @@ Game::Loop()
 	  &gameplayManager->GetComponentManager()->GetComponent<Camera>(
 	    cameraSystem->cameraEntity));
 		
-	gameWindow->guiManager->AddWidget(
-	  "doomguy2",
-	  std::make_shared<GuiWidget>("assets/images/splash.png",
-	                              0.0f,
-	                              0.0f,
-	                              100,
-	                              121,
-	                              GuiAnchor::TL,
+	auto DamagePillIndicator = gameWindow->guiManager->AddWidget(
+	  "damage_pill_indicator",
+	  std::make_shared<GuiWidget>("assets/images/UI/Pills/DamagePill.png",
+	                              30.0f,
+	                              30.0f,
+	                              128,
+	                              128,
+	                              GuiAnchor::TR,
 	                              gameWindow->GetWindow()));
 
-	auto DoomGuy = gameWindow->guiManager->AddWidget(
-	  "doomguy",
-	  std::make_shared<GuiWidget>("assets/images/doomguy.png",
-	                              100.0f,
-	                              0.0f,
-	                              100,
-	                              121,
-	                              GuiAnchor::TL,
+	auto HealthPillIndicator = gameWindow->guiManager->AddWidget(
+	  "health_pill_indicator",
+	  std::make_shared<GuiWidget>("assets/images/UI/Pills/HealthPill.png",
+	                              30.0f,
+	                              158.0f,
+	                              128,
+	                              128,
+	                              GuiAnchor::TR,
 	                              gameWindow->GetWindow()));
 
-	DoomGuy->SetVisible(false);
-
-	gameWindow->guiManager->AddWidget(
-	  "doomguy22",
-	  std::make_shared<GuiWidget>("assets/images/UI/Drugman/Drugman60.png",
-	                              200.0f,
-	                              0.0f,
-	                              150,
-	                              121,
-	                              GuiAnchor::TL,
+	auto SpeedPillIndicator = gameWindow->guiManager->AddWidget(
+	  "speed_pill_indicator",
+	  std::make_shared<GuiWidget>("assets/images/UI/Pills/SpeedPill.png",
+	                              30.0f,
+	                              158.0f + 128.0f,
+	                              128,
+	                              128,
+	                              GuiAnchor::TR,
 	                              gameWindow->GetWindow()));
 
-	gameWindow->guiManager->AddWidget(
-	  "dooms2",
-	  std::make_shared<GuiWidget>("assets/images/UI/Drugman/Drugman0.png",
-	                              300.0f,
-	                              0.0f,
-	                              150,
-	                              121,
-	                              GuiAnchor::TL,
-	                              gameWindow->GetWindow()));
 
 	gameWindow->CloseSplashScreen();
 	// avoid displaying empty window

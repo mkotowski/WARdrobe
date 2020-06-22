@@ -70,18 +70,7 @@ public:
 
 	void UpdateViewportData()
 	{
-		glfwGetFramebufferSize(gameWindow, &framebufferWidth, &framebufferHeight);
-
-		// float alignment = framebufferWidth / 2;
-
-		float pixel_x = static_cast<float>(x_start); //+alignment - (width / 2);
-		float pixel_y = static_cast<float>(y_start);
-
-		float x_ndc = 2.0f * (pixel_x + 0.5f) / framebufferWidth - 1.0f;
-		float y_ndc = 2.0f * (pixel_y + 0.5f) / framebufferHeight - 1.0f;
-
-		float x_end = 2.0f * (pixel_x + width + 0.5f) / framebufferWidth - 1.0f;
-		float y_end = 2.0f * (pixel_y + height + 0.5f) / framebufferHeight - 1.0f;
+		CalculatePosition();
 
 		unsigned int indices[6] = {
 			// note that we start from 0!
@@ -143,7 +132,7 @@ public:
 		glBindVertexArray(0);
 
 		glUseProgram(shaderProgram);
-		glBindTexture(GL_TEXTURE_2D, texture-1);
+		glBindTexture(GL_TEXTURE_2D, texture - 1);
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	}
@@ -221,20 +210,21 @@ private:
 
 	unsigned int VBO, VAO, EBO;
 
+	// float pixel_x;
+	// float pixel_y;
+
+	float offset_x;
+	float offset_y;
+
+	float x_ndc;
+	float y_ndc;
+
+	float x_end;
+	float y_end;
+
 	void Init()
 	{
-		glfwGetFramebufferSize(gameWindow, &framebufferWidth, &framebufferHeight);
-
-		//float alignment = framebufferWidth / 2;
-
-		float pixel_x = static_cast<float>(x_start);//+alignment - (width / 2);
-		float pixel_y = static_cast<float>(y_start);
-
-		float x_ndc = 2.0f * (pixel_x + 0.5f) / framebufferWidth - 1.0f;
-		float y_ndc = 2.0f * (pixel_y + 0.5f) / framebufferHeight - 1.0f;
-
-		float x_end = 2.0f * (pixel_x + width + 0.5f) / framebufferWidth - 1.0f;
-		float y_end = 2.0f * (pixel_y + height + 0.5f) / framebufferHeight - 1.0f;
+		CalculatePosition();
 
 		unsigned int indices[6] = {
 			// note that we start from 0!
@@ -333,6 +323,63 @@ private:
 		// set texture filtering parameters
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}
+
+	void CalculatePosition()
+	{
+		glfwGetFramebufferSize(gameWindow, &framebufferWidth, &framebufferHeight);
+
+		float x_calc;
+		float y_calc;
+		float alignment;
+
+		float offset_x = static_cast<float>(x_start);
+		float offset_y = static_cast<float>(y_start);
+
+		switch (anchor) {
+			case GuiAnchor::TL:
+				break;
+			case GuiAnchor::TR: // pill indicators
+				x_calc = framebufferWidth - offset_x - width;
+				y_calc = framebufferHeight - offset_y - height;
+
+				x_ndc = 2.0f * (x_calc + 0.5f) / framebufferWidth - 1.0f;
+				y_ndc = 2.0f * (y_calc + 0.5f) / framebufferHeight - 1.0f;
+
+				x_end = 2.0f * (x_calc + width + 0.5f) / framebufferWidth - 1.0f;
+				y_end = 2.0f * (y_calc + height + 0.5f) / framebufferHeight - 1.0f;
+				break;
+			case GuiAnchor::BL: // default
+				x_ndc = 2.0f * (offset_x + 0.5f) / framebufferWidth - 1.0f;
+				y_ndc = 2.0f * (offset_y + 0.5f) / framebufferHeight - 1.0f;
+
+				x_end = 2.0f * (offset_x + width + 0.5f) / framebufferWidth - 1.0f;
+				y_end = 2.0f * (offset_y + height + 0.5f) / framebufferHeight - 1.0f;
+				break;
+			case GuiAnchor::BR:
+				break;
+			case GuiAnchor::C:
+				break;
+			case GuiAnchor::TC:
+				break;
+			case GuiAnchor::BC: // head
+				alignment = framebufferWidth / 2;
+
+				x_calc = offset_x + alignment - (width / 2);
+
+				x_ndc = 2.0f * (x_calc + 0.5f) / framebufferWidth - 1.0f;
+				y_ndc = 2.0f * (offset_y + 0.5f) / framebufferHeight - 1.0f;
+
+				x_end = 2.0f * (x_calc + width + 0.5f) / framebufferWidth - 1.0f;
+				y_end = 2.0f * (offset_y + height + 0.5f) / framebufferHeight - 1.0f;
+				break;
+			case GuiAnchor::LC:
+				break;
+			case GuiAnchor::RC:
+				break;
+			default:
+				break;
+		}
 	}
 };
 
