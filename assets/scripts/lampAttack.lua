@@ -29,7 +29,7 @@ function lampAttackCoroutine(dt)
     lamps[enemy.colliderEntity].attacking = true
     setBoundingBox(enemy.colliderEntity, componentManager, true)
 
-    local wait = 0.7
+    local wait = 0.9
     local timeStamp = time
 
     while time - timeStamp < wait do
@@ -37,16 +37,18 @@ function lampAttackCoroutine(dt)
     end
 
     local z = 0.0
-    while z < 4.0 do
-        z = z + (5.0 * dt)
+    while z < 3.0 do
+        z = z + (10.0 * dt)
         setPositionRelativeToEnemy(0.0, 0.0, z, enemy)
         dt = coroutine.yield()
     end
-    z = 4.0
+    z = 3.0
     setPositionRelativeToEnemy(0.0, 0.0, z, enemy)
 
+    setBoundingBox(enemy.colliderEntity, componentManager, false)
+
     while z > 0.0 do
-        z = z - (10.0 * dt)
+        z = z - (20.0 * dt)
         setPositionRelativeToEnemy(0.0, 0.0, z, enemy)
         dt = coroutine.yield()
     end
@@ -54,8 +56,6 @@ function lampAttackCoroutine(dt)
     z = 0.0
     setPositionRelativeToEnemy(0.0, 0.0, z, enemy)
     lamps[enemy.colliderEntity].attacking = false
-
-    setBoundingBox(enemy.colliderEntity, componentManager, false)
 end
 
 function lampAttackOnCollisionEnter(box)

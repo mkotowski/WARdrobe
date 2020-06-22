@@ -29,13 +29,13 @@ function drawEQ()
 end
 
 function handleEQInput()
-    if ePressed == true and equipment["Q"] ~= nil then
-        getHigh(equipment["Q"])
-        equipment["Q"] = nil
+    if qPressed == true and equipment["Q"] ~= nil then
+        getHigh("Q", equipment["Q"])
+        equipment["Q"] = "used"
     end
 
-    if qPressed == true and equipment["E"] ~= nil then
-        getHigh(equipment["E"])
-        equipment["E"] = nil
+    if ePressed == true and equipment["E"] ~= nil then
+        getHigh("E", equipment["E"])
+        equipment["E"] = "used"
     end
 end

@@ -44,7 +44,7 @@ function bulbAttackCoroutine(dt)
     local speed = 5.0
 
     moveObject(-dirX * speed, -dirY * speed, -dirZ * speed)
-    while time - timeStamp < 0.2 do
+    while time - timeStamp < 0.35 do
         dt = coroutine.yield()
     end
 

@@ -96,7 +96,7 @@ function dashCoroutine(dt)
     rightFist.damage = comboDamage * damageMultiplier
 
     applyForce(player.entity, componentManager, (-mouse.x), 0.0, 
-        (-mouse.z), -1200.0)
+        (-mouse.z), -2000.0)
 
     local timeStamp = time
     

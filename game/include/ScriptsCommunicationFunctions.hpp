@@ -372,6 +372,19 @@ l_cppsetIndicator(lua_State* l)
 
 	return 1;
 }
+
+int
+l_cppsetHead(lua_State* l)
+{
+	Window* w = (Window*)lua_touserdata(l, 1);
+
+	float hp = lua_tonumber(l, 2);
+	bool  hit = lua_toboolean(l, 3);
+
+	w->headManager->SetHead(hp, hit);
+
+	return 1;
+}
 #pragma endregion
 
 void
@@ -451,4 +464,7 @@ setAllFunctions(lua_State* state)
 	// Window
 	lua_pushcfunction(state, l_cppsetIndicator);
 	lua_setglobal(state, "setIndicator");
+
+	lua_pushcfunction(state, l_cppsetHead);
+	lua_setglobal(state, "setHead");
 }
