@@ -220,21 +220,22 @@ Game::Loop()
 	                              GuiAnchor::TL,
 	                              gameWindow->GetWindow()));
 
-	gameWindow->guiManager->AddWidget(
+	auto DoomGuy = gameWindow->guiManager->AddWidget(
 	  "doomguy",
 	  std::make_shared<GuiWidget>("assets/images/doomguy.png",
-	                              50.0f,
+	                              100.0f,
 	                              0.0f,
 	                              100,
 	                              121,
 	                              GuiAnchor::TL,
 	                              gameWindow->GetWindow()));
 
+	DoomGuy->SetVisible(false);
 
 	gameWindow->guiManager->AddWidget(
 	  "doomguy22",
 	  std::make_shared<GuiWidget>("assets/images/UI/Drugman/Drugman60.png",
-	                              100.0f,
+	                              200.0f,
 	                              0.0f,
 	                              150,
 	                              121,
@@ -244,7 +245,7 @@ Game::Loop()
 	gameWindow->guiManager->AddWidget(
 	  "dooms2",
 	  std::make_shared<GuiWidget>("assets/images/UI/Drugman/Drugman0.png",
-	                              150.0f,
+	                              300.0f,
 	                              0.0f,
 	                              150,
 	                              121,

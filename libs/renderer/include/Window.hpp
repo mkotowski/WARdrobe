@@ -361,9 +361,20 @@ public:
 		}
 	}
 
-	void AddWidget(const char* label, std::shared_ptr<GuiWidget> widget)
+	std::shared_ptr<GuiWidget> AddWidget(const char*                label,
+	                                     std::shared_ptr<GuiWidget> widget)
 	{
 		widgets.insert(std::make_pair(label, widget));
+		return widgets[label];
+	}
+
+	std::shared_ptr<GuiWidget> GetWidget(const char* label)
+	{
+		if (widgets.find(label) == widgets.end()) {
+			return std::shared_ptr<GuiWidget>(nullptr);
+		} else {
+			return widgets[label];
+		}
 	}
 
 private:
