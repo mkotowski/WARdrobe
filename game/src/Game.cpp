@@ -209,6 +209,37 @@ Game::Loop()
 	  this->gameWindow,
 	  &gameplayManager->GetComponentManager()->GetComponent<Camera>(
 	    cameraSystem->cameraEntity));
+		
+	auto DamagePillIndicator = gameWindow->guiManager->AddWidget(
+	  "damage_pill_indicator",
+	  std::make_shared<GuiWidget>("assets/images/UI/Pills/DamagePill.png",
+	                              30.0f,
+	                              30.0f,
+	                              128,
+	                              128,
+	                              GuiAnchor::TR,
+	                              gameWindow->GetWindow()));
+
+	auto HealthPillIndicator = gameWindow->guiManager->AddWidget(
+	  "health_pill_indicator",
+	  std::make_shared<GuiWidget>("assets/images/UI/Pills/HealthPill.png",
+	                              30.0f,
+	                              158.0f,
+	                              128,
+	                              128,
+	                              GuiAnchor::TR,
+	                              gameWindow->GetWindow()));
+
+	auto SpeedPillIndicator = gameWindow->guiManager->AddWidget(
+	  "speed_pill_indicator",
+	  std::make_shared<GuiWidget>("assets/images/UI/Pills/SpeedPill.png",
+	                              30.0f,
+	                              158.0f + 128.0f,
+	                              128,
+	                              128,
+	                              GuiAnchor::TR,
+	                              gameWindow->GetWindow()));
+
 
 	gameWindow->CloseSplashScreen();
 	// avoid displaying empty window
@@ -252,7 +283,7 @@ Game::Loop()
 		renderSystem->Draw(dt, gameplayManager->GetComponentManager());
 
 		// USER INTERFACE RENDERING
-		gameWindow->TestGUI();
+		gameWindow->guiManager->Draw();
 #if INCLUDE_DEBUG_UI
 		gameWindow->RenderDebugUI();
 #endif // INCLUDE_DEBUG_UI
@@ -285,8 +316,8 @@ Game::LoadLevel(std::string levelPath)
 	} catch (std::exception& e) {
 		std::cerr << e.what() << std::endl;
 	}
-	
-	//int entityNr = 0;
+
+	// int entityNr = 0;
 	for (auto& it : jsonLevelData.items()) {
 		Entity entity = gameplayManager->CreateEntity();
 
