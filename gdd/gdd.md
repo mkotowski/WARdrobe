@@ -24,13 +24,10 @@ header-includes: |
 | Version | Author          | Date       | Comments                           |
 |:--------|:----------------|:-----------|------------------------------------|
 | 0.1.0   | Michał Kotowski | 2020-03-06 | First draft.                       |
+|:--------|:----------------|:-----------|------------------------------------|
+| 0.2.0   | Michał Kotowski | 2020-06-22 | Second draft.                      |
 
 ---
-
-::: warning
-Draft document!
-:::
-
 ---
 
 \begin{center}
@@ -143,10 +140,11 @@ action video games.
 The aim of 
 
 ## Story
+Once upon a time, there was a furniture shop with... eh... Its kinda bland isn't it? Ok, let me do it again.
+Imagine handover so hard that you landed in the backroom of furniture shop with monsters in it. Weird huh? What if those monters are also furnitures? Add to that a (un)healthy dose of drugs and here is your situation. Will you fight your way out? Will you survive that amount of drugs? Will you discover what is going on in the shop?
 
 ### Setting
-
-The game will be set in a generic furniture shop in a supermarket.
+The game will be set in a generic furniture shop in a supermarket. Enemies are living furnitures and pickups are drugs.
 
 ::: proposition
 The generated areas should be generated procedurally from a small 
@@ -156,47 +154,50 @@ set of premade elements.
 ## Game Structure
 
 ## Players
+Player is a drug addict, also reffered as Drugman, that woke up in the furniture shop. Player can attack with both hands separately as well as making combos. Player has to manage not only their own health but also health of his brain, that will become more and more poisoned from taking pills.
 
 ## Action
+As mentioned before, player can attack with both hands separately as well as making combos. There are two special attacks that are made after finishing combos:
+> Windmill - hand 1 strong attack, hand 2 weak attack, hand 1 weak attack - AoE attack that pushes off enemies in the nearby area.
+> Dash - hadn 1 weak attack, hand 1 weak attack, hand 2 strong attack - player dashes in straight line dealing extensive damage to enemies
+
+Player has also to theirs disposal drugs, often reffered to as pills. There are three types of pills:
+> Damage(red) - increases players damage for a short while
+> Speed(blue) - increases players speed for a short while
+> Health(green) - heals player
+Pills will deal brain damage that will heal with time, but overdose (indicator is more then 100) will hurt also "normal" health.
+Pills are stored in the inventory (2 max)
 
 ## Objective
-
+The objective of the player is to get out from the shop and to do it, player has to fight his way through enemies. Their final obstacle is boss that guards the exit and will not let player to escape that easily.
 ## Graphics
-
-::: proposition
-Due to the lack of artists on the team, the most simplistic textures and 
-models possible are to be used.
-
-Extensive use of shaders and particles is expected and should be 
-the main focus when developing the game's graphics.
-:::
+Models and textures are fairly simple, made using MagicaVoxel and animated using Blender. All of it is filled with special colloring of the meshes when player uses the pill.
 
 ## Data Storage
+Levels are stored in .json files, that are then parsed. Inside it are entitities with corresponding components. Models are stored in .obj and .fbx files, animations are stored in .fbx files, textures are stored in .png files. 
 
 # Gameplay
 
 ## World
-
-## Landscape
-
-## Ground Type
+Generic furniture shop with a large warehouse filled with crates, shelfs and forklifts. Also pills.
 
 ## Object Types
+Obstacles - typical obstacles that you cant move through, shelfs, boxes, crates, forklifts
+Pills - power Ups that helps player through the level
 
 ## NPC Types
-
+Enemies:
+>Bat Bulb - one of the common enemies that attacks player directly, its a lightbulb with winds
+>Lamp Monster - second of the common enemies that attacks player directly, its a lamp that jumps at you and smacks you with its teeths
+>Mayor Plywoodov - boss, a big wardrobe that commands other enemies.
 ## Controls
+WASD - player movement
+Mouse 0 - left hand
+Mouse 1 - right hand
+Hold for strong attack.
+Q, E - use pill (left or right pill in inventory)
+Move Mouse to turn around
 
-The game should be able to handle the traditional keyboard 
-and standard gamepad mapping.
-
-::: proposition
-
-:::
-
-::: warning
-
-:::
 
 ### Keyboard and mouse (KB+M)
 
@@ -234,16 +235,13 @@ Based on controls of the game *Fire Emblem Warriors*.
 
 ## Physics
 
+
 ### Collisions
 
 The current plans for gameplay do not demand a very precise collision system.
 
 Since the gameplay demands the ability to handle significant number of enemies, 
 a simple collision system should be enough.
-
-### Particle system
-
-
 
 # Front End
 
@@ -326,12 +324,13 @@ Programmers:
 
 - Michał Kotowski
 - Jakub Guzek
-- Piotr Gortyński
 - Łukasz Gołygowski
 
-# Time
+Artists:
 
-# Roadmap
+- Jakub Guzek
+
+# Time
 
 ## Prototyping stage
 
