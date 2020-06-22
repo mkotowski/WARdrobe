@@ -141,7 +141,7 @@ The aim of
 
 ## Story
 Once upon a time, there was a furniture shop with... eh... Its kinda bland isn't it? Ok, let me do it again.
-Imagine hangover so hard that you landed in the backroom of furniture shop with monsters in it. Weird huh? What if those monters are also furnitures? Add to that a (un)healthy dose of drugs and here is your situation. Will you fight your way out? Will you survive that amount of drugs? Will you discover what is going on in the shop?
+Imagine hangover so hard that you landed in the backroom of furniture shop with monsters in it. Weird huh? What if those monsters are also furnitures? Add to that a (un)healthy dose of drugs and here is your situation. Will you fight your way out? Will you survive that amount of drugs? Will you discover what is going on in the shop?
 
 ### Setting
 The game will be set in a generic furniture shop in a supermarket. Enemies are living furnitures and pickups are drugs.
