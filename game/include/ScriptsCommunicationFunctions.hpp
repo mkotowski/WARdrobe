@@ -359,6 +359,21 @@ l_cppsetTransformRelToRotatingParent(lua_State* l)
 }
 #pragma endregion
 
+#pragma region Window
+int
+l_cppsetIndicator(lua_State* l)
+{
+	Window* w = (Window*)lua_touserdata(l, 1);
+
+	const char* label = lua_tostring(l, 2);
+	bool        set = lua_toboolean(l, 3);
+
+	w->guiManager->GetWidget(label)->SetVisible(set);
+
+	return 1;
+}
+#pragma endregion
+
 void
 setAllFunctions(lua_State* state)
 {
@@ -432,4 +447,8 @@ setAllFunctions(lua_State* state)
 
 	lua_pushcfunction(state, l_cppsetTransformRelToRotatingParent);
 	lua_setglobal(state, "setTransformRelToRotatingParent");
+
+	// Window
+	lua_pushcfunction(state, l_cppsetIndicator);
+	lua_setglobal(state, "setIndicator");
 }

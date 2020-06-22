@@ -202,13 +202,6 @@ Game::Loop()
 
 	renderSystem->Init();
 	std::cout << "RenderSystem has been initialized" << std::endl;
-
-	scriptsSystem->Init(
-	  gameplayManager,
-	  renderSystem,
-	  this->gameWindow,
-	  &gameplayManager->GetComponentManager()->GetComponent<Camera>(
-	    cameraSystem->cameraEntity));
 		
 	auto DamagePillIndicator = gameWindow->guiManager->AddWidget(
 	  "damage_pill_indicator",
@@ -239,6 +232,13 @@ Game::Loop()
 	                              128,
 	                              GuiAnchor::TR,
 	                              gameWindow->GetWindow()));
+
+	scriptsSystem->Init(
+	  gameplayManager,
+	  renderSystem,
+	  this->gameWindow,
+	  &gameplayManager->GetComponentManager()->GetComponent<Camera>(
+	    cameraSystem->cameraEntity));
 
 
 	gameWindow->CloseSplashScreen();
