@@ -209,6 +209,47 @@ Game::Loop()
 	  this->gameWindow,
 	  &gameplayManager->GetComponentManager()->GetComponent<Camera>(
 	    cameraSystem->cameraEntity));
+		
+	gameWindow->guiManager->AddWidget(
+	  "doomguy2",
+	  std::make_shared<GuiWidget>("assets/images/splash.png",
+	                              0.0f,
+	                              0.0f,
+	                              100,
+	                              121,
+	                              GuiAnchor::TL,
+	                              gameWindow->GetWindow()));
+
+	gameWindow->guiManager->AddWidget(
+	  "doomguy",
+	  std::make_shared<GuiWidget>("assets/images/doomguy.png",
+	                              50.0f,
+	                              0.0f,
+	                              100,
+	                              121,
+	                              GuiAnchor::TL,
+	                              gameWindow->GetWindow()));
+
+
+	gameWindow->guiManager->AddWidget(
+	  "doomguy22",
+	  std::make_shared<GuiWidget>("assets/images/UI/Drugman/Drugman60.png",
+	                              100.0f,
+	                              0.0f,
+	                              150,
+	                              121,
+	                              GuiAnchor::TL,
+	                              gameWindow->GetWindow()));
+
+	gameWindow->guiManager->AddWidget(
+	  "dooms2",
+	  std::make_shared<GuiWidget>("assets/images/UI/Drugman/Drugman0.png",
+	                              150.0f,
+	                              0.0f,
+	                              150,
+	                              121,
+	                              GuiAnchor::TL,
+	                              gameWindow->GetWindow()));
 
 	gameWindow->CloseSplashScreen();
 	// avoid displaying empty window
@@ -252,7 +293,7 @@ Game::Loop()
 		renderSystem->Draw(dt, gameplayManager->GetComponentManager());
 
 		// USER INTERFACE RENDERING
-		gameWindow->TestGUI();
+		gameWindow->guiManager->Draw();
 #if INCLUDE_DEBUG_UI
 		gameWindow->RenderDebugUI();
 #endif // INCLUDE_DEBUG_UI
@@ -285,8 +326,8 @@ Game::LoadLevel(std::string levelPath)
 	} catch (std::exception& e) {
 		std::cerr << e.what() << std::endl;
 	}
-	
-	//int entityNr = 0;
+
+	// int entityNr = 0;
 	for (auto& it : jsonLevelData.items()) {
 		Entity entity = gameplayManager->CreateEntity();
 
