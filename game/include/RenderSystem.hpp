@@ -78,61 +78,86 @@ RenderSystem::Draw(float dt, std::shared_ptr<ComponentManager> componentManager)
 
 		auto& shader = Shader();
 
-		if (renderer.drawingType == 7) {
-			shader = componentManager->GetComponent<Shader>(shaders->at("boxShader"));
+		switch(renderer.drawingType)
+		{
+			// Bounding box
+			case 7:
+				shader = componentManager->GetComponent<Shader>(shaders->at("boxShader"));
+				DrawBoundingBox(componentManager->GetComponent<BoundingBox>(entity),
+								&componentManager->GetComponent<Camera>(cameraEntity),
+								&shader,
+								this->window);
+				continue;
+				break;
 
-			auto& box = componentManager->GetComponent<BoundingBox>(entity);
+			// Model shader with BB
+			case 6:
+				shader =
+				componentManager->GetComponent<Shader>(shaders->at("modelShader"));
+				shader.use();
+				break;
+			
+			// Animated model with BB
+			case 5:
+				shader = componentManager->GetComponent<Shader>(
+			  	shaders->at("animatedModelShader"));
+				shader.use();
+				componentManager->GetComponent<Animator>(entity).PlayCurrentAnimation(dt);
+				break;
 
-			DrawBoundingBox(box,
-			                &componentManager->GetComponent<Camera>(cameraEntity),
-			                &shader,
-			                this->window);
-			continue;
-		}
 
-		if (renderer.drawingType == 0 || renderer.drawingType == 6) {
-			shader =
-			  componentManager->GetComponent<Shader>(shaders->at("modelShader"));
-			shader.use();
-		}
+			// Refractive model
+			case 4:
+				shader =
+				componentManager->GetComponent<Shader>(shaders->at("cubemapShader"));
+				shader.use();
+				renderer.DrawRefractiveObject(&shader,
+											&componentManager->GetComponent<ModelArray>(entity).zeroLevelModel,
+											&cameraComponent,
+											this->skybox,
+											componentManager->GetComponent<Transform>(entity).position,
+											componentManager->GetComponent<Transform>(entity).rotation,
+											componentManager->GetComponent<Transform>(entity).scale,
+											this->window->GetWindowWidth(),
+											this->window->GetWindowHeight());
+				continue;
+				break;
+			
+			// Skybox
+			case 3:
+				shader =
+			  	componentManager->GetComponent<Shader>(shaders->at("skyBoxShader"));
+				shader.use();
+				renderer.DrawSkybox(&shader,
+									this->skybox,
+									&cameraComponent,
+									window->GetWindowWidth(),
+									window->GetWindowHeight());
+				continue;
+				break;
 
-		else if (renderer.drawingType == 1) {
-			shader =
-			  componentManager->GetComponent<Shader>(shaders->at("billboardShader"));
-			shader.use();
-		} else if (renderer.drawingType == 2 || renderer.drawingType == 5) {
-			shader = componentManager->GetComponent<Shader>(
-			  shaders->at("animatedModelShader"));
-			shader.use();
-			auto& animator = componentManager->GetComponent<Animator>(entity);
-			animator.PlayCurrentAnimation(dt);
-		} else if (renderer.drawingType == 3) {
-			shader =
-			  componentManager->GetComponent<Shader>(shaders->at("skyBoxShader"));
-			shader.use();
+			// Animated model without BB
+			case 2:
+				shader = componentManager->GetComponent<Shader>(
+			  	shaders->at("animatedModelShader"));
+				shader.use();
+				componentManager->GetComponent<Animator>(entity).PlayCurrentAnimation(dt);
+				break;
 
-			renderer.DrawSkybox(&shader,
-			                    this->skybox,
-			                    &cameraComponent,
-			                    window->GetWindowWidth(),
-			                    window->GetWindowHeight());
-			continue;
-		} else if (renderer.drawingType == 4) {
-			shader =
-			  componentManager->GetComponent<Shader>(shaders->at("cubemapShader"));
-			shader.use();
-			auto& modelArray = componentManager->GetComponent<ModelArray>(entity);
-			auto& transform = componentManager->GetComponent<Transform>(entity);
-			renderer.DrawRefractiveObject(&shader,
-			                              &modelArray.zeroLevelModel,
-			                              &cameraComponent,
-			                              this->skybox,
-			                              transform.position,
-			                              transform.rotation,
-			                              transform.scale,
-			                              this->window->GetWindowWidth(),
-			                              this->window->GetWindowHeight());
-			continue;
+			// Billboard
+			case 1:
+				shader =
+			  	componentManager->GetComponent<Shader>(shaders->at("billboardShader"));
+				shader.use();
+				break;
+
+			// Model without BB
+			case 0:
+				shader =
+				componentManager->GetComponent<Shader>(shaders->at("modelShader"));
+				shader.use();
+				break;		
+
 		}
 
 		auto& modelArray = componentManager->GetComponent<ModelArray>(entity);
