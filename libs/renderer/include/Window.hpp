@@ -413,21 +413,24 @@ public:
 	std::shared_ptr<GuiWidget> AddWidget(const char*                label,
 	                                     std::shared_ptr<GuiWidget> widget)
 	{
-		widgets.insert(std::make_pair(label, widget));
-		return widgets[label];
+		std::string str_label = label;
+		widgets.insert(std::make_pair(str_label, widget));
+		return widgets[str_label];
 	}
 
 	std::shared_ptr<GuiWidget> GetWidget(const char* label)
 	{
-		if (widgets.find(label) == widgets.end()) {
+		std::string str_label = label;
+
+		if (widgets.find(str_label) == widgets.end()) {
 			return std::shared_ptr<GuiWidget>(nullptr);
 		} else {
-			return widgets[label];
+			return widgets[str_label];
 		}
 	}
 
 private:
-	std::map<const char*, std::shared_ptr<GuiWidget>> widgets;
+	std::map<std::string, std::shared_ptr<GuiWidget>> widgets;
 };
 
 class HeadManager
