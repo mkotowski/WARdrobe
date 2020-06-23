@@ -18,6 +18,8 @@ float playerInputHorizontal = 0.0f;
 float playerInputVertical = 0.0f;
 bool  leftMousePressed = false;
 bool  rightMousePressed = false;
+bool  ePressed = false;
+bool  qPressed = false;
 
 class CameraSystem : public System
 {

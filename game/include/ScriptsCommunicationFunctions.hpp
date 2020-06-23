@@ -49,6 +49,18 @@ isAnimationPlaying(lua_State* l)
 
 #pragma region BoundingBox
 int
+l_cppsetTriggerBoundingBox(lua_State* l)
+{
+	Entity            e = luaL_checknumber(l, 1);
+	ComponentManager* cm = (ComponentManager*)lua_touserdata(l, 2);
+	bool              set = lua_toboolean(l, 3);
+
+	cm->GetComponent<BoundingBox>(e).trigger = set;
+
+	return 1;
+}
+
+int
 l_cppsetBoundingBox(lua_State* l)
 {
 	Entity            e = luaL_checknumber(l, 1);
@@ -226,14 +238,12 @@ l_cppapplyForce(lua_State* l)
 int
 l_cppsetSubroutine(lua_State* l)
 {
-	Entity            modelShaderE = luaL_checknumber(l, 1);
-	Entity            animatedModelShaderE = luaL_checknumber(l, 2);
-	ComponentManager* cm = (ComponentManager*)lua_touserdata(l, 3);
+	Entity            quadShader = luaL_checknumber(l, 1);
+	ComponentManager* cm = (ComponentManager*)lua_touserdata(l, 2);
 
-	std::string s = lua_tostring(l, 4);
+	std::string s = lua_tostring(l, 3);
 
-	cm->GetComponent<Shader>(modelShaderE).currentSubroutine = s;
-	cm->GetComponent<Shader>(animatedModelShaderE).currentSubroutine = s;
+	cm->GetComponent<Shader>(quadShader).currentSubroutine = s;
 
 	return 1;
 }
@@ -347,6 +357,34 @@ l_cppsetTransformRelToRotatingParent(lua_State* l)
 }
 #pragma endregion
 
+#pragma region Window
+int
+l_cppsetIndicator(lua_State* l)
+{
+	Window* w = (Window*)lua_touserdata(l, 1);
+
+	const char* label = lua_tostring(l, 2);
+	bool        set = lua_toboolean(l, 3);
+
+	w->guiManager->GetWidget(label)->SetVisible(set);
+
+	return 1;
+}
+
+int
+l_cppsetHead(lua_State* l)
+{
+	Window* w = (Window*)lua_touserdata(l, 1);
+
+	float hp = lua_tonumber(l, 2);
+	bool  hit = lua_toboolean(l, 3);
+
+	w->headManager->SetHead(hp, hit);
+
+	return 1;
+}
+#pragma endregion
+
 void
 setAllFunctions(lua_State* state)
 {
@@ -361,6 +399,9 @@ setAllFunctions(lua_State* state)
 	lua_setglobal(state, "isAnimationPlaying");
 
 	// BoundingBox
+	lua_pushcfunction(state, l_cppsetTriggerBoundingBox);
+	lua_setglobal(state, "setTrigger");
+
 	lua_pushcfunction(state, l_cppsetBoundingBox);
 	lua_setglobal(state, "setBoundingBox");
 
@@ -417,4 +458,11 @@ setAllFunctions(lua_State* state)
 
 	lua_pushcfunction(state, l_cppsetTransformRelToRotatingParent);
 	lua_setglobal(state, "setTransformRelToRotatingParent");
+
+	// Window
+	lua_pushcfunction(state, l_cppsetIndicator);
+	lua_setglobal(state, "setIndicator");
+
+	lua_pushcfunction(state, l_cppsetHead);
+	lua_setglobal(state, "setHead");
 }

@@ -26,7 +26,7 @@
                     "Animator" : [1, "Walking",
                         "assets/models/Drugman/DrugmanWalkArmless.fbx", true, "Walking"],
                     "BoundingBox" : [1000.0, 4000.0, 1000.0, 0, false, "player"],
-                    "Scripts" : ["character.lua"]
+                    "Scripts" : ["character.lua", "equipment.lua", "combos.lua"]
                 }
             ,
     "Pill01" :            
@@ -34,7 +34,7 @@
                     "ModelArray" : [0, "assets/models/Pills/RedPill.obj", "assets/textures/Pills/RedPill.png"],
                     "Transform" : [ 10.0, 0.0, -4.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1 ],
                     "Renderer" : 6,
-                    "BoundingBox" : [20.0, 20.0, 20.0, 1, false, "pill"],
+                    "BoundingBox" : [10.0, 10.0, 10.0, 1, false, "pill"],
                     "Scripts" : ["pillRed.lua"]
                 }
             ,
@@ -43,7 +43,7 @@
                     "ModelArray" : [0, "assets/models/Pills/GreenPill.obj", "assets/textures/Pills/GreenPill.png"],
                     "Transform" : [ -15.0, 0.0,  0.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1 ],
                     "Renderer" : 6,
-                    "BoundingBox" : [20.0, 20.0, 20.0, 1, false, "pill"],
+                    "BoundingBox" : [10.0, 10.0, 10.0, 1, false, "pill"],
                     "Scripts" : ["pillGreen.lua"]
                 }
             ,
@@ -52,7 +52,7 @@
                     "ModelArray" : [0, "assets/models/Pills/BluePill.obj", "assets/textures/Pills/BluePill.png"],
                     "Transform" : [ 0.0, 0.0, -15.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1 ],
                     "Renderer" : 6,
-                    "BoundingBox" : [20.0, 20.0, 20.0, 1, false, "pill"],
+                    "BoundingBox" : [10.0, 10.0, 10.0, 1, false, "pill"],
                     "Scripts" : ["pillBlue.lua"]
                 }
             ,
