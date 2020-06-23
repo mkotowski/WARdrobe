@@ -44,7 +44,7 @@ ShaderSystem::Update(float                             dt,
         auto& shader = componentManager->GetComponent<Shader>(entity);
         shader.use();
         shader.setVec3("viewPos", componentManager->GetComponent<Camera>(this->cameraEntity).cameraPos);       
-        if (shader.shaderType == "modelShader" || shader.shaderType == "animatedModelShader")
-        shader.setFloat("sinX", sin((double)dtForSinX));     
+        if (shader.shaderType == "modelShader" || shader.shaderType == "animatedModelShader" || shader.shaderType == "quadShader")
+            shader.setFloat("sinX", sin((double)dtForSinX));     
     }
 }

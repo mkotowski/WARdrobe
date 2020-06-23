@@ -11,7 +11,7 @@
             ,
     "mainCamera" :            
                 {
-                    "Transform" : [0.0, 30.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+                    "Transform" : [0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
                     "Camera" : [0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 1.0, 80.0],
                     "Scripts" : ["camera.lua"]
                 }
@@ -1474,6 +1474,11 @@
                 "Shader" : ["assets/shaders/cubemapVertex.glsl", "assets/shaders/cubemapFragment.glsl", "cubemapShader"]
                 }
             ,
+    "quadShader" :
+            {
+            "Shader" : ["assets/shaders/quadVertex.glsl", "assets/shaders/quadFragment.glsl", "quadShader"]
+            }
+        ,
     "directionalLight" :
                 {
                     "Light" : ["directionalLight",
