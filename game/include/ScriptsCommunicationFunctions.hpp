@@ -238,14 +238,12 @@ l_cppapplyForce(lua_State* l)
 int
 l_cppsetSubroutine(lua_State* l)
 {
-	Entity            modelShaderE = luaL_checknumber(l, 1);
-	Entity            animatedModelShaderE = luaL_checknumber(l, 2);
-	ComponentManager* cm = (ComponentManager*)lua_touserdata(l, 3);
+	Entity            quadShader = luaL_checknumber(l, 1);
+	ComponentManager* cm = (ComponentManager*)lua_touserdata(l, 2);
 
-	std::string s = lua_tostring(l, 4);
+	std::string s = lua_tostring(l, 3);
 
-	cm->GetComponent<Shader>(modelShaderE).currentSubroutine = s;
-	cm->GetComponent<Shader>(animatedModelShaderE).currentSubroutine = s;
+	cm->GetComponent<Shader>(quadShader).currentSubroutine = s;
 
 	return 1;
 }

@@ -139,13 +139,13 @@ function handleBrain(dt)
     end
 
     if isHighDamage == false and isHighHeal == false and isHighSpeed == false then
-        setSubroutine(modelShader, animatedModelShader, componentManager, "ColorWhite")
+        setSubroutine(quadShader, componentManager, "ColorWhite")
     elseif isHighDamage == true and isHighHeal == false and isHighSpeed == false then
-        setSubroutine(modelShader, animatedModelShader, componentManager, "ColorRed")
+        setSubroutine(quadShader, componentManager, "ColorRed")
     elseif isHighDamage == false and isHighHeal == true and isHighSpeed == false then
-        setSubroutine(modelShader, animatedModelShader, componentManager, "ColorWavy")
+        setSubroutine(quadShader, componentManager, "ColorWavy")
     elseif isHighDamage == false and isHighHeal == false and isHighSpeed == true then
-        setSubroutine(modelShader, animatedModelShader, componentManager, "ColorCustom")
+        setSubroutine(quadShader, componentManager, "ColorCustom")
     end
 end
 
@@ -170,7 +170,7 @@ function getHigh(slot, type)
         damageHighTimeStamp = time
         damageSlot = slot
         setIndicator(window, "damage_pill_indicator", true)
-        setSubroutine(modelShader, animatedModelShader, componentManager, "ColorRed")
+        setSubroutine(quadShader, componentManager, "ColorRed")
     elseif type == "green" then
         isHighHeal = true
         player.health = player.health + (maxHealth - player.health)
@@ -178,7 +178,7 @@ function getHigh(slot, type)
         healHighTimeStamp = time
         healSlot = slot
         setIndicator(window, "health_pill_indicator", true)
-        setSubroutine(modelShader, animatedModelShader, componentManager, "ColorWavy")
+        setSubroutine(quadShader, componentManager, "ColorWavy")
     elseif type == "blue" then
         isHighSpeed = true
         speedMultiplier = bluePillPower * speedMultiplier
@@ -187,7 +187,7 @@ function getHigh(slot, type)
         speedHighTimeStamp = time
         speedSlot = slot
         setIndicator(window, "speed_pill_indicator", true)
-        setSubroutine(modelShader, animatedModelShader, componentManager, "ColorCustom")
+        setSubroutine(quadShader, componentManager, "ColorCustom")
     end
 end
 

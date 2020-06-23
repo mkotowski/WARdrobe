@@ -75,10 +75,8 @@ ScriptsSystem::Init(GameplayManager*              gameplayManager,
 		}
 	}
 
-	lua_pushnumber(state, rs->shaders->at("modelShader"));
-	lua_setglobal(state, "modelShader");
-	lua_pushnumber(state, rs->shaders->at("animatedModelShader"));
-	lua_setglobal(state, "animatedModelShader");
+	lua_pushnumber(state, rs->shaders->at("quadShader"));
+	lua_setglobal(state, "quadShader");
 
 	lua_pushlightuserdata(state, &(*gameplayManager));
 	lua_setglobal(state, "gameplayManager");

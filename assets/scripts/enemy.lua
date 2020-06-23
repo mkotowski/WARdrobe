@@ -2,7 +2,7 @@ hitInterval = 0.1
 globalComboLeftHitStamp = 0.0
 globalComboRightHitStamp = 0.0
 
-minimalDistance = 1.5
+minimalDistance = 2.0
 maximalDistance = 8.0
 unconsciousnessTime = 2.0
 

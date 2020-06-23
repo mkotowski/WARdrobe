@@ -15,7 +15,7 @@ function bulbAttackStart()
         end
     end
 
-    local bulb = {attacking = false, enemyEntity = enemyEntity, attackTimeStamp = 0.0, hitTimeStamp = 0.0, hitInterval = 3.0}
+    local bulb = {attacking = false, enemyEntity = enemyEntity, attackTimeStamp = 0.0, hitTimeStamp = 0.0, hitInterval = 1.5}
     lamps[entity] = bulb
 end
 
