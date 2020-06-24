@@ -32,7 +32,8 @@ header-includes: |
 | 0.3.0   | Michał Kotowski   | 2020-06-24 | Add enemies' images.               |
 | 0.3.1   | Michał Kotowski   | 2020-06-24 | Update info about controls.        |
 | 0.3.2   | Michał Kotowski   | 2020-06-24 | Add tmp team logo.                 |
-| 0.3.3   | Łukasz Gołygowski | 2020-06-24 | Add collisions and gui info        |
+| 0.3.3   | Michał Kotowski   | 2020-06-24 | Update gamepad info.               |
+| 0.3.4   | Łukasz Gołygowski | 2020-06-25 | Add collisions and gui info        |
 
 ---
 
