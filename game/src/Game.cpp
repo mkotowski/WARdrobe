@@ -199,6 +199,118 @@ Game::Loop()
 
 	renderSystem->Init();
 	std::cout << "RenderSystem has been initialized" << std::endl;
+		
+	auto DamagePillIndicator = gameWindow->guiManager->AddWidget(
+	  "damage_pill_indicator",
+	  std::make_shared<GuiWidget>("assets/images/UI/Pills/DamagePill.png",
+	                              30.0f,
+	                              30.0f,
+	                              128,
+	                              128,
+	                              GuiAnchor::TR,
+	                              gameWindow->GetWindow()));
+
+	auto HealthPillIndicator = gameWindow->guiManager->AddWidget(
+	  "health_pill_indicator",
+	  std::make_shared<GuiWidget>("assets/images/UI/Pills/HealthPill.png",
+	                              30.0f,
+	                              158.0f,
+	                              128,
+	                              128,
+	                              GuiAnchor::TR,
+	                              gameWindow->GetWindow()));
+
+	auto SpeedPillIndicator = gameWindow->guiManager->AddWidget(
+	  "speed_pill_indicator",
+	  std::make_shared<GuiWidget>("assets/images/UI/Pills/SpeedPill.png",
+	                              30.0f,
+	                              158.0f + 128.0f,
+	                              128,
+	                              128,
+	                              GuiAnchor::TR,
+	                              gameWindow->GetWindow()));
+
+	auto HeadHit = gameWindow->guiManager->AddWidget(
+	  "head_hit",
+	  std::make_shared<GuiWidget>("assets/images/UI/Drugman/DrugmanHit.png",
+	                              0.0f,
+	                              0.0f,
+	                              120,
+	                              128,
+	                              GuiAnchor::BC,
+	                              gameWindow->GetWindow()));
+	HeadHit->SetVisible(false);
+
+	auto Head0 = gameWindow->guiManager->AddWidget(
+	  "head_0",
+	  std::make_shared<GuiWidget>("assets/images/UI/Drugman/Drugman0.png",
+	                              0.0f,
+	                              0.0f,
+	                              120,
+	                              128,
+	                              GuiAnchor::BC,
+	                              gameWindow->GetWindow()));
+	Head0->SetVisible(false);
+
+	auto Head20 = gameWindow->guiManager->AddWidget(
+	  "head_20",
+	  std::make_shared<GuiWidget>("assets/images/UI/Drugman/Drugman20.png",
+	                              0.0f,
+	                              0.0f,
+	                              120,
+	                              128,
+	                              GuiAnchor::BC,
+	                              gameWindow->GetWindow()));
+	Head20->SetVisible(false);
+
+	auto Head40 = gameWindow->guiManager->AddWidget(
+	  "head_40",
+	  std::make_shared<GuiWidget>("assets/images/UI/Drugman/Drugman40.png",
+	                              0.0f,
+	                              0.0f,
+	                              120,
+	                              128,
+	                              GuiAnchor::BC,
+	                              gameWindow->GetWindow()));
+	Head40->SetVisible(false);
+
+	auto Head60 = gameWindow->guiManager->AddWidget(
+	  "head_60",
+	  std::make_shared<GuiWidget>("assets/images/UI/Drugman/Drugman60.png",
+	                              0.0f,
+	                              0.0f,
+	                              120,
+	                              128,
+	                              GuiAnchor::BC,
+	                              gameWindow->GetWindow()));
+	Head60->SetVisible(false);
+
+	auto Head80 = gameWindow->guiManager->AddWidget(
+	  "head_80",
+	  std::make_shared<GuiWidget>("assets/images/UI/Drugman/Drugman80.png",
+	                              0.0f,
+	                              0.0f,
+	                              120,
+	                              128,
+	                              GuiAnchor::BC,
+	                              gameWindow->GetWindow()));
+	Head80->SetVisible(false);
+
+	auto Head100 = gameWindow->guiManager->AddWidget(
+	  "head_100",
+	  std::make_shared<GuiWidget>("assets/images/UI/Drugman/Drugman100.png",
+	                              0.0f,
+	                              0.0f,
+	                              120,
+	                              128,
+	                              GuiAnchor::BC,
+	                              gameWindow->GetWindow()));
+	Head100->SetVisible(false);
+
+	gameWindow->headManager = std::make_shared<HeadManager>(
+	  Head0, Head20, Head40, Head60, Head80, Head100, HeadHit);
+
+	gameWindow->headManager->SetHead(80, false);
 
 	scriptsSystem->Init(
 	  gameplayManager,
@@ -233,10 +345,10 @@ Game::Loop()
 		// GAME LOGIC
 
 		// gameplayManager->Update(dt);
-		scriptsSystem->Update(dt, gameplayManager->GetComponentManager());
 
 		physicsSystem->Update(dt, gameplayManager->GetComponentManager());
 		colliderSystem->Update(dt, gameplayManager->GetComponentManager());
+		scriptsSystem->Update(dt, gameplayManager->GetComponentManager());
 
 		// GAMEPLAY RENDERING
 		gameWindow->UpdateViewport();
@@ -249,7 +361,7 @@ Game::Loop()
 		renderSystem->Draw(dt, gameplayManager->GetComponentManager());
 
 		// USER INTERFACE RENDERING
-		gameWindow->TestGUI();
+		gameWindow->guiManager->Draw();
 #if INCLUDE_DEBUG_UI
 		gameWindow->RenderDebugUI();
 #endif // INCLUDE_DEBUG_UI

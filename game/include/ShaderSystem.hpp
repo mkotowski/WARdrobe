@@ -28,6 +28,12 @@ ShaderSystem::Init(std::shared_ptr<ComponentManager> componentManager)
         auto& shader = componentManager->GetComponent<Shader>(entity);
         shader.currentSubroutine = "ColorWhite";
         std::cout << shader.currentSubroutine << std::endl;
+        if (shader.shaderType == "quadShader")
+        {
+            shader.use();
+            shader.setFloat("contrast", 1.0);
+            shader.setFloat("brightness", 0.1);
+        }
     }
 }
 
@@ -44,7 +50,7 @@ ShaderSystem::Update(float                             dt,
         auto& shader = componentManager->GetComponent<Shader>(entity);
         shader.use();
         shader.setVec3("viewPos", componentManager->GetComponent<Camera>(this->cameraEntity).cameraPos);       
-        if (shader.shaderType == "modelShader" || shader.shaderType == "animatedModelShader")
-        shader.setFloat("sinX", sin((double)dtForSinX));     
+        if (shader.shaderType == "modelShader" || shader.shaderType == "animatedModelShader" || shader.shaderType == "quadShader")
+            shader.setFloat("sinX", sin((double)dtForSinX));     
     }
 }

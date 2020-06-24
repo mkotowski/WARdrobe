@@ -13,4 +13,7 @@ extern float playerInputHorizontal;
 extern bool leftMousePressed;
 extern bool rightMousePressed;
 
+extern bool ePressed;
+extern bool qPressed;
+
 extern float cameraFront;
