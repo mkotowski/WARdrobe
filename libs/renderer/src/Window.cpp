@@ -81,8 +81,6 @@ Window::DefaultScrollCallback(GLFWwindow* window,
 
 	VirtualInputManager* vim = VirtualInputManager::GetInstance();
 	vim->Update(1, InputSource::SCROLL, (float)xoffset);
-
-	VirtualInputManager* vim = VirtualInputManager::GetInstance();
 	vim->Update(2, InputSource::SCROLL, (float)yoffset);
 }
 
