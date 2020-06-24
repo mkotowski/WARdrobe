@@ -45,6 +45,8 @@ string(TIMESTAMP NOW   "%H%M%S")
 
 # OPTIONS #####################################################################
 
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
 # project building
 option(GIT_SUBMODULE       "Check submodules during build"  ON )
 option(BUILD_WARDROBE_DOC  "Build WARdrobe documentation"   OFF)

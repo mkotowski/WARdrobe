@@ -1,3 +1,6 @@
+# add the input manager
+add_subdirectory(input)
+
 # add the entity component system implementation
 add_subdirectory(ecs)
 
