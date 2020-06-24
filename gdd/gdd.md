@@ -1,10 +1,10 @@
 ---
 title: "WARdrobe -- Beat Them Up"
-author: [Michał Kotowski]
+author: [Video Game Assembly Studio]
 date: "2020-03-06 -- 2020-06-24"
 subject: "PBL"
 keywords: [PBL, gamedev]
-subtitle: "Game Design Document (version 0.3.3)"
+subtitle: "Game Design Document"
 lang: "en"
 toc-own-page: true
 titlepage: true
@@ -23,17 +23,17 @@ header-includes: |
 
 # Revision List
 
-| Version | Author            | Date       | Comments                           |
-|:--------|:------------------|:-----------|------------------------------------|
-| 0.1.0   | Michał Kotowski   | 2020-03-06 | First draft.                       |
-| 0.2.0   | Jakub Guzek       | 2020-06-22 | Second draft.                      |
-| 0.2.1   | Jakub Guzek       | 2020-06-23 | Updating.                          |
-| 0.2.2   | Michał Kotowski   | 2020-06-24 | Fix and update metadata.           |
-| 0.3.0   | Michał Kotowski   | 2020-06-24 | Add enemies' images.               |
-| 0.3.1   | Michał Kotowski   | 2020-06-24 | Update info about controls.        |
-| 0.3.2   | Michał Kotowski   | 2020-06-24 | Add tmp team logo.                 |
-| 0.3.3   | Michał Kotowski   | 2020-06-24 | Update gamepad info.               |
-| 0.3.4   | Łukasz Gołygowski | 2020-06-25 | Add collisions and gui info        |
+| Version | Author            | Date       | Comments                          |
+|:--------|:------------------|:-----------|-----------------------------------|
+| 0.1.0   | Michał Kotowski   | 2020-03-06 | First draft.                      |
+| 0.2.0   | Jakub Guzek       | 2020-06-22 | Second draft.                     |
+| 0.2.1   | Jakub Guzek       | 2020-06-23 | Updating.                         |
+| 0.2.2   | Michał Kotowski   | 2020-06-24 | Fix and update metadata.          |
+| 0.3.0   | Michał Kotowski   | 2020-06-24 | Add enemies' images.              |
+| 0.3.1   | Michał Kotowski   | 2020-06-24 | Update info about controls.       |
+| 0.3.2   | Michał Kotowski   | 2020-06-24 | Add tmp team logo.                |
+| 0.3.3   | Michał Kotowski   | 2020-06-24 | Update gamepad info.              |
+| 0.3.4   | Łukasz Gołygowski | 2020-06-25 | Add collisions and gui info.      |
 
 ---
 
@@ -76,12 +76,10 @@ The name of our team is **Video Game Assembly Studio**.
   - CMake and game's installer configuration
   - GLFW window management and GUI placement system
   - ECS systems
-  - GDD
 - Jakub Guzek
   - asset creator
   - level designer
   - animation and rendering
-  - GDD
 - Łukasz Gołygowski
   - AI logic
   - Lua scripting
@@ -330,9 +328,9 @@ GUI elements:
 
 ![Health increased](./img/gui/GreenPillEffect.png)
 
-## Intro
+<!-- ## Intro -->
 
-## Menus
+<!-- ## Menus -->
 
 # Development Tools
 
