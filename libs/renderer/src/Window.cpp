@@ -78,6 +78,12 @@ Window::DefaultScrollCallback(GLFWwindow* window,
                               double      yoffset)
 {
 	std::cout << "Scroll: " << xoffset << " " << yoffset << std::endl;
+
+	VirtualInputManager* vim = VirtualInputManager::GetInstance();
+	vim->Update(1, InputSource::SCROLL, (float)xoffset);
+
+	VirtualInputManager* vim = VirtualInputManager::GetInstance();
+	vim->Update(2, InputSource::SCROLL, (float)yoffset);
 }
 
 void
