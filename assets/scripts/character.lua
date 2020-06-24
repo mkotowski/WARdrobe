@@ -36,12 +36,6 @@ function characterStart()
     setIndicator(window, "damage_pill_indicator", false)
     setIndicator(window, "health_pill_indicator", false)
     setHead(window, 100, false)
-    prevRightInput = 0.0
-    prevDirectionH = 0.0
-    dirZeroHCounter = 0
-    prevForwardInput = 0.0
-    prevDirectionV = 0.0
-    dirZeroVCounter = 0
     player.entity = entity
 end
 
@@ -59,41 +53,41 @@ function characterUpdate(dt)
 
     characterSetRotation()
 
-    directionH = 0.0
-    directionV = 0.0
-
-    if rightInput - prevRightInput < 0 then
-        directionH = -1.0
-    elseif rightInput - prevRightInput > 0 then
-        directionH = 1.0
-    end
-
-    if directionH == 0.0 and dirZeroHCounter == 1 then
-        dirZeroHCounter = 0
-    elseif directionH == 0.0 and prevDirectionH ~= 0.0 then
-        dirZeroHCounter = 1
-        directionH = prevDirectionH
-    elseif directionH ~= 0.0 then
-        dirZeroHCounter = 0
-    end
-
-    prevDirectionH = directionH
-
-    if forwardInput - prevForwardInput < 0 then
-        directionV = -1.0
-    elseif forwardInput - prevForwardInput > 0 then
-        directionV = 1.0
-    end
-
     prevDirectionV = directionV
 
     if detectedCombo == "dash" then
         return
     end
     
-    moveObject(-directionH * playerSpeed, 0.0, directionV * playerSpeed)
+    handleMovement()
     prevRightInput = rightInput
     prevForwardInput = forwardInput
+end
+
+function handleMovement()
+    local direction = {x = 0.0, y = 0.0, z = 0.0}
+
+    if forwardInput > 0.0 then
+        direction.x = -mouse.x
+        direction.z = mouse.z
+    elseif forwardInput < 0.0 then
+        direction.x = mouse.x
+        direction.z = -mouse.z
+    end
+
+    if rightInput > 0.0 then
+        direction.x = direction.x + mouse.z
+        direction.z = direction.z + mouse.x
+    elseif rightInput < 0.0 then
+        direction.x = direction.x - mouse.z
+        direction.z = direction.z - mouse.x
+    end
+
+    if direction.x ~= 0.0 or direction.z ~= 0.0 then
+        direction.x, direction.y, direction.z = normalize(direction.x, direction.y, direction.z)
+    end
+
+    moveObject(-direction.x * playerSpeed, direction.y * playerSpeed, direction.z * playerSpeed)
 end
 
 function handleHead(dt)
