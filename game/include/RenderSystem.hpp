@@ -87,7 +87,7 @@ RenderSystem::Init()
 	
     CreateColorAttachmentTexture();
 
-	windowWidth = this->window->GetWindowWidth();
+	windowWidth = this->window->GetWindowWidth()-1;
 	windowHeight = this->window->GetWindowHeight();
 }
 
