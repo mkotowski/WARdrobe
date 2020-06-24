@@ -68,19 +68,15 @@ function handleMovement()
     local direction = {x = 0.0, y = 0.0, z = 0.0}
 
     if forwardInput > 0.0 then
-        direction.x = -mouse.x
-        direction.z = mouse.z
+        direction.z = 1.0
     elseif forwardInput < 0.0 then
-        direction.x = mouse.x
-        direction.z = -mouse.z
+        direction.z = -1.0
     end
 
     if rightInput > 0.0 then
-        direction.x = direction.x + mouse.z
-        direction.z = direction.z + mouse.x
+        direction.x = 1.0
     elseif rightInput < 0.0 then
-        direction.x = direction.x - mouse.z
-        direction.z = direction.z - mouse.x
+        direction.x = -1.0
     end
 
     if direction.x ~= 0.0 or direction.z ~= 0.0 then
