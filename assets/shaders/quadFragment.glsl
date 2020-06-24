@@ -4,6 +4,8 @@ out vec4 FragColor;
 in vec2 TexCoords;
 
 uniform sampler2D screenTexture;
+uniform float brightness;
+uniform float contrast;
 
 // sin(x), where x [0, 3.14]
 uniform float sinX;
@@ -51,6 +53,8 @@ vec4 ColorCustom(vec4 tempColor)
 void main()
 {
     vec3 col = texture(screenTexture, TexCoords).rgb;
-    vec4 result = vec4(col, 1.0);
-    FragColor = Color(result);
+    vec4 result = Color(vec4(col, 1.0));
+	vec3 colorContrasted = result.rgb * contrast;
+	vec3 colorBright = colorContrasted + vec3(brightness, brightness, brightness);
+    FragColor = vec4(colorBright, 1.0);
 }

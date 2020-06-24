@@ -46,6 +46,7 @@ public:
 	unsigned int FBO, RBO;
 	unsigned int quadVAO, quadVBO;
 	unsigned int textureColorbuffer;
+	int windowWidth, windowHeight;
 	
 };
 
@@ -84,17 +85,10 @@ RenderSystem::Init()
 
 	// Framebuffer to texture
 	
-    glGenFramebuffers(1, &FBO);
-    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
-    // create a color attachment texture
     CreateColorAttachmentTexture();
-    // create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
-    glGenRenderbuffers(1, &RBO);
-    glBindRenderbuffer(GL_RENDERBUFFER, RBO);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 2048, 2048); // use a single renderbuffer object for both a depth AND stencil buffer.
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RBO); // now actually attach it
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	windowWidth = this->window->GetWindowWidth()-1;
+	windowHeight = this->window->GetWindowHeight();
 }
 
 void
@@ -102,7 +96,14 @@ RenderSystem::Draw(float dt, std::shared_ptr<ComponentManager> componentManager)
 {
 	// first pass - to framebuffer
 	//
-	glViewport(0, 0, 2048, 2048);
+	if (windowHeight != window->GetWindowHeight() || windowWidth != window->GetWindowWidth())
+	{
+		CreateColorAttachmentTexture();
+		windowWidth = window->GetWindowWidth();
+		windowHeight = this->window->GetWindowHeight();
+	}
+		
+
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 	glEnable(GL_DEPTH_TEST);
 
@@ -271,10 +272,10 @@ RenderSystem::Draw(float dt, std::shared_ptr<ComponentManager> componentManager)
 		}
 	}
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	// std::cout << window->GetWindowWidth() << " " << window->GetWindowHeight() << std::endl;
+	
 	glDisable(GL_DEPTH_TEST);
-	glViewport(0, 0, window->GetWindowWidth(), window->GetWindowHeight());
-
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	auto& shader = 
@@ -285,9 +286,10 @@ RenderSystem::Draw(float dt, std::shared_ptr<ComponentManager> componentManager)
 	shader.SetSubroutineFragment(shader.currentSubroutine);
 	glBindVertexArray(0);
 	glBindVertexArray(quadVAO);
-	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glActiveTexture(GL_TEXTURE0);
+	glEnable(GL_DEPTH_TEST);
 }
 
 int
@@ -315,10 +317,22 @@ RenderSystem::CheckDistance(Entity                            entityToCheck,
 void 
 RenderSystem::CreateColorAttachmentTexture()
 {
+	glGenFramebuffers(1, &FBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    // create a color attachment texture
+	
 	glGenTextures(1, &textureColorbuffer);
     glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2048, 2048, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->window->GetWindowWidth(), this->window->GetWindowHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
+    // create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
+    glGenRenderbuffers(1, &RBO);
+    glBindRenderbuffer(GL_RENDERBUFFER, RBO);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, this->window->GetWindowWidth(), this->window->GetWindowHeight()); // use a single renderbuffer object for both a depth AND stencil buffer.
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RBO); // now actually attach it
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 }

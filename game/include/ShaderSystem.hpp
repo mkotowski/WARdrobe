@@ -28,6 +28,12 @@ ShaderSystem::Init(std::shared_ptr<ComponentManager> componentManager)
         auto& shader = componentManager->GetComponent<Shader>(entity);
         shader.currentSubroutine = "ColorWhite";
         std::cout << shader.currentSubroutine << std::endl;
+        if (shader.shaderType == "quadShader")
+        {
+            shader.use();
+            shader.setFloat("contrast", 1.0);
+            shader.setFloat("brightness", 0.1);
+        }
     }
 }
 

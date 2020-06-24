@@ -1,11 +1,11 @@
-#include "InputManager.hpp"
+#include "VirtualInputManager.hpp"
 
-std::shared_ptr<VirtualInput> InputManager::AddVirtualInput(std::string label, VirtualInputType type) {
+std::shared_ptr<VirtualInput> VirtualInputManager::AddVirtualInput(std::string label, VirtualInputType type) {
 	inputs.insert(std::make_pair(label, std::make_shared<VirtualInput>(type)));
 	return inputs[label];
 }
 
-std::shared_ptr<VirtualInput> InputManager::GetVirtualInput(std::string label) {
+std::shared_ptr<VirtualInput> VirtualInputManager::GetVirtualInput(std::string label) {
 	if(inputs.find(label) == inputs.end()) {
 		return nullptr;
 	}
@@ -14,11 +14,11 @@ std::shared_ptr<VirtualInput> InputManager::GetVirtualInput(std::string label) {
 	}
 }
 
-void InputManager::SetVirtualInputValue(std::string label, float newValue) {
+void VirtualInputManager::SetVirtualInputValue(std::string label, float newValue) {
 	inputs[label]->UpdateRawValue(newValue);
 }
 
-void InputManager::Update(int rawInputId, int rawInputSource, float value) {
+void VirtualInputManager::Update(int rawInputId, int rawInputSource, float value) {
 	std::pair<int, int> mappingsKey = std::make_pair(rawInputId, rawInputSource);
 	std::string virtualInputLabel;
 
@@ -37,7 +37,7 @@ void InputManager::Update(int rawInputId, int rawInputSource, float value) {
 	}
 }
 
-void InputManager::AddMapping(std::string virtualInputLabel, int rawInputId, int rawInputSource) {
+void VirtualInputManager::AddMapping(std::string virtualInputLabel, int rawInputId, int rawInputSource) {
 	if(inputs.find(virtualInputLabel) != inputs.end()) {
 		mappings.insert(std::make_pair(std::make_pair(rawInputId, rawInputSource), virtualInputLabel));
 	}
@@ -45,3 +45,5 @@ void InputManager::AddMapping(std::string virtualInputLabel, int rawInputId, int
 		std::cout << "No virtual key found...\n";
 	}
 }
+
+VirtualInputManager* VirtualInputManager::singleton_ = nullptr;

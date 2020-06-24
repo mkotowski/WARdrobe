@@ -168,7 +168,7 @@ private:
 	bool showOverlay = true;
 	bool showDemoWindow = false;
 
-	bool isLogDisplayed = true;
+	bool isLogDisplayed = false;
 
 	// the number of monitors detected
 	int monitorCount;

@@ -6,6 +6,8 @@
 
 #include <stb_image.h>
 
+#include "VirtualInputManager.hpp"
+
 static void
 glfw_error_callback(int error, const char* description)
 {
@@ -76,6 +78,10 @@ Window::DefaultScrollCallback(GLFWwindow* window,
                               double      yoffset)
 {
 	std::cout << "Scroll: " << xoffset << " " << yoffset << std::endl;
+
+	VirtualInputManager* vim = VirtualInputManager::GetInstance();
+	vim->Update(1, InputSource::SCROLL, (float)xoffset);
+	vim->Update(2, InputSource::SCROLL, (float)yoffset);
 }
 
 void
@@ -126,21 +132,8 @@ Window::DefaultMouseButtonCallback(GLFWwindow* window,
 
 	handler->input->UpdateButton(button, action, mods);
 
-	// Advanced Buttons
-	// XButton1	4th mouse button. Typically performs the same function as
-	// Browser_Back. XButton2	5th mouse button. Typically performs the same
-	// function as Browser_Forward.
-
-	if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS) {
-		// SetShouldClose(GLFW_TRUE);
-		glfwSetWindowShouldClose(window, GLFW_TRUE);
-	}
-
-	// GLFW_MOUSE_BACK
-	if (button == GLFW_MOUSE_BUTTON_4 && action == GLFW_PRESS) {
-		// SetShouldClose(GLFW_TRUE);
-		glfwSetWindowShouldClose(window, GLFW_TRUE);
-	}
+	VirtualInputManager* vim = VirtualInputManager::GetInstance();
+	vim->Update(button, InputSource::MOUSE_BUTTON, (float)action);
 }
 
 template<typename Function>
@@ -208,6 +201,25 @@ Window::SetFramebufferSizeCallback(Function framebuffer_size_callback)
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 }
 
+template<typename Function>
+void
+Window::SetWindowFocusCallback(Function focus_callback)
+{
+	glfwSetWindowFocusCallback(window, focus_callback);
+}
+
+void
+Window::DefaultFocusCallback(GLFWwindow* window, int focused)
+{
+	Window* handler = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+	
+	if (focused) {
+		handler->SetFocus(true);
+	} else {
+		handler->SetFocus(false);
+	}
+}
+
 void
 Window::DefaultKeyCallback(GLFWwindow* window,
                            int         key,
@@ -218,6 +230,9 @@ Window::DefaultKeyCallback(GLFWwindow* window,
 	Window* handler = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
 
 	handler->input->UpdateKey(key, action, mods);
+
+	VirtualInputManager* vim = VirtualInputManager::GetInstance();
+	vim->Update(key, InputSource::KEY, (float)action);
 }
 
 Window* Window::mainWindowPtr = nullptr;
@@ -497,28 +512,7 @@ Window::Window(std::string windowTitle)
 
 	guiManager = std::make_shared<GuiManager>();
 
-	/*input->AddKey(GLFW_KEY_0, GLFW_PRESS, 0);
-	input->AddKey(GLFW_KEY_0, GLFW_PRESS, GLFW_MOD_ALT);
-	input->AddKey(GLFW_KEY_ESCAPE, GLFW_PRESS, 0);
-
-	input->AddButton(GLFW_MOUSE_BUTTON_LEFT, GLFW_PRESS, 0);
-	input->AddButton(GLFW_MOUSE_BUTTON_RIGHT, GLFW_PRESS, 0);
-	input->AddButton(GLFW_MOUSE_BUTTON_MIDDLE, GLFW_PRESS, 0);
-	input->AddButton(GLFW_MOUSE_BUTTON_4, GLFW_PRESS, 0);
-	input->AddButton(GLFW_MOUSE_BUTTON_5, GLFW_PRESS, 0);*/
-
-	/*Tmp             a;
-	Callback        callback = std::bind(&Tmp::execute, a, std::placeholders::_1);
-	CallbackPointer ptr = std::make_shared<Callback>(callback);*/
-
-	/*input->BindAction(
-	  GLFW_MOUSE_BUTTON_LEFT, InputSource::MOUSE_BUTTON, GLFW_PRESS, 0, ptr);
-	input->BindAction(
-	  GLFW_MOUSE_BUTTON_RIGHT, InputSource::MOUSE_BUTTON, GLFW_PRESS, 0, ptr);
-	input->BindAction(
-	  GLFW_MOUSE_BUTTON_MIDDLE, InputSource::MOUSE_BUTTON, GLFW_PRESS, 0, ptr);
-	input->BindAction(
-	  GLFW_MOUSE_BUTTON_4, InputSource::MOUSE_BUTTON, GLFW_PRESS, 0, ptr);*/
+	isFocused = true;
 
 	int err = Setup();
 
@@ -552,6 +546,7 @@ Window::Window(std::string windowTitle)
 		SetJoystickCallback(DefaultJoystickCallback);
 		SetScrollCallback(DefaultScrollCallback);
 		SetFramebufferSizeCallback(DefaultFramebufferSizeCallback);
+		SetWindowFocusCallback(DefaultFocusCallback);
 
 		const char* pctwinshock =
 		  "03000000790000000600000000000000,G-Shark "
