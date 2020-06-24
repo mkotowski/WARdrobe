@@ -317,6 +317,20 @@ InputManager::UpdateInput(int id, int source, int state, int mods)
 		rightMousePressed = false;
 	}
 
+	if (id == GLFW_KEY_E && source == InputSource::KEY && state == GLFW_PRESS) {
+		ePressed = true;
+	} else if (id == GLFW_KEY_E && source == InputSource::KEY &&
+	           state == GLFW_RELEASE) {
+		ePressed = false;
+	}
+
+	if (id == GLFW_KEY_Q && source == InputSource::KEY && state == GLFW_PRESS) {
+		qPressed = true;
+	} else if (id == GLFW_KEY_Q && source == InputSource::KEY &&
+	           state == GLFW_RELEASE) {
+		qPressed = false;
+	}
+
 	Input searchedInput;
 	searchedInput.id = id;
 	searchedInput.source = source;

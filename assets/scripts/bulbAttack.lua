@@ -15,7 +15,7 @@ function bulbAttackStart()
         end
     end
 
-    local bulb = {attacking = false, enemyEntity = enemyEntity, attackTimeStamp = 0.0, hitTimeStamp = 0.0, hitInterval = 3.0}
+    local bulb = {attacking = false, enemyEntity = enemyEntity, attackTimeStamp = 0.0, hitTimeStamp = 0.0, hitInterval = 1.5}
     lamps[entity] = bulb
 end
 
@@ -44,7 +44,7 @@ function bulbAttackCoroutine(dt)
     local speed = 5.0
 
     moveObject(-dirX * speed, -dirY * speed, -dirZ * speed)
-    while time - timeStamp < 0.2 do
+    while time - timeStamp < 0.35 do
         dt = coroutine.yield()
     end
 
@@ -79,13 +79,17 @@ function continueAttack(dt)
 end
 
 function bulbAttackOnCollisionEnter(box)
-    if time - lamps[entity].hitTimeStamp >= damageInterval and getTag(box) == "player" then
+    local tag = getTag(box)
+
+    if time - lamps[entity].hitTimeStamp >= damageInterval and tag == "player" then
         lamps[entity].hitTimeStamp = time
         playerGetHit(bulbDamage)
     end
 
-    if getTag(box) == "playerWeaponLeft" or getTag(box) == "playerWeaponRight" then
+    if tag == "playerWeaponLeft" or tag == "playerWeaponRight" then
+        local orgEntity = entity
         entity = lamps[entity].enemyEntity
         enemyOnCollisionEnter(box)
+        entity = orgEntity
     end
 end
