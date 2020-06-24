@@ -12,6 +12,8 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "VirtualInputManager.hpp"
+
 float forwardInput = 0.0f;
 float rightInput = 0.0f;
 float playerInputHorizontal = 0.0f;
@@ -46,6 +48,22 @@ CameraSystem::Update(float                             dt,
 {
 	const float cameraSpeed = 1.0f;
 
+	VirtualInputManager* vim = VirtualInputManager::GetInstance();
+
+	forwardInput = vim->GetVirtualInput("MoveForward")->GetValue() -
+	               vim->GetVirtualInput("MoveBackward")->GetValue();
+
+	rightInput = vim->GetVirtualInput("MoveRight")->GetValue() -
+	             vim->GetVirtualInput("MoveLeft")->GetValue();
+
+	leftMousePressed =
+	  static_cast<bool>(vim->GetVirtualInput("AttackLeftHand")->GetValue());
+	rightMousePressed =
+	  static_cast<bool>(vim->GetVirtualInput("AttackRightHand")->GetValue());
+
+	ePressed = vim->GetVirtualInput("ActivateBuff")->GetValue();
+	qPressed = vim->GetVirtualInput("ActivateHeal")->GetValue();
+
 	for (auto& entity : entities) {
 		auto& camera = componentManager->GetComponent<Camera>(entity);
 		auto& transform = componentManager->GetComponent<Transform>(entity);
@@ -61,14 +79,12 @@ CameraSystem::Update(float                             dt,
 		auto actionForwardMove =
 		  ActionManager::GetInstance().GetAction("CameraForward");
 
-		auto actionBackMove =
-		  ActionManager::GetInstance().GetAction("CameraBack");
+		auto actionBackMove = ActionManager::GetInstance().GetAction("CameraBack");
 
 		auto actionRightMove =
 		  ActionManager::GetInstance().GetAction("CameraRight");
 
-		auto actionLeftMove =
-		  ActionManager::GetInstance().GetAction("CameraLeft");
+		auto actionLeftMove = ActionManager::GetInstance().GetAction("CameraLeft");
 
 		float camX = 1;
 		float camZ = 1;
@@ -87,13 +103,13 @@ CameraSystem::Update(float                             dt,
 		/*camera.cameraFront =
 		  glm::vec3(-camX / 8, -transform.position[1], -camZ / 8);*/
 
-		//std::cout << "Camera system forward: " << forwardInput << std::endl;
+		// std::cout << "Camera system forward: " << forwardInput << std::endl;
 
 		/*camera.cameraFront += glm::vec3(rightInput,0,0);
 		camera.cameraFront = glm::normalize(camera.cameraFront);
 		rightInput = 0.0f;*/
 
-		//epilepsy
+		// epilepsy
 		/*glm::mat4 rotate(1.0f);
 		glm::vec3 cross = glm::cross(camera.cameraPos - camera.cameraFront,
 		                             camera.cameraUp - camera.cameraFront);
@@ -103,8 +119,8 @@ CameraSystem::Update(float                             dt,
 		camera.cameraPos = glm::vec3(rotate * glm::vec4(camera.cameraPos, 1.0f));
 		camera.cameraUp = glm::vec3(rotate * glm::vec4(camera.cameraUp, 1.0f));*/
 
-		//float camX = sin(glfwGetTime());
-		//float camZ = cos(glfwGetTime());
+		// float camX = sin(glfwGetTime());
+		// float camZ = cos(glfwGetTime());
 
 		camera.cameraPos = transform.position;
 
@@ -116,15 +132,15 @@ CameraSystem::Update(float                             dt,
 		camera.cameraPos = glm::vec3(rotate * glm::vec4(camera.cameraPos, 1.0f));
 		camera.cameraUp = glm::vec3(rotate * glm::vec4(camera.cameraUp, 1.0f));*/
 
-		//camera.cameraPos += forwardInput * cameraSpeed * camera.cameraFront;
-		//camera.cameraPos = glm::vec3(camera.cameraPos[0] + rightInput,
+		// camera.cameraPos += forwardInput * cameraSpeed * camera.cameraFront;
+		// camera.cameraPos = glm::vec3(camera.cameraPos[0] + rightInput,
 		//                             camera.cameraPos[1],
 		//                             camera.cameraPos[2]); // camZ
-		/*camera.cameraPos += 
+		/*camera.cameraPos +=
 		  glm::normalize(glm::cross(camera.cameraFront, camera.cameraUp)) *
 		  cameraSpeed;*/
-		//forwardInput = 0;
-		//rightInput = 0;
+		// forwardInput = 0;
+		// rightInput = 0;
 
 		transform.position = camera.cameraPos;
 		// smooth movement

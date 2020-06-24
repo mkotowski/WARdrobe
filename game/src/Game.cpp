@@ -50,9 +50,19 @@ Game::Loop()
 	vim->AddVirtualInput("AttackLeftHand", VirtualInputType::Action);
 	vim->AddVirtualInput("AttackRightHand", VirtualInputType::Action);
 	vim->AddVirtualInput("MenuBack", VirtualInputType::Action);
+	vim->AddVirtualInput("ActivateHeal", VirtualInputType::Action);
+	vim->AddVirtualInput("ActivateBuff", VirtualInputType::Action);
 
 	vim->AddMapping("MoveForward", GLFW_KEY_W, InputSource::KEY);
 	vim->AddMapping("MoveForward", GLFW_KEY_UP, InputSource::KEY);
+
+	vim->AddMapping("ActivateHeal", GLFW_KEY_Q, InputSource::KEY);
+	vim->AddMapping(
+	  "ActivateHeal", GLFW_MOUSE_BUTTON_4, InputSource::MOUSE_BUTTON);
+
+	vim->AddMapping("ActivateBuff", GLFW_KEY_E, InputSource::KEY);
+	vim->AddMapping(
+	  "ActivateBuff", GLFW_MOUSE_BUTTON_5, InputSource::MOUSE_BUTTON);
 
 	vim->AddMapping("MoveBackward", GLFW_KEY_S, InputSource::KEY);
 	vim->AddMapping("MoveBackward", GLFW_KEY_DOWN, InputSource::KEY);
@@ -62,6 +72,8 @@ Game::Loop()
 
 	vim->AddMapping("MoveLeft", GLFW_KEY_A, InputSource::KEY);
 	vim->AddMapping("MoveLeft", GLFW_KEY_LEFT, InputSource::KEY);
+
+	vim->AddMapping("MenuBack", GLFW_KEY_ESCAPE, InputSource::KEY);
 
 	vim->AddMapping(
 	  "AttackLeftHand", GLFW_MOUSE_BUTTON_LEFT, InputSource::MOUSE_BUTTON);
@@ -199,7 +211,7 @@ Game::Loop()
 
 	renderSystem->Init();
 	std::cout << "RenderSystem has been initialized" << std::endl;
-		
+
 	auto DamagePillIndicator = gameWindow->guiManager->AddWidget(
 	  "damage_pill_indicator",
 	  std::make_shared<GuiWidget>("assets/images/UI/Pills/DamagePill.png",

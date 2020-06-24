@@ -3,6 +3,10 @@
 #include <iostream>
 #include <map>
 
+#include "Constants.h"
+
+#include "VirtualInputManager.hpp"
+
 struct Scripts
 {
 	std::list<std::string> names;
