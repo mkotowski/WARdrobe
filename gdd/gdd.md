@@ -1,10 +1,10 @@
 ---
-title: "IKEA Fighters GDD"
+title: "WARdrobe GDD"
 author: [Michał Kotowski]
 date: "2020-03-06"
 subject: "PBL"
 keywords: [PBL, gamedev]
-subtitle: "Game Design Document (version 0.1.0)"
+subtitle: "Game Design Document (version 0.2.2)"
 lang: "en"
 toc-own-page: true
 titlepage: true
@@ -24,12 +24,10 @@ header-includes: |
 | Version | Author          | Date       | Comments                           |
 |:--------|:----------------|:-----------|------------------------------------|
 | 0.1.0   | Michał Kotowski | 2020-03-06 | First draft.                       |
-|:--------|:----------------|:-----------|------------------------------------|
 | 0.2.0   | Jakub Guzek     | 2020-06-22 | Second draft.                      |
-|:--------|:----------------|:-----------|------------------------------------|
 | 0.2.1   | Jakub Guzek     | 2020-06-23 | Updating.                          |
+| 0.2.2   | Michał Kotowski | 2020-06-24 | Fix and update metadata.           |
 
----
 ---
 
 \begin{center}
