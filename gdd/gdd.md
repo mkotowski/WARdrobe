@@ -23,15 +23,16 @@ header-includes: |
 
 # Revision List
 
-| Version | Author          | Date       | Comments                           |
-|:--------|:----------------|:-----------|------------------------------------|
-| 0.1.0   | Michał Kotowski | 2020-03-06 | First draft.                       |
-| 0.2.0   | Jakub Guzek     | 2020-06-22 | Second draft.                      |
-| 0.2.1   | Jakub Guzek     | 2020-06-23 | Updating.                          |
-| 0.2.2   | Michał Kotowski | 2020-06-24 | Fix and update metadata.           |
-| 0.3.0   | Michał Kotowski | 2020-06-24 | Add enemies' images.               |
-| 0.3.1   | Michał Kotowski | 2020-06-24 | Update info about controls.        |
-| 0.3.2   | Michał Kotowski | 2020-06-24 | Add tmp team logo.                 |
+| Version | Author            | Date       | Comments                           |
+|:--------|:------------------|:-----------|------------------------------------|
+| 0.1.0   | Michał Kotowski   | 2020-03-06 | First draft.                       |
+| 0.2.0   | Jakub Guzek       | 2020-06-22 | Second draft.                      |
+| 0.2.1   | Jakub Guzek       | 2020-06-23 | Updating.                          |
+| 0.2.2   | Michał Kotowski   | 2020-06-24 | Fix and update metadata.           |
+| 0.3.0   | Michał Kotowski   | 2020-06-24 | Add enemies' images.               |
+| 0.3.1   | Michał Kotowski   | 2020-06-24 | Update info about controls.        |
+| 0.3.2   | Michał Kotowski   | 2020-06-24 | Add tmp team logo.                 |
+| 0.3.3   | Łukasz Gołygowski | 2020-06-24 | Add collisions and gui info        |
 
 ---
 
@@ -82,6 +83,7 @@ The name of our team is **Video Game Assembly Studio**.
   - AI logic
   - Lua scripts
   - GUI logic
+  - collisions
 
 # Core Concepts
 
@@ -310,15 +312,36 @@ Based on controls of the game *Fire Emblem Warriors*.
 
 ## Physics
 
+Physics system is modifying objects world position based on velocity from it's RigidBody component.
+Velocity can be changed by applying impulse force which changes RigidBody's acceleration or setting
+it's value directly. The system is gradually decreasing the velocity's value.
+The position is then corrected by collisions system.
 
 ### Collisions
 
-The current plans for gameplay do not demand a very precise collision system.
-
-Since the gameplay demands the ability to handle significant number of enemies, 
-a simple collision system should be enough.
+We are using OBBs (Oriented Bounding Boxes) as we needed to detect collisions 
+between rotating objects. To detect and resolve collisions we implemented
+SAT (Separating Axis Theorem).
 
 # Front End
+
+GUI elements:
+
+- Face indicating player's health or if he was attacked
+
+![Full health](./img/gui/Face.png)
+
+![Player attacked](./img/gui/HitEffect.png)
+
+![Low health](./img/gui/FaceBadHealth.png)
+
+- Indicators that pill is influencig player's statistics
+
+![Damage increased](./img/gui/RedPillEffect.png)
+
+![Speed increased](./img/gui/BluePillEffect.png)
+
+![Health increased](./img/gui/GreenPillEffect.png)
 
 ## Intro
 
