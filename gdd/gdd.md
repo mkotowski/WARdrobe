@@ -1,10 +1,10 @@
 ---
-title: "WARdrobe GDD"
+title: "WARdrobe -- Beat Them Up"
 author: [Michał Kotowski]
-date: "2020-03-06"
+date: "2020-03-06 -- 2020-06-24"
 subject: "PBL"
 keywords: [PBL, gamedev]
-subtitle: "Game Design Document (version 0.2.2)"
+subtitle: "Game Design Document (version 0.3.2)"
 lang: "en"
 toc-own-page: true
 titlepage: true
@@ -13,6 +13,8 @@ titlepage-text-color: "ffdb00"
 titlepage-rule-color: "ffdb00"
 titlepage-rule-height: 2
 colorlinks: true
+logo: "vga.pdf"
+logo-width: 120
 header-includes: |
     \usepackage{xcolor}
 ...
@@ -27,6 +29,9 @@ header-includes: |
 | 0.2.0   | Jakub Guzek     | 2020-06-22 | Second draft.                      |
 | 0.2.1   | Jakub Guzek     | 2020-06-23 | Updating.                          |
 | 0.2.2   | Michał Kotowski | 2020-06-24 | Fix and update metadata.           |
+| 0.3.0   | Michał Kotowski | 2020-06-24 | Add enemies' images.               |
+| 0.3.1   | Michał Kotowski | 2020-06-24 | Update info about controls.        |
+| 0.3.2   | Michał Kotowski | 2020-06-24 | Add tmp team logo.                 |
 
 ---
 
@@ -39,7 +44,8 @@ We throw in extra parts just to mess with you.
 
 # Introduction
 
-This document specifies a design for the gameplay of a game *"WARdrobe - Beat Them Up"*.
+This document specifies the design guidelines for the gameplay and art style of 
+the game **"WARdrobe -- Beat Them Up"**.
 
 ## Scope
 
@@ -56,19 +62,36 @@ Things which have not been officially agreed on but which are suggested
 by the author are presented in special formatting, like this.
 :::
 
+# Team
+The name of our team is **Video Game Assembly Studio**.
+
+![f](./img/team_logo/DE15_Connector_Pinout.svg){style="width:70%;margin:auto;"}
+
+- Michał Kotowski
+  - leader
+  - CMake configuration
+  - game's installer configuration
+  - GLFW window management
+  - GUI placement system
+  - GDD
+- Jakub Guzek
+  - asset creator
+  - animation and rendering
+  - GDD
+- Łukasz Gołygowski
+  - AI logic
+  - Lua scripts
+  - GUI logic
+
 # Core Concepts
 
 ## Working Title
 
-The current working title --- *Ikea Fighters* --- will be changed 
-at a further date to avoid trademark issues.
+~~The current working title --- *Ikea Fighters* --- will be changed 
+at a further date to avoid trademark issues.~~
 
-::: proposition
-Current propositions for the permanent name:
+After further development the team had choose the following name:
 *"WARdrobe - Beat Them Up"*.
-
-- ...
-:::
 
 ## Elevator Pitch
 
@@ -78,125 +101,184 @@ the supermarket's checkout, all of it while trying not to run out of drugs.
 
 Wywalcz sobie drogę przez falę agresywnych mebli, aby dotrzeć 
 do kasy w supermarkecie, wszystko to, zanim skończą ci się narkotyki.
-
-:::proposition
-The aspect of running out of drugs -- yes or not?
-:::
-
 :::
 
 ## Genres
-
-Simulation and brawler.
+Our game is designed around conventions of simulation and brawler genres.
 
 ### Themes
-
 Furniture and psychedelics.
 
 ## Target Audience
-
 The target audience of this game will be fans of beat 'em up genre.
 
 ## Unique Selling Points
-
 The USP of the game should be the humorous mix of "living" furniture 
 and visual effects inspired by effects of psychedelics.
 
 ## Target Platforms
+The targeted platforms are:
 
-### Windows 10
-
-The Microsoft's system is the most obvious target platform for our game.
-
----
-
-::: proposition
-### Linux
-:::
+- Windows 10
+- Ubuntu 20.04
 
 # References
 
 ## Beat 'em up (brawler) genre
-
 From Wikipedia:
 
 > [Beat 'em up][wikibeatemup] is a video game genre featuring hand-to-hand 
 combat between the protagonist and an improbably large number of opponents.
 
-### Dynasty Warriors
-
+## Dynasty Warriors
 *Dynasty Warriors* by Omega Force and Koei is a series of hack and slash 
 action video games.
 
 # Specification
 
 ## Concept
-
 The aim of 
 
 ## Story
-Once upon a time, there was a furniture shop with... eh... Its kinda bland isn't it? Ok, let me do it again.
-Imagine hangover so hard that you landed in the backroom of furniture shop with monsters in it. Weird huh? What if those monsters are also furnitures? Add to that a(n) (un)healthy dose of drugs and here is your situation. Will you fight your way out? Will you survive that amount of drugs? Will you discover what is going on in the shop?
+Once upon a time, there was a furniture shop with... eh... 
+Its kinda bland isn't it? Ok, let me do it again.
+Imagine hangover so hard that you landed in the backroom of furniture shop 
+with monsters in it. Weird huh? What if those monsters are also furnitures? 
+Add to that a(n) (un)healthy dose of drugs and here is your situation. 
+Will you fight your way out? Will you survive that amount of drugs? 
+Will you discover what is going on in the shop?
 
 ### Setting
-The game will be set in a generic furniture shop in a supermarket. Enemies are living furnitures and pickups are drugs.
+The game will be set in a generic furniture shop in a supermarket. 
+Enemies are living furnitures and pickups are drugs.
 
 ## Game Structure
-Player starts in small room and travels from one room to another. There are no other rooms outside those on main path. Player is fighting mainly on arenas, bigger areas where there are more enemies and in corridors/hallways, that are smaller and have less enemies. There are also hidden power Ups in the corridor section. Each Arena is divided by corridor. Final two rooms are designed as boss arenas with room before it being empty space with few pill preparing player for final fight.
+Player starts in small room and travels from one room to another. 
+There are no other rooms outside those on main path. 
+Player is fighting mainly on arenas, bigger areas where there are 
+more enemies and in corridors/hallways, that are smaller and have less enemies. 
+There are also hidden power Ups in the corridor section. 
+Each Arena is divided by corridor. 
+Final two rooms are designed as boss arenas with room before it 
+being empty space with few pill preparing player for final fight.
 
-## Players
-Player is a drug addict, also reffered as Drugman, that woke up in the furniture shop. Player can attack with both hands separately as well as making combos. Player has to manage not only their own health but also health of his brain, that will become more and more poisoned from taking pills.
+## Player's character
+Player's character is a drug addict, also reffered as **Drugman**, 
+that woke up in the furniture shop.
+
+Player can attack with both hands separately as well as making *combos*.
+ 
+Player has to manage not only *their own health*, but 
+also *health of their brain*, that will become more and more poisoned 
+from taking pills.
 
 ## Action
-As mentioned before, player can attack with both hands separately as well as making combos. There are two special attacks that are made after finishing combos:
-- Windmill - hand 1 strong attack, hand 2 weak attack, hand 1 weak attack - AoE attack that pushes off enemies in the nearby area.
-- Dash - hadn 1 weak attack, hand 1 weak attack, hand 2 strong attack - player dashes in straight line dealing extensive damage to enemies
+As mentioned before, player can attack with both hands separately as well 
+as making combos. There are two special attacks that are made 
+after finishing combos:
 
-Player has also to theirs disposal drugs, often reffered to as pills. There are three types of pills:
-- Damage(red) - increases players damage for a short while
-- Speed(blue) - increases players speed for a short while
-- Health(green) - heals player
-Pills will deal brain damage that will heal with time, but overdose (indicator is more then 100) will hurt also "normal" health.
+- Windmill
+  - combo: hand 1 strong attack, hand 2 weak attack, hand 1 weak attack
+  - AoE attack that pushes off enemies in the nearby area.
+- Dash
+  - combo: hand 1 weak attack, hand 1 weak attack, hand 2 strong attack 
+  - player dashes in straight line dealing extensive damage to enemies
+
+Player has also to theirs disposal drugs, often reffered to as pills. 
+There are three types of pills:
+
+- Damage(red) -- increases players damage for a short while
+- Speed(blue) -- increases players speed for a short while
+- Health(green) -- heals player
+
+Pills will deal brain damage that will heal with time, but overdose 
+(indicator is more then 100) will hurt also "normal" health.
+
 Pills are stored in the inventory (2 max)
 
 ## Objective
-The objective of the player is to get out from the shop and to do it, player has to fight his way through enemies. Their final obstacle is boss that guards the exit and will not let player to escape that easily.
+The objective of the player is to get out from the shop and to do it, 
+player has to fight his way through enemies. 
+Their final obstacle is boss that guards the exit 
+and will not let player to escape that easily.
 
 ## Graphics
-Models and textures are fairly simple, made using MagicaVoxel and animated using Blender. All of it is filled with special colloring of the meshes when player uses the pill.
+Models and textures are fairly simple, made using *MagicaVoxel* 
+and animated using *Blender*. All of it is filled with special 
+coloring of the meshes when player uses the pill.
 
 ## Data Storage
-Levels are stored in .json files, that are then parsed. Inside it are entitities with corresponding components. Models are stored in .obj and .fbx files, animations are stored in .fbx files, textures are stored in .png files. 
+Levels are stored in .json files, that are then parsed. 
+Inside it are entitities with corresponding components. 
+Models are stored in .obj and .fbx files, 
+animations are stored in .fbx files, textures are stored in .png files. 
 
 # Gameplay
 
 ## World
-Generic furniture shop with a large warehouse filled with crates, shelfs and forklifts. Also pills.
+Generic furniture shop with a large warehouse filled with crates, 
+shelves and forklifts. Also pills.
 
 ## Object Types
-Obstacles - typical obstacles that you cant move through, shelfs, boxes, crates, forklifts
-Pills - power Ups that helps player through the level
 
-## NPC Types
-Enemies:
--Bat Bulb - one of the common enemies that attacks player directly, its a lightbulb with winds
--Lamp Monster - second of the common enemies that attacks player directly, its a lamp that jumps at you and smacks you with its teeths
--Mayor Plywoodov - boss, a big wardrobe that commands other enemies.
+1. Obstacles - typical obstacles that you can't move through: 
+  - shelves, 
+  - boxes, 
+  - crates, 
+  - forklifts,
+  - ...
+2. Pills - power-ups that helps player through the level
+  - green healing pill
+  - red attack-enhanting pill
+  - blue speed-enchanting pill
+
+\pagebreak
+
+## NPC Types (Enemies)
+
+### Bat Bulb
+A common enemy, that attacks the player directly, 
+it's a lightbulb with winds
+
+![Bat Bulb's model](./img/enemies/BatBulb_export_transparent.png)
+
+\pagebreak
+
+### Lamp Monster
+A common enemy, that attacks the player directly,.
+It's a lamp, that jumps at you and smacks you with its teeth.
+
+![Lamp Monster's model](./img/enemies/Lamp_Monster_export_transparent.png)
+
+\pagebreak
+
+### Mayor Plywoodov
+Boss, a big wardrobe, that commands other enemies.
+
+---
+
+### Unused designs
+The list of abandoned/on hold designs:
+
+- Carabinet
+
+![Carabinet's model](./img/enemies/Carabinet_export_transparent.png)
 
 ## Controls
 
 ### Keyboard and mouse (KB+M)
 
-WASD - player movement
-Mouse 0 - left hand
-Mouse 1 - right hand
-Hold for strong attack.
-Q, E - use pill (left or right pill in inventory)
-Move Mouse to turn around
+- WASD, arrow keys -- player movement
+- left mouse button -- left hand
+- right mouse button -- right hand
+- cursor movement -- turning around
+- Q, E, 4th and 5th mouse button -- use pill (left or right pill in inventory)
+
+Hold button/key for a strong attack.
 
 ### Gamepads
 
-The basic support for gamepads:
+The basic support for gamepads using the standard mapping, which include:
 
 - Microsoft Xbox 360 Controller
 - Microsoft Xbox One Controller
@@ -245,24 +327,26 @@ a simple collision system should be enough.
 # Development Tools
 
 The development process will be focused on compatibility with Windows 10.
+The use of cross-platform tools enables our team to test the game under 
+Linux-based operating system at a further date.
 
-::: proposition
-For achieving the stage of Minimal Viable Product, the team will focus 
-on developing the game for Windows 10, but **any Windows-specific solution 
-should be avoided**.
+For achieving the stage of *Minimal Viable Product*, the team will focus 
+on developing the game for Windows 10, but 
+**any Windows-specific solution should be avoided**.
 
-If the progress of the game will be satisfactory, the testing of Linux support 
-could be considered.
-:::
+~~If the progress of the game will be satisfactory, the testing of Linux support 
+could be considered.~~
 
 ## Programming Languages, Standards and APIs
 
 - C++11
 - OpenGL -- a cross-platform API for rendering 2D and 3D vector graphics
 - OpenAL -- a cross-platform audio API
+
+## Libraries and frameworks
+
 - Assimp -- an API for loading 3D assets, including both models and animations
 - nlohmann/json  -- a library used to parse .json files
-
 
 ## Build automation
 
@@ -272,10 +356,6 @@ could be considered.
 
 - Git
 - GitHub
-
-::: proposition
-
-:::
 
 ## Editors
 
@@ -305,31 +385,13 @@ Pandoc's Markdown extensions used:
 - `fenced_divs`
 - `definition_lists`
 
-# Team
+# Timeline
 
-Programmers:
-
-- Michał Kotowski
-- Jakub Guzek
-- Łukasz Gołygowski
-
-Artists:
-
-- Jakub Guzek
-
-# Time
-
-## Prototyping stage
-
-2020-03-05 --- 2020-03-26
-
-## Elaboration stage
-
-2020-03-27 --- 2020-04-16
-
-# Construction stage
-
-# Transition stage
+- Prototyping stage -- 2020-03-05 - 2020-03-26
+- Elaboration stage -- 2020-03-27 - 2020-04-16
+- Construction stage
+- Transition stage
+- ZTGK submission deadline -- 2020-06-26
 
 ---
 
