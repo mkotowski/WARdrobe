@@ -24,6 +24,9 @@
 
 #include "ActionManager.hpp"
 
+#include "InputManager.hpp"
+#include "VirtualInputManager.hpp"
+
 Game::Game(std::string windowTitle)
 {
 	gameWindow = new Window(windowTitle);
@@ -38,41 +41,35 @@ Game::~Game() {}
 void
 Game::Loop()
 {
-	/*auto cameraForwardAction =
-	  ActionManager::GetInstance().AddAction("CameraForward", ActionType::State);
+	VirtualInputManager* vim = VirtualInputManager::GetInstance();
 
-	auto cameraBackAction =
-	  ActionManager::GetInstance().AddAction("CameraBack", ActionType::State);
+	vim->AddVirtualInput("MoveForward", VirtualInputType::State);
+	vim->AddVirtualInput("MoveRight", VirtualInputType::State);
+	vim->AddVirtualInput("MoveBackward", VirtualInputType::State);
+	vim->AddVirtualInput("MoveLeft", VirtualInputType::State);
+	vim->AddVirtualInput("AttackLeftHand", VirtualInputType::Action);
+	vim->AddVirtualInput("AttackRightHand", VirtualInputType::Action);
+	vim->AddVirtualInput("MenuBack", VirtualInputType::Action);
 
-	auto cameraRightAction =
-	  ActionManager::GetInstance().AddAction("CameraRight", ActionType::State);
+	vim->AddMapping("MoveForward", GLFW_KEY_W, InputSource::KEY);
+	vim->AddMapping("MoveForward", GLFW_KEY_UP, InputSource::KEY);
 
-	auto cameraLeftAction =
-	  ActionManager::GetInstance().AddAction("CameraLeft", ActionType::State);
+	vim->AddMapping("MoveBackward", GLFW_KEY_S, InputSource::KEY);
+	vim->AddMapping("MoveBackward", GLFW_KEY_DOWN, InputSource::KEY);
 
-	CallbackPointer forwardPtr = std::make_shared<Callback>(
-	  std::bind(&Action::execute, cameraForwardAction, std::placeholders::_1));
+	vim->AddMapping("MoveRight", GLFW_KEY_D, InputSource::KEY);
+	vim->AddMapping("MoveRight", GLFW_KEY_RIGHT, InputSource::KEY);
 
-	CallbackPointer backPtr = std::make_shared<Callback>(
-	  std::bind(&Action::execute, cameraBackAction, std::placeholders::_1));
+	vim->AddMapping("MoveLeft", GLFW_KEY_A, InputSource::KEY);
+	vim->AddMapping("MoveLeft", GLFW_KEY_LEFT, InputSource::KEY);
 
-	CallbackPointer rightPtr = std::make_shared<Callback>(
-	  std::bind(&Action::execute, cameraRightAction, std::placeholders::_1));
+	vim->AddMapping(
+	  "AttackLeftHand", GLFW_MOUSE_BUTTON_LEFT, InputSource::MOUSE_BUTTON);
+	vim->AddMapping("AttackLeftHand", GLFW_KEY_SPACE, InputSource::KEY);
 
-	CallbackPointer leftPtr = std::make_shared<Callback>(
-	  std::bind(&Action::execute, cameraLeftAction, std::placeholders::_1));
-
-	gameWindow->GetInputManager()->BindAction(
-	  GLFW_KEY_W, InputSource::KEY, GLFW_PRESS, 0, forwardPtr);
-
-	gameWindow->GetInputManager()->BindAction(
-	  GLFW_KEY_S, InputSource::KEY, GLFW_PRESS, 0, backPtr);
-
-	gameWindow->GetInputManager()->BindAction(
-	  GLFW_KEY_A, InputSource::KEY, GLFW_PRESS, 0, leftPtr);
-
-	gameWindow->GetInputManager()->BindAction(
-	  GLFW_KEY_D, InputSource::KEY, GLFW_PRESS, 0, rightPtr);*/
+	vim->AddMapping(
+	  "AttackRightHand", GLFW_MOUSE_BUTTON_RIGHT, InputSource::MOUSE_BUTTON);
+	vim->AddMapping("AttackRightHand", GLFW_KEY_B, InputSource::KEY);
 
 	// Initialize ECS managers
 	gameplayManager->Init();
