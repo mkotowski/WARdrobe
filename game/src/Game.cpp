@@ -24,6 +24,8 @@
 
 #include "ActionManager.hpp"
 
+#include "InputManager.hpp"
+
 Game::Game(std::string windowTitle)
 {
 	gameWindow = new Window(windowTitle);

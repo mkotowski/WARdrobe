@@ -45,7 +45,7 @@ target_include_directories(game
 )
 
 target_link_libraries(game 
-	PUBLIC ecs renderer lua audio glm OpenAL assetmanager nlohmann_json)
+	PUBLIC ecs renderer lua audio glm OpenAL assetmanager nlohmann_json input)
 
 target_compile_features(game PRIVATE cxx_std_17)
 
