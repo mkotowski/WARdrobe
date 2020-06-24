@@ -118,9 +118,9 @@ void
 ScriptsSystem::Update(float                             dt,
                       std::shared_ptr<ComponentManager> componentManager)
 {
-	lua_pushnumber(state, rightInput);
+	lua_pushnumber(state, playerInputHorizontal);
 	lua_setglobal(state, "rightInput");
-	lua_pushnumber(state, forwardInput);
+	lua_pushnumber(state, playerInputVertical);
 	lua_setglobal(state, "forwardInput");
 	lua_pushboolean(state, leftMousePressed);
 	lua_setglobal(state, "leftMousePressed");

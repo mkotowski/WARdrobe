@@ -4,7 +4,7 @@ author: [Michał Kotowski]
 date: "2020-03-06 -- 2020-06-24"
 subject: "PBL"
 keywords: [PBL, gamedev]
-subtitle: "Game Design Document (version 0.3.2)"
+subtitle: "Game Design Document (version 0.3.3)"
 lang: "en"
 toc-own-page: true
 titlepage: true
@@ -14,7 +14,7 @@ titlepage-rule-color: "ffdb00"
 titlepage-rule-height: 2
 colorlinks: true
 logo: "vga.pdf"
-logo-width: 120
+logo-width: 240
 header-includes: |
     \usepackage{xcolor}
 ...
@@ -63,25 +63,27 @@ Things which have not been officially agreed on but which are suggested
 by the author are presented in special formatting, like this.
 :::
 
+\pagebreak
+
 # Team
 The name of our team is **Video Game Assembly Studio**.
 
-![f](./img/team_logo/DE15_Connector_Pinout.svg){style="width:70%;margin:auto;"}
+![Team's logo (tentative version)][vga]
 
 - Michał Kotowski
   - leader
-  - CMake configuration
-  - game's installer configuration
-  - GLFW window management
-  - GUI placement system
+  - CMake and game's installer configuration
+  - GLFW window management and GUI placement system
+  - ECS systems
   - GDD
 - Jakub Guzek
   - asset creator
+  - level designer
   - animation and rendering
   - GDD
 - Łukasz Gołygowski
   - AI logic
-  - Lua scripts
+  - Lua scripting
   - GUI logic
   - collisions
 
@@ -94,16 +96,6 @@ at a further date to avoid trademark issues.~~
 
 After further development the team had choose the following name:
 *"WARdrobe - Beat Them Up"*.
-
-## Elevator Pitch
-
-::: proposition
-Fight your way through the waves of aggresive furniture to reach 
-the supermarket's checkout, all of it while trying not to run out of drugs.
-
-Wywalcz sobie drogę przez falę agresywnych mebli, aby dotrzeć 
-do kasy w supermarkecie, wszystko to, zanim skończą ci się narkotyki.
-:::
 
 ## Genres
 Our game is designed around conventions of simulation and brawler genres.
@@ -137,9 +129,6 @@ combat between the protagonist and an improbably large number of opponents.
 action video games.
 
 # Specification
-
-## Concept
-The aim of 
 
 ## Story
 Once upon a time, there was a furniture shop with... eh... 
@@ -270,11 +259,12 @@ The list of abandoned/on hold designs:
 
 ### Keyboard and mouse (KB+M)
 
-- WASD, arrow keys -- player movement
-- left mouse button -- left hand
-- right mouse button -- right hand
-- cursor movement -- turning around
-- Q, E, 4th and 5th mouse button -- use pill (left or right pill in inventory)
+- `WASD`, arrow keys ↑←↓→ -- player movement
+- left mouse button, `space` -- left hand
+- right mouse button, `B` -- right hand
+- `cursor movement` -- turning around
+- `Q`, `E`; 4th, 5th mouse buttons -- use pill (left or right pill in inventory)
+- `ESC` -- menu
 
 Hold button/key for a strong attack.
 
@@ -292,23 +282,19 @@ therefore should be the main focus.
 
 In this document and all of the documentation
 
-[][w3cpad]
+<!-- ![W3C Standard Gamepad](./img/gamepad/standard_gamepad.svg) -->
 
-![W3C Standard Gamepad](./img/gamepad/standard_gamepad.svg)
+![Xbox 360 gamepad](./img/gamepad/600px-UnityLinuxMapping.png)
 
-::: proposition
-
-| Control        | Action         |
-|:--------------:|:---------------|
-| L              | Lock On        |
-| ZL             | Guard          |
-| X              | Regular Attack |
-| Left Joystick  | Move           |
-| Right Joystick | Camera Control |
-
-Based on controls of the game *Fire Emblem Warriors*.
-
-:::
+| Control             | Action                   |
+|:-------------------:|:-------------------------|
+| DPad, left joystick | player movement          |
+| Right joystick      | charqacter rotation      |
+| A, left bumper      | left hand attack         |
+| B, right bumper     | right hand attack        |
+| X, left trigger     | use pill from the slot 1 |
+| Y, right trigger    | use pill from the slot 2 |
+| Back                | menu                     |
 
 ## Physics
 
@@ -360,9 +346,13 @@ on developing the game for Windows 10, but
 ~~If the progress of the game will be satisfactory, the testing of Linux support 
 could be considered.~~
 
-## Programming Languages, Standards and APIs
+## Programming Languages
 
-- C++11
+- C++17
+- Lua 5
+
+## APIs
+
 - OpenGL -- a cross-platform API for rendering 2D and 3D vector graphics
 - OpenAL -- a cross-platform audio API
 
@@ -370,15 +360,29 @@ could be considered.~~
 
 - Assimp -- an API for loading 3D assets, including both models and animations
 - nlohmann/json  -- a library used to parse .json files
+- openal-soft -- userspace OpenAL implementation
+- glad -- multi-language GL/GLES/EGL/GLX/WGL loader
+- GLFW 3.3 -- cross-platform window management framework
+- dear imgui -- immediate mode graphical interface (used in Debug builds)
+- stb_image -- image loading/decoding from file/memory
 
 ## Build automation
 
 - [CMake][cmake]
 
+## Installer's creation
+
+- NSIS
+- WiX toolset
+
 ## Version Control System
 
 - Git
 - GitHub
+
+## Other
+
+- clang-format -- used to enforce single code stylke across files
 
 ## Editors
 
@@ -386,8 +390,6 @@ The code is expected to by developed mostly
 in *Microsoft Visual Studio 2019*, but should be IDE-independend.
 
 ## Debugging
-
-### OpenGL
 
 - [RenderDoc][renderdoc] -- graphics debugger
 
@@ -416,10 +418,6 @@ Pandoc's Markdown extensions used:
 - Transition stage
 - ZTGK submission deadline -- 2020-06-26
 
----
-
-# Glossary
-
 [cmake]: https://cmake.org/
 [renderdoc]: https://renderdoc.org/
 [pandoc]: https://pandoc.org/
@@ -429,3 +427,5 @@ Pandoc's Markdown extensions used:
 [wikihacknslash]: https://en.wikipedia.org/wiki/Hack_and_slash
 [shadered]: https://shadered.org/
 [w3cpad]: https://www.w3.org/TR/gamepad/
+
+[vga]: ./img/team_logo/DE15_Connector_Pinout.svg
