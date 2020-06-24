@@ -4,7 +4,7 @@ author: [Michał Kotowski]
 date: "2020-03-06 -- 2020-06-24"
 subject: "PBL"
 keywords: [PBL, gamedev]
-subtitle: "Game Design Document (version 0.3.2)"
+subtitle: "Game Design Document (version 0.3.3)"
 lang: "en"
 toc-own-page: true
 titlepage: true
@@ -14,7 +14,7 @@ titlepage-rule-color: "ffdb00"
 titlepage-rule-height: 2
 colorlinks: true
 logo: "vga.pdf"
-logo-width: 120
+logo-width: 240
 header-includes: |
     \usepackage{xcolor}
 ...
@@ -32,6 +32,7 @@ header-includes: |
 | 0.3.0   | Michał Kotowski | 2020-06-24 | Add enemies' images.               |
 | 0.3.1   | Michał Kotowski | 2020-06-24 | Update info about controls.        |
 | 0.3.2   | Michał Kotowski | 2020-06-24 | Add tmp team logo.                 |
+| 0.3.3   | Michał Kotowski | 2020-06-24 | Update gamepad info.               |
 
 ---
 
@@ -62,10 +63,12 @@ Things which have not been officially agreed on but which are suggested
 by the author are presented in special formatting, like this.
 :::
 
+\pagebreak
+
 # Team
 The name of our team is **Video Game Assembly Studio**.
 
-![f](./img/team_logo/DE15_Connector_Pinout.svg){style="width:70%;margin:auto;"}
+![Team's logo (tentative version)][vga]
 
 - Michał Kotowski
   - leader
@@ -73,6 +76,7 @@ The name of our team is **Video Game Assembly Studio**.
   - game's installer configuration
   - GLFW window management
   - GUI placement system
+  - ECS systems
   - GDD
 - Jakub Guzek
   - asset creator
@@ -80,7 +84,7 @@ The name of our team is **Video Game Assembly Studio**.
   - GDD
 - Łukasz Gołygowski
   - AI logic
-  - Lua scripts
+  - Lua scripting
   - GUI logic
 
 # Core Concepts
@@ -268,11 +272,12 @@ The list of abandoned/on hold designs:
 
 ### Keyboard and mouse (KB+M)
 
-- WASD, arrow keys -- player movement
-- left mouse button -- left hand
-- right mouse button -- right hand
-- cursor movement -- turning around
-- Q, E, 4th and 5th mouse button -- use pill (left or right pill in inventory)
+- `WASD`, arrow keys ↑←↓→ -- player movement
+- left mouse button, `space` -- left hand
+- right mouse button, `B` -- right hand
+- `cursor movement` -- turning around
+- `Q`, `E`; 4th, 5th mouse buttons -- use pill (left or right pill in inventory)
+- `ESC` -- menu
 
 Hold button/key for a strong attack.
 
@@ -290,26 +295,23 @@ therefore should be the main focus.
 
 In this document and all of the documentation
 
-[][w3cpad]
+<!-- ![W3C Standard Gamepad](./img/gamepad/standard_gamepad.svg) -->
 
-![W3C Standard Gamepad](./img/gamepad/standard_gamepad.svg)
+![Xbox 360 gamepad](./img/gamepad/600px-UnityLinuxMapping.png)
 
-::: proposition
+| Control             | Action                   |
+|:-------------------:|:-------------------------|
+| DPad, left joystick | player movement          |
+| Right joystick      | charqacter rotation      |
+| A, left bumper      | left hand attack         |
+| B, right bumper     | right hand attack        |
+| X, left trigger     | use pill from the slot 1 |
+| Y, right trigger    | use pill from the slot 2 |
+| Back                | menu                     |
 
-| Control        | Action         |
-|:--------------:|:---------------|
-| L              | Lock On        |
-| ZL             | Guard          |
-| X              | Regular Attack |
-| Left Joystick  | Move           |
-| Right Joystick | Camera Control |
-
-Based on controls of the game *Fire Emblem Warriors*.
-
-:::
+~~Based on controls of the game *Fire Emblem Warriors*.~~
 
 ## Physics
-
 
 ### Collisions
 
@@ -406,3 +408,5 @@ Pandoc's Markdown extensions used:
 [wikihacknslash]: https://en.wikipedia.org/wiki/Hack_and_slash
 [shadered]: https://shadered.org/
 [w3cpad]: https://www.w3.org/TR/gamepad/
+
+[vga]: ./img/team_logo/DE15_Connector_Pinout.svg
