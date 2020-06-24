@@ -72,14 +72,13 @@ The name of our team is **Video Game Assembly Studio**.
 
 - Michał Kotowski
   - leader
-  - CMake configuration
-  - game's installer configuration
-  - GLFW window management
-  - GUI placement system
+  - CMake and game's installer configuration
+  - GLFW window management and GUI placement system
   - ECS systems
   - GDD
 - Jakub Guzek
   - asset creator
+  - level designer
   - animation and rendering
   - GDD
 - Łukasz Gołygowski
@@ -96,16 +95,6 @@ at a further date to avoid trademark issues.~~
 
 After further development the team had choose the following name:
 *"WARdrobe - Beat Them Up"*.
-
-## Elevator Pitch
-
-::: proposition
-Fight your way through the waves of aggresive furniture to reach 
-the supermarket's checkout, all of it while trying not to run out of drugs.
-
-Wywalcz sobie drogę przez falę agresywnych mebli, aby dotrzeć 
-do kasy w supermarkecie, wszystko to, zanim skończą ci się narkotyki.
-:::
 
 ## Genres
 Our game is designed around conventions of simulation and brawler genres.
@@ -139,9 +128,6 @@ combat between the protagonist and an improbably large number of opponents.
 action video games.
 
 # Specification
-
-## Concept
-The aim of 
 
 ## Story
 Once upon a time, there was a furniture shop with... eh... 
@@ -309,8 +295,6 @@ In this document and all of the documentation
 | Y, right trigger    | use pill from the slot 2 |
 | Back                | menu                     |
 
-~~Based on controls of the game *Fire Emblem Warriors*.~~
-
 ## Physics
 
 ### Collisions
@@ -339,9 +323,13 @@ on developing the game for Windows 10, but
 ~~If the progress of the game will be satisfactory, the testing of Linux support 
 could be considered.~~
 
-## Programming Languages, Standards and APIs
+## Programming Languages
 
-- C++11
+- C++17
+- Lua 5
+
+## APIs
+
 - OpenGL -- a cross-platform API for rendering 2D and 3D vector graphics
 - OpenAL -- a cross-platform audio API
 
@@ -349,15 +337,29 @@ could be considered.~~
 
 - Assimp -- an API for loading 3D assets, including both models and animations
 - nlohmann/json  -- a library used to parse .json files
+- openal-soft -- userspace OpenAL implementation
+- glad -- multi-language GL/GLES/EGL/GLX/WGL loader
+- GLFW 3.3 -- cross-platform window management framework
+- dear imgui -- immediate mode graphical interface (used in Debug builds)
+- stb_image -- image loading/decoding from file/memory
 
 ## Build automation
 
 - [CMake][cmake]
 
+## Installer's creation
+
+- NSIS
+- WiX toolset
+
 ## Version Control System
 
 - Git
 - GitHub
+
+## Other
+
+- clang-format -- used to enforce single code stylke across files
 
 ## Editors
 
@@ -365,8 +367,6 @@ The code is expected to by developed mostly
 in *Microsoft Visual Studio 2019*, but should be IDE-independend.
 
 ## Debugging
-
-### OpenGL
 
 - [RenderDoc][renderdoc] -- graphics debugger
 
@@ -394,10 +394,6 @@ Pandoc's Markdown extensions used:
 - Construction stage
 - Transition stage
 - ZTGK submission deadline -- 2020-06-26
-
----
-
-# Glossary
 
 [cmake]: https://cmake.org/
 [renderdoc]: https://renderdoc.org/
