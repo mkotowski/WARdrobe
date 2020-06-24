@@ -128,21 +128,8 @@ Window::DefaultMouseButtonCallback(GLFWwindow* window,
 
 	handler->input->UpdateButton(button, action, mods);
 
-	// Advanced Buttons
-	// XButton1	4th mouse button. Typically performs the same function as
-	// Browser_Back. XButton2	5th mouse button. Typically performs the same
-	// function as Browser_Forward.
-
-	if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS) {
-		// SetShouldClose(GLFW_TRUE);
-		glfwSetWindowShouldClose(window, GLFW_TRUE);
-	}
-
-	// GLFW_MOUSE_BACK
-	if (button == GLFW_MOUSE_BUTTON_4 && action == GLFW_PRESS) {
-		// SetShouldClose(GLFW_TRUE);
-		glfwSetWindowShouldClose(window, GLFW_TRUE);
-	}
+	VirtualInputManager* vim = VirtualInputManager::GetInstance();
+	vim->Update(button, InputSource::MOUSE_BUTTON, (float)action);
 }
 
 template<typename Function>
