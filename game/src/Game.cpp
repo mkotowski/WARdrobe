@@ -351,6 +351,11 @@ Game::Loop()
 
 		// EVENT AND INPUT PROCESSING
 		gameWindow->PollEvents();
+
+		if (!gameWindow->IsFocused()) {
+			continue;
+		}
+
 		gameWindow->ProcessInput();
 		gameWindow->GetInputManager()->Call();
 

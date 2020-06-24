@@ -555,6 +555,9 @@ public:
 	template<typename Function>
 	void SetFramebufferSizeCallback(Function framebuffer_size_callback);
 
+	template<typename Function>
+	void SetWindowFocusCallback(Function focus_callback);
+
 	// Default GLFW Callbacks
 	// For accessing the Window instance memebers:
 	// @look https://stackoverflow.com/questions/7676971/
@@ -589,6 +592,8 @@ public:
 
 	static void DefaultJoystickCallback(int jid, int event);
 
+	static void DefaultFocusCallback(GLFWwindow* window, int focused);
+
 #if INCLUDE_DEBUG_UI
 	DebugUI* GetDebugUI() { return debugUi; }
 #endif // INCLUDE_DEBUG_UI
@@ -599,8 +604,12 @@ public:
 
 	static Window* mainWindowPtr;
 
-	std::shared_ptr<GuiManager> guiManager;
+	std::shared_ptr<GuiManager>  guiManager;
 	std::shared_ptr<HeadManager> headManager;
+
+	bool IsFocused() { return isFocused; }
+
+	void SetFocus(bool focus) { isFocused = focus; }
 
 private:
 	GLFWwindow* window;
@@ -614,6 +623,8 @@ private:
 
 	int framebufferWidth;
 	int framebufferHeight;
+
+	bool isFocused;
 
 	void SetGLAndGLSLVersions();
 	void Close();

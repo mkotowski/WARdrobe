@@ -201,6 +201,25 @@ Window::SetFramebufferSizeCallback(Function framebuffer_size_callback)
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 }
 
+template<typename Function>
+void
+Window::SetWindowFocusCallback(Function focus_callback)
+{
+	glfwSetWindowFocusCallback(window, focus_callback);
+}
+
+void
+Window::DefaultFocusCallback(GLFWwindow* window, int focused)
+{
+	Window* handler = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+	
+	if (focused) {
+		handler->SetFocus(true);
+	} else {
+		handler->SetFocus(false);
+	}
+}
+
 void
 Window::DefaultKeyCallback(GLFWwindow* window,
                            int         key,
@@ -493,28 +512,7 @@ Window::Window(std::string windowTitle)
 
 	guiManager = std::make_shared<GuiManager>();
 
-	/*input->AddKey(GLFW_KEY_0, GLFW_PRESS, 0);
-	input->AddKey(GLFW_KEY_0, GLFW_PRESS, GLFW_MOD_ALT);
-	input->AddKey(GLFW_KEY_ESCAPE, GLFW_PRESS, 0);
-
-	input->AddButton(GLFW_MOUSE_BUTTON_LEFT, GLFW_PRESS, 0);
-	input->AddButton(GLFW_MOUSE_BUTTON_RIGHT, GLFW_PRESS, 0);
-	input->AddButton(GLFW_MOUSE_BUTTON_MIDDLE, GLFW_PRESS, 0);
-	input->AddButton(GLFW_MOUSE_BUTTON_4, GLFW_PRESS, 0);
-	input->AddButton(GLFW_MOUSE_BUTTON_5, GLFW_PRESS, 0);*/
-
-	/*Tmp             a;
-	Callback        callback = std::bind(&Tmp::execute, a, std::placeholders::_1);
-	CallbackPointer ptr = std::make_shared<Callback>(callback);*/
-
-	/*input->BindAction(
-	  GLFW_MOUSE_BUTTON_LEFT, InputSource::MOUSE_BUTTON, GLFW_PRESS, 0, ptr);
-	input->BindAction(
-	  GLFW_MOUSE_BUTTON_RIGHT, InputSource::MOUSE_BUTTON, GLFW_PRESS, 0, ptr);
-	input->BindAction(
-	  GLFW_MOUSE_BUTTON_MIDDLE, InputSource::MOUSE_BUTTON, GLFW_PRESS, 0, ptr);
-	input->BindAction(
-	  GLFW_MOUSE_BUTTON_4, InputSource::MOUSE_BUTTON, GLFW_PRESS, 0, ptr);*/
+	isFocused = true;
 
 	int err = Setup();
 
@@ -548,6 +546,7 @@ Window::Window(std::string windowTitle)
 		SetJoystickCallback(DefaultJoystickCallback);
 		SetScrollCallback(DefaultScrollCallback);
 		SetFramebufferSizeCallback(DefaultFramebufferSizeCallback);
+		SetWindowFocusCallback(DefaultFocusCallback);
 
 		const char* pctwinshock =
 		  "03000000790000000600000000000000,G-Shark "
