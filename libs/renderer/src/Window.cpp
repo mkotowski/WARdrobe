@@ -6,6 +6,8 @@
 
 #include <stb_image.h>
 
+#include "VirtualInputManager.hpp"
+
 static void
 glfw_error_callback(int error, const char* description)
 {
@@ -209,6 +211,9 @@ Window::DefaultKeyCallback(GLFWwindow* window,
 	Window* handler = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
 
 	handler->input->UpdateKey(key, action, mods);
+
+	VirtualInputManager* vim = VirtualInputManager::GetInstance();
+	vim->Update(key, InputSource::KEY, (float)action);
 }
 
 Window* Window::mainWindowPtr = nullptr;
