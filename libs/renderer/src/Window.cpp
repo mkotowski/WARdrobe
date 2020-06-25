@@ -765,7 +765,7 @@ Window::Window(std::string windowTitle)
 		image.height = 16;
 		image.pixels = pixels;
 
-		GLFWcursor* cursor = glfwCreateCursor(&image, 0, 0);
+		//GLFWcursor* cursor = glfwCreateCursor(&image, 0, 0);
 
 		//GLFWcursor* cursor2 = glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR);
 
