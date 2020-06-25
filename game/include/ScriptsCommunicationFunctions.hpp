@@ -142,8 +142,15 @@ l_cppgetMouseWorldPos(lua_State* l)
 	Window* w = (Window*)lua_touserdata(l, 1);
 	Camera* sceneCamera = (Camera*)lua_touserdata(l, 2);
 
+	VirtualInputManager* vim = VirtualInputManager::GetInstance();
+
 	double x, y;
-	glfwGetCursorPos(w->GetWindow(), &x, &y);
+	//glfwGetCursorPos(w->GetWindow(), &x, &y);
+
+	x = (double)(((vim->GetVirtualInput("RotationX")->GetValue() + 1.0f) / 2.0f) *
+	             static_cast<float>(w->GetWindowWidth()));
+	y = (double)(((vim->GetVirtualInput("RotationY")->GetValue() + 1.0f) / 2.0f) *
+	             static_cast<float>(w->GetWindowHeight()));
 
 	glm::mat4 projection =
 	  glm::perspective(glm::radians(80.0f),

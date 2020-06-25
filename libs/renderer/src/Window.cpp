@@ -26,7 +26,69 @@ Window::DefaultDropCallback(GLFWwindow* window, int count, const char** paths)
 void
 Window::ProcessInput()
 {
-	input->Update(this->window);
+	// input->Update(this->window);
+
+	static unsigned char prevButtonValue[GLFW_GAMEPAD_BUTTON_LAST + 1] = { 0 };
+	static float         prevAxisValue[GLFW_GAMEPAD_AXIS_LAST + 1] = { 0.0f };
+
+	VirtualInputManager* vim = VirtualInputManager::GetInstance();
+
+	for (int jid = 0; jid <= GLFW_JOYSTICK_LAST; jid++) {
+		std::string label = "";
+
+		if (glfwJoystickIsGamepad(jid)) {
+			GLFWgamepadstate state;
+
+			if (glfwGetGamepadState(jid, &state)) {
+
+				for (int i = 0; i <= GLFW_GAMEPAD_BUTTON_LAST; i++) {
+					std::cout << static_cast<int>(state.buttons[i]);
+
+					if (prevButtonValue[i] == state.buttons[i])
+						continue;
+
+					label = vim->GetAssignedLabel(i, InputSource::GAMEPAD_BUTTON);
+
+					if (label == "")
+						continue;
+
+					// float currentValue = vim->GetVirtualInput(label)->GetValue();
+
+					prevButtonValue[i] = state.buttons[i];
+
+					vim->Update(i, InputSource::GAMEPAD_BUTTON, state.buttons[i]);
+				}
+
+				for (int i = 0; i <= GLFW_GAMEPAD_AXIS_LAST; i++) {
+					std::cout << " " << static_cast<float>(state.axes[i]) << " ";
+
+					float deadZone = 0.01;
+
+					if (abs(state.axes[i]) < deadZone)
+						continue;
+
+					if (prevAxisValue[i] == state.axes[i])
+						continue;
+
+					prevAxisValue[i] = state.axes[i];
+
+					label = vim->GetAssignedLabel(i, InputSource::GAMEPAD_AXIS);
+
+					if (label == "")
+						continue;
+
+					float convertedValue =
+					  (abs(state.axes[i]) < deadZone) ? 0.0f : state.axes[i];
+
+					vim->Update(i, InputSource::GAMEPAD_AXIS, convertedValue);
+				}
+
+				std::cout << std::endl;
+			}
+		} else {
+			// remove gamepad!
+		}
+	}
 
 	/*if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 	  glfwSetWindowShouldClose(window, true);
@@ -128,9 +190,9 @@ Window::DefaultMouseButtonCallback(GLFWwindow* window,
                                    int         action,
                                    int         mods)
 {
-	Window* handler = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
-
-	handler->input->UpdateButton(button, action, mods);
+	// Window* handler =
+	// reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+	// handler->input->UpdateButton(button, action, mods);
 
 	VirtualInputManager* vim = VirtualInputManager::GetInstance();
 	vim->Update(button, InputSource::MOUSE_BUTTON, (float)action);
@@ -208,11 +270,33 @@ Window::SetWindowFocusCallback(Function focus_callback)
 	glfwSetWindowFocusCallback(window, focus_callback);
 }
 
+template<typename Function>
+void
+Window::SetCursorPosCallback(Function cursor_pos_callback)
+{
+	glfwSetCursorPosCallback(window, cursor_pos_callback);
+}
+
+void
+Window::DefaultCursorPosCallback(GLFWwindow* window, double xpos, double ypos)
+{
+	Window* handler = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+	VirtualInputManager* vim = VirtualInputManager::GetInstance();
+
+	float normalizedX =
+	  2.0f * ((float)xpos + 0.5f) / handler->GetWindowWidth() - 1.0f;
+	float normalizedY =
+	  2.0f * ((float)ypos + 0.5f) / handler->GetWindowHeight() - 1.0f;
+
+	vim->Update(0, InputSource::CURSOR, normalizedX);
+	vim->Update(1, InputSource::CURSOR, normalizedY);
+}
+
 void
 Window::DefaultFocusCallback(GLFWwindow* window, int focused)
 {
 	Window* handler = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
-	
+
 	if (focused) {
 		handler->SetFocus(true);
 	} else {
@@ -227,9 +311,9 @@ Window::DefaultKeyCallback(GLFWwindow* window,
                            int         action,
                            int         mods)
 {
-	Window* handler = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
-
-	handler->input->UpdateKey(key, action, mods);
+	// Window* handler =
+	// reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+	// handler->input->UpdateKey(key, action, mods);
 
 	VirtualInputManager* vim = VirtualInputManager::GetInstance();
 	vim->Update(key, InputSource::KEY, (float)action);
@@ -547,6 +631,7 @@ Window::Window(std::string windowTitle)
 		SetScrollCallback(DefaultScrollCallback);
 		SetFramebufferSizeCallback(DefaultFramebufferSizeCallback);
 		SetWindowFocusCallback(DefaultFocusCallback);
+		SetCursorPosCallback(DefaultCursorPosCallback);
 
 		const char* pctwinshock =
 		  "03000000790000000600000000000000,G-Shark "

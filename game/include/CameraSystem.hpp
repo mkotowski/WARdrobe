@@ -56,6 +56,9 @@ CameraSystem::Update(float                             dt,
 	rightInput = vim->GetVirtualInput("MoveRight")->GetValue() -
 	             vim->GetVirtualInput("MoveLeft")->GetValue();
 
+	playerInputVertical += forwardInput;
+	playerInputHorizontal += rightInput;
+
 	leftMousePressed =
 	  static_cast<bool>(vim->GetVirtualInput("AttackLeftHand")->GetValue());
 	rightMousePressed =
@@ -73,17 +76,17 @@ CameraSystem::Update(float                             dt,
 		transform.position = camera.cameraPos;
 		// smooth movement
 		if (forwardInput > 0.0f)
-			forwardInput -= 0.01f;
+			playerInputVertical -= 0.01f;
 		if (rightInput > 0.0f)
-			rightInput -= 0.01f;
+			playerInputHorizontal -= 0.01f;
 		if (forwardInput < 0.0f)
-			forwardInput += 0.01f;
+			playerInputVertical += 0.01f;
 		if (rightInput < 0.0f)
-			rightInput += 0.01f;
+			playerInputHorizontal += 0.01f;
 		// poślizg
-		if (abs(forwardInput) < 0.2f)
-			forwardInput = 0.0f;
-		if (abs(rightInput) < 0.2f)
-			rightInput = 0.0f;
+		if (abs(forwardInput) < 1.0f)
+			playerInputVertical = 0.0f;
+		if (abs(rightInput) < 1.0f)
+			playerInputHorizontal = 0.0f;
 	}
 }

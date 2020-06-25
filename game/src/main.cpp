@@ -150,7 +150,19 @@ main()
 {
 	std::setlocale(LC_ALL, "pl_PL");
 
-	Logger log;
+	//Logger log;
+
+	std::cout << "\u001b[32m"; // green
+	std::cout << "[WARdrobe -- Beat them up!]\n\n";
+	std::cout << "\u001b[36m"; // cyan
+	std::cout << "Creators:\n";
+	std::cout << " - Micha³ Kotowski\n";
+	std::cout << " - Jakub Guzek\n";
+	std::cout << " - £ukasz Go³ygowski\n";
+	
+	std::cout << "\u001b[33m"; // yellow
+	std::cout << "\nStarting the game...\n\n";
+	std::cout << "\u001b[0m"; // reset
 
 	//std::setlocale(LC_ALL, "pl_PL.UTF-8");
 	//std::setlocale(LC_NUMERIC, "de_DE.UTF-8");
@@ -163,7 +175,7 @@ main()
 
 	using json = nlohmann::json;
 
-	luaTest();
+	//luaTest();
 
 	std::shared_ptr<AssetManager> assetManager = std::make_shared<AssetManager>();
 	std::shared_ptr<ConfigManager> configManager = std::make_shared<ConfigManager>("settings.toml");
@@ -182,8 +194,6 @@ main()
 		t2.join();
 	if (t3.joinable())
 		t3.join();*/
-
-	
 
 	Game* game = new Game("WARdrobe");
 	game->Loop();

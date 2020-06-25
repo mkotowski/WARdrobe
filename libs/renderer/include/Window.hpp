@@ -558,6 +558,9 @@ public:
 	template<typename Function>
 	void SetWindowFocusCallback(Function focus_callback);
 
+	template<typename Function>
+	void SetCursorPosCallback(Function cursor_pos_callback);
+
 	// Default GLFW Callbacks
 	// For accessing the Window instance memebers:
 	// @look https://stackoverflow.com/questions/7676971/
@@ -593,6 +596,10 @@ public:
 	static void DefaultJoystickCallback(int jid, int event);
 
 	static void DefaultFocusCallback(GLFWwindow* window, int focused);
+
+	static void DefaultCursorPosCallback(GLFWwindow* window,
+	                                     double      xpos,
+	                                     double      ypos);
 
 #if INCLUDE_DEBUG_UI
 	DebugUI* GetDebugUI() { return debugUi; }

@@ -43,45 +43,89 @@ Game::Loop()
 {
 	VirtualInputManager* vim = VirtualInputManager::GetInstance();
 
-	vim->AddVirtualInput("MoveForward", VirtualInputType::State);
+	vim->AddVirtualInput("MoveForward", VirtualInputType::Range);
 	vim->AddVirtualInput("MoveRight", VirtualInputType::State);
 	vim->AddVirtualInput("MoveBackward", VirtualInputType::State);
 	vim->AddVirtualInput("MoveLeft", VirtualInputType::State);
 	vim->AddVirtualInput("AttackLeftHand", VirtualInputType::Action);
 	vim->AddVirtualInput("AttackRightHand", VirtualInputType::Action);
 	vim->AddVirtualInput("MenuBack", VirtualInputType::Action);
-	vim->AddVirtualInput("ActivateHeal", VirtualInputType::Action);
-	vim->AddVirtualInput("ActivateBuff", VirtualInputType::Action);
+	vim->AddVirtualInput("Restart", VirtualInputType::Action);
+	vim->AddVirtualInput("ActivateHeal", VirtualInputType::Trigger);
+	vim->AddVirtualInput("ActivateBuff", VirtualInputType::Trigger);
+
+	vim->AddVirtualInput("RotationX", VirtualInputType::Raw);
+	vim->AddVirtualInput("RotationY", VirtualInputType::Raw);
+
+	vim->AddMapping(
+	  "RotationX", GLFW_GAMEPAD_AXIS_RIGHT_X, InputSource::GAMEPAD_AXIS);
+	vim->AddMapping(
+	  "RotationY", GLFW_GAMEPAD_AXIS_RIGHT_Y, InputSource::GAMEPAD_AXIS);
+
+	vim->AddMapping("RotationX", 0, InputSource::CURSOR);
+	vim->AddMapping("RotationY", 1, InputSource::CURSOR);
 
 	vim->AddMapping("MoveForward", GLFW_KEY_W, InputSource::KEY);
 	vim->AddMapping("MoveForward", GLFW_KEY_UP, InputSource::KEY);
+	vim->AddMapping(
+	  "MoveForward", GLFW_GAMEPAD_BUTTON_DPAD_UP, InputSource::GAMEPAD_BUTTON);
 
 	vim->AddMapping("ActivateHeal", GLFW_KEY_Q, InputSource::KEY);
 	vim->AddMapping(
 	  "ActivateHeal", GLFW_MOUSE_BUTTON_4, InputSource::MOUSE_BUTTON);
+	vim->AddMapping(
+	  "ActivateHeal", GLFW_GAMEPAD_BUTTON_X, InputSource::GAMEPAD_BUTTON);
+	vim->AddMapping(
+	  "ActivateHeal", GLFW_GAMEPAD_AXIS_LEFT_TRIGGER, InputSource::GAMEPAD_AXIS);
 
 	vim->AddMapping("ActivateBuff", GLFW_KEY_E, InputSource::KEY);
 	vim->AddMapping(
 	  "ActivateBuff", GLFW_MOUSE_BUTTON_5, InputSource::MOUSE_BUTTON);
+	vim->AddMapping(
+	  "ActivateBuff", GLFW_GAMEPAD_BUTTON_Y, InputSource::GAMEPAD_BUTTON);
+	vim->AddMapping(
+	  "ActivateBuff", GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER, InputSource::GAMEPAD_AXIS);
 
 	vim->AddMapping("MoveBackward", GLFW_KEY_S, InputSource::KEY);
 	vim->AddMapping("MoveBackward", GLFW_KEY_DOWN, InputSource::KEY);
+	vim->AddMapping(
+	  "MoveBackward", GLFW_GAMEPAD_BUTTON_DPAD_DOWN, InputSource::GAMEPAD_BUTTON);
 
 	vim->AddMapping("MoveRight", GLFW_KEY_D, InputSource::KEY);
 	vim->AddMapping("MoveRight", GLFW_KEY_RIGHT, InputSource::KEY);
+	vim->AddMapping(
+	  "MoveRight", GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, InputSource::GAMEPAD_BUTTON);
 
 	vim->AddMapping("MoveLeft", GLFW_KEY_A, InputSource::KEY);
 	vim->AddMapping("MoveLeft", GLFW_KEY_LEFT, InputSource::KEY);
+	vim->AddMapping(
+	  "MoveLeft", GLFW_GAMEPAD_BUTTON_DPAD_LEFT, InputSource::GAMEPAD_BUTTON);
 
 	vim->AddMapping("MenuBack", GLFW_KEY_ESCAPE, InputSource::KEY);
+	vim->AddMapping(
+	  "MenuBack", GLFW_GAMEPAD_BUTTON_BACK, InputSource::GAMEPAD_BUTTON);
+
+	vim->AddMapping("Restart", GLFW_KEY_F5, InputSource::KEY);
+	vim->AddMapping(
+	  "Restart", GLFW_GAMEPAD_BUTTON_START, InputSource::GAMEPAD_BUTTON);
 
 	vim->AddMapping(
 	  "AttackLeftHand", GLFW_MOUSE_BUTTON_LEFT, InputSource::MOUSE_BUTTON);
 	vim->AddMapping("AttackLeftHand", GLFW_KEY_SPACE, InputSource::KEY);
+	vim->AddMapping(
+	  "AttackLeftHand", GLFW_GAMEPAD_BUTTON_A, InputSource::GAMEPAD_BUTTON);
+	vim->AddMapping("AttackLeftHand",
+	                GLFW_GAMEPAD_BUTTON_LEFT_BUMPER,
+	                InputSource::GAMEPAD_BUTTON);
 
 	vim->AddMapping(
 	  "AttackRightHand", GLFW_MOUSE_BUTTON_RIGHT, InputSource::MOUSE_BUTTON);
 	vim->AddMapping("AttackRightHand", GLFW_KEY_B, InputSource::KEY);
+	vim->AddMapping(
+	  "AttackRightHand", GLFW_GAMEPAD_BUTTON_B, InputSource::GAMEPAD_BUTTON);
+	vim->AddMapping("AttackRightHand",
+	                GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER,
+	                InputSource::GAMEPAD_BUTTON);
 
 	// Initialize ECS managers
 	gameplayManager->Init();

@@ -29,6 +29,18 @@ public:
 		return singleton_;
 	}
 
+	std::string GetAssignedLabel(int rawInputId, int rawInputSource)
+	{
+		std::pair<int, int> key = std::make_pair(rawInputId, rawInputSource);
+
+		if (mappings.find(key) ==
+		    mappings.end()) {
+			return std::string("");
+		} else {
+			return mappings[key];
+		}
+	}
+
 private:
 	VirtualInputManager() = default;
 

@@ -11,8 +11,9 @@ enum VirtualInputType {
 	Range  = 1, // float [-1.0, 1.0]
 	State  = 2, // 0 off, 1 on, 2 continue
 	            // adapated for 1/0 values
-	Action = 3  // bool
+	Action = 3, // bool
 	            // adapated for 1/0 values
+	Trigger = 4 // default value -1
 };
 
 class VirtualInput
@@ -21,6 +22,7 @@ public:
 	VirtualInput(VirtualInputType type) : type(type) {
 		previousRawValue = 0;
 		virtualValue = 0;
+		rawValue = 0;
 	}
 	~VirtualInput() = default;
 	
@@ -43,6 +45,13 @@ public:
 					virtualValue = 1.0f;
 				}
 				else {
+					virtualValue = 0.0f;
+				}
+				break;
+			case VirtualInputType::Trigger:
+				if (rawValue == 1.0f) {
+					virtualValue = 1.0f;
+				} else {
 					virtualValue = 0.0f;
 				}
 				break;
