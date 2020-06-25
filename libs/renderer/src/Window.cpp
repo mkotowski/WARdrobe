@@ -767,9 +767,9 @@ Window::Window(std::string windowTitle)
 
 		GLFWcursor* cursor = glfwCreateCursor(&image, 0, 0);
 
-		GLFWcursor* cursor2 = glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR);
+		//GLFWcursor* cursor2 = glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR);
 
-		glfwSetCursor(window, cursor2);
+		glfwSetCursor(window, cursor);
 		glfwSetWindowIcon(window, 1, &cursor_data);
 
 

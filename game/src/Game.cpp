@@ -31,7 +31,7 @@ Game::Game(std::string windowTitle)
 {
 	gameWindow = new Window(windowTitle);
 
-	gameWindow->GetDebugUI()->AddLog("test imgui logger\n");
+	//gameWindow->GetDebugUI()->AddLog("test imgui logger\n");
 
 	gameplayManager = new GameplayManager();
 }
