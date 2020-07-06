@@ -4,6 +4,7 @@ out vec4 FragColor;
 in vec2 TexCoord;
 in vec3 Normal;
 in vec3 FragPos;
+in vec4 FragPosLightSpace;
 
 
 struct DirLight
@@ -53,9 +54,13 @@ uniform vec3 viewPos;
 // Changing specific color of the object via Renderer
 uniform vec3 newColor;
 uniform DirLight dirLight;
-uniform PointLight pointLight;
+
+#define NR_POINT_LIGHTS 32
+uniform int numberOfPointLights;
+uniform PointLight pointLights[NR_POINT_LIGHTS];
 
 #define NR_SPOT_LIGHTS 32
+
 uniform int numberOfSpotLights;
 uniform SpotLight spotLights[NR_SPOT_LIGHTS];
 
@@ -115,10 +120,12 @@ void main()
 	FragColor = texture(texture1, TexCoord);
 
 	vec3 result = vec3(0.0, 0.0, 0.0);
-	result += ResultPointLight(pointLight, norm, FragPos, viewDir);
+	for (int i = 0; i < numberOfPointLights; i++)
+		result += ResultPointLight(pointLights[i], norm, FragPos, viewDir);
 	
-	for (int i = 0; i < numberOfSpotLights; i++)
-		result += ResultSpotLight(spotLights[i], norm, FragPos, viewDir);
+	
+	for (int j = 0; j < numberOfSpotLights; j++)
+		result += ResultSpotLight(spotLights[j], norm, FragPos, viewDir);
 	
 	result += ResultDirLight(dirLight, norm, viewDir);
 	result = result * newColor;
@@ -138,8 +145,8 @@ vec3 ResultDirLight(DirLight light, vec3 normal, vec3 viewDir)
 	vec3 diffuse = light.diffuse * diff * vec3(texture(texture1, TexCoord).rgb);
 	vec3 specular = light.specular * spec;
 	
-	//float shadow = ShadowCalculation(FragPosLightSpace, light.position);
-	vec3 result = (ambient + diffuse + specular);
+	float shadow = ShadowCalculation(FragPosLightSpace, light.position);
+	vec3 result = (ambient + (1.0 - shadow) *  (diffuse + specular));
 
 	return result;
 }

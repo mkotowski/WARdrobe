@@ -26,11 +26,12 @@ public:
 	void RenderSystem::Draw(float                             dt,
 	                        std::shared_ptr<ComponentManager> componentManager);
 
-	void Init();
+	void Init(std::shared_ptr<ComponentManager> componentManager);
 	int  CheckDistance(Entity                            entityToCheck,
 	                   std::shared_ptr<ComponentManager> componentManager);
 
 	void CreateColorAttachmentTexture();
+	void CreateShadowmapAttachment();
 
 	Entity  cameraEntity;
 	Entity  lightEntity;
@@ -43,6 +44,12 @@ public:
 	float secondLevelOfDetail = 50.0f;
 	float thirdLevelOfDetail = 75.0f;
 
+	// Shadowmapping variables
+	unsigned int ShadowFBO, ShadowRBO;
+	unsigned int shadowmapTexture;
+	glm::mat4 lightSpaceMatrix;
+
+	// Postprocessing variables
 	unsigned int FBO, RBO;
 	unsigned int quadVAO, quadVBO;
 	unsigned int textureColorbuffer;
@@ -56,7 +63,7 @@ RenderSystem::Update(float                             dt,
 {}
 
 void
-RenderSystem::Init()
+RenderSystem::Init(std::shared_ptr<ComponentManager> componentManager)
 {
 
 	glEnable(GL_BLEND);
@@ -86,16 +93,118 @@ RenderSystem::Init()
 	// Framebuffer to texture
 	
     CreateColorAttachmentTexture();
-
+	CreateShadowmapAttachment();
 	windowWidth = this->window->GetWindowWidth()-1;
 	windowHeight = this->window->GetWindowHeight();
+
+	// Initiate shadow shader (not animated)
+	
+
+	glm::mat4 lightProjection, lightView;
+    float near_plane = 1.0f, far_plane = 25.0f;
+    
+
+
+    lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+    lightView = glm::lookAt(componentManager->GetComponent<Light>(lightEntity).position, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+    lightSpaceMatrix = lightProjection * lightView;
+	std::cout << "Here" << std::endl;
+	
+
+	auto& shader1 = componentManager->GetComponent<Shader>(shaders->at("modelShaderShadow"));
+	shader1.use();
+	shader1.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+	std::cout << "Here" << std::endl;
+	
+	auto& shader2 = componentManager->GetComponent<Shader>(shaders->at("animatedModelShaderShadow"));
+	shader2.use();
+	shader2.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 }
 
 void
 RenderSystem::Draw(float dt, std::shared_ptr<ComponentManager> componentManager)
 {
-	// first pass - to framebuffer
+	// first pass - depthmap
+	glViewport(0, 0, 1024, 1024);
+	glBindFramebuffer(GL_FRAMEBUFFER, ShadowFBO);
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+	// renderScene?
+	for (auto& entity : entities) {
+		auto& renderer = componentManager->GetComponent<Renderer>(entity);
+
+		auto& shader = Shader();
+
+		switch(renderer.drawingType)
+		{
+			// No animations for shadows, fuck yeah!
+			// Model shader with BB
+			case 6:
+				shader =
+				componentManager->GetComponent<Shader>(shaders->at("modelShaderShadow"));
+				shader.use();
+				break;
+			// Animated model without BB
+			case 0:
+				shader =
+				componentManager->GetComponent<Shader>(shaders->at("modelShaderShadow"));
+				shader.use();
+				break;	
+			default:
+				continue;	
+
+		}
+
+		auto& modelArray = componentManager->GetComponent<ModelArray>(entity);
+		auto& transform = componentManager->GetComponent<Transform>(entity);
+
+		if (modelArray.checkLevelOfDetail == 0) 
+		{
+			renderer.DrawToShadowMap(&shader,
+			              &modelArray.zeroLevelModel,
+			              transform.position,
+			              transform.rotation,
+			              transform.scale);
+		} 
+		else 
+		{
+			// Gets distance between camera and model
+			int checkedLevelOfDetail = CheckDistance(entity, componentManager);
+
+			if (checkedLevelOfDetail == 1) // FirstLevel of detail
+			{
+				renderer.DrawToShadowMap(&shader,
+				              &modelArray.firstLevelModel,
+				              transform.position,
+				              transform.rotation,
+				              transform.scale);
+			} 
+			else if (checkedLevelOfDetail == 2) // Second level of detail
+			{
+				renderer.DrawToShadowMap(&shader,
+				              &modelArray.secondLevelModel,
+				              transform.position,
+				              transform.rotation,
+				              transform.scale);
+			} 
+			else if (checkedLevelOfDetail == 3) // Third level of detail
+			{
+				renderer.DrawToShadowMap(&shader,
+				              &modelArray.thirdLevelModel,
+				              transform.position,
+				              transform.rotation,
+				              transform.scale);
+			} 
+			else // Model outside of the view
+			{
+				// What do you expect should be here huh?
+			}
+		}
+	}
+
+	// second pass - to framebuffer
 	//
+
 	if (windowHeight != window->GetWindowHeight() || windowWidth != window->GetWindowWidth())
 	{
 		CreateColorAttachmentTexture();
@@ -103,8 +212,8 @@ RenderSystem::Draw(float dt, std::shared_ptr<ComponentManager> componentManager)
 		windowHeight = this->window->GetWindowHeight();
 	}
 		
-
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+	glViewport(0, 0, windowWidth, windowHeight);
 	glEnable(GL_DEPTH_TEST);
 
 	glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
@@ -112,11 +221,15 @@ RenderSystem::Draw(float dt, std::shared_ptr<ComponentManager> componentManager)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	auto& cameraComponent = componentManager->GetComponent<Camera>(cameraEntity);
+
 	// Setup all neded entities so they dont have to be searched and/or attached
 	// to renderSystem at the start
+
 	for (auto& entity : entities) {
-		if (componentManager->GetComponent<Renderer>(entity).drawingType == 3) {
+		if (componentManager->GetComponent<Renderer>(entity).drawingType == 3) 
+		{
 			this->skybox = &componentManager->GetComponent<Skybox>(entity);
+			break;
 		}
 	}
 
@@ -142,6 +255,10 @@ RenderSystem::Draw(float dt, std::shared_ptr<ComponentManager> componentManager)
 				shader =
 				componentManager->GetComponent<Shader>(shaders->at("modelShader"));
 				shader.use();
+				shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+				shader.setInt("shadowMap", 1);
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, shadowmapTexture);				
 				break;
 			
 			// Animated model with BB
@@ -150,6 +267,10 @@ RenderSystem::Draw(float dt, std::shared_ptr<ComponentManager> componentManager)
 			  	shaders->at("animatedModelShader"));
 				shader.use();
 				componentManager->GetComponent<Animator>(entity).PlayCurrentAnimation(dt);
+				shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+				shader.setInt("shadowMap", 1);				
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, shadowmapTexture);	
 				break;
 
 
@@ -189,6 +310,10 @@ RenderSystem::Draw(float dt, std::shared_ptr<ComponentManager> componentManager)
 			  	shaders->at("animatedModelShader"));
 				shader.use();
 				componentManager->GetComponent<Animator>(entity).PlayCurrentAnimation(dt);
+				shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+				shader.setInt("shadowMap", 1);
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, shadowmapTexture);	
 				break;
 
 			// Billboard
@@ -203,6 +328,10 @@ RenderSystem::Draw(float dt, std::shared_ptr<ComponentManager> componentManager)
 				shader =
 				componentManager->GetComponent<Shader>(shaders->at("modelShader"));
 				shader.use();
+				shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+				shader.setInt("shadowMap", 1);
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, shadowmapTexture);	
 				break;		
 
 		}
@@ -210,7 +339,8 @@ RenderSystem::Draw(float dt, std::shared_ptr<ComponentManager> componentManager)
 		auto& modelArray = componentManager->GetComponent<ModelArray>(entity);
 		auto& transform = componentManager->GetComponent<Transform>(entity);
 
-		if (modelArray.checkLevelOfDetail == 0) {
+		if (modelArray.checkLevelOfDetail == 0) 
+		{
 			renderer.Draw(&shader,
 			              &modelArray.zeroLevelModel,
 			              &cameraComponent,
@@ -220,7 +350,8 @@ RenderSystem::Draw(float dt, std::shared_ptr<ComponentManager> componentManager)
 			              this->window->GetWindowWidth(),
 			              this->window->GetWindowHeight());
 
-			if (renderer.drawingType == 6 || renderer.drawingType == 5) {
+			if (renderer.drawingType == 6 || renderer.drawingType == 5) 
+			{
 				shader =
 				  componentManager->GetComponent<Shader>(shaders->at("boxShader"));
 
@@ -231,7 +362,9 @@ RenderSystem::Draw(float dt, std::shared_ptr<ComponentManager> componentManager)
 				                &shader,
 				                this->window);
 			}
-		} else {
+		} 
+		else 
+		{
 			// Gets distance between camera and model
 			int checkedLevelOfDetail = CheckDistance(entity, componentManager);
 
@@ -245,7 +378,8 @@ RenderSystem::Draw(float dt, std::shared_ptr<ComponentManager> componentManager)
 				              transform.scale,
 				              this->window->GetWindowWidth(),
 				              this->window->GetWindowHeight());
-			} else if (checkedLevelOfDetail == 2) // Second level of detail
+			} 
+			else if (checkedLevelOfDetail == 2) // Second level of detail
 			{
 				renderer.Draw(&shader,
 				              &modelArray.secondLevelModel,
@@ -255,7 +389,8 @@ RenderSystem::Draw(float dt, std::shared_ptr<ComponentManager> componentManager)
 				              transform.scale,
 				              this->window->GetWindowWidth(),
 				              this->window->GetWindowHeight());
-			} else if (checkedLevelOfDetail == 3) // Third level of detail
+			} 
+			else if (checkedLevelOfDetail == 3) // Third level of detail
 			{
 				renderer.Draw(&shader,
 				              &modelArray.thirdLevelModel,
@@ -265,14 +400,15 @@ RenderSystem::Draw(float dt, std::shared_ptr<ComponentManager> componentManager)
 				              transform.scale,
 				              this->window->GetWindowWidth(),
 				              this->window->GetWindowHeight());
-			} else // Model outside of the view
+			} 
+			else // Model outside of the view
 			{
 				// What do you expect should be here huh?
 			}
 		}
 	}
 
-	// std::cout << window->GetWindowWidth() << " " << window->GetWindowHeight() << std::endl;
+	// third pass - on the quad
 	
 	glDisable(GL_DEPTH_TEST);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -334,5 +470,28 @@ RenderSystem::CreateColorAttachmentTexture()
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RBO); // now actually attach it
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+}
+
+void
+RenderSystem::CreateShadowmapAttachment()
+{
+	glGenFramebuffers(1, &ShadowFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, ShadowFBO);
+	glGenTextures(1, &shadowmapTexture);
+	glBindTexture(GL_TEXTURE_2D, shadowmapTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 1024, 1024, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+    // attach depth texture as FBO's depth buffer
+    glBindFramebuffer(GL_FRAMEBUFFER, ShadowFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowmapTexture, 0);
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 }
