@@ -118,6 +118,8 @@ public:
 	void SetVisible(bool visibility) { isVisible = visibility; }
 	void Draw()
 	{
+		glDisable(GL_CULL_FACE);
+
 		// note that this is allowed, the call to glVertexAttribPointer registered
 		// VBO as the vertex attribute's bound vertex buffer object so afterwards we
 		// can safely unbind
@@ -137,6 +139,8 @@ public:
 		glBindTexture(GL_TEXTURE_2D, texture - 1);
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+		glEnable(GL_CULL_FACE);
 	}
 
 private:
