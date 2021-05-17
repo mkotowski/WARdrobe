@@ -118,6 +118,8 @@ public:
 	void SetVisible(bool visibility) { isVisible = visibility; }
 	void Draw()
 	{
+		glDisable(GL_CULL_FACE);
+
 		// note that this is allowed, the call to glVertexAttribPointer registered
 		// VBO as the vertex attribute's bound vertex buffer object so afterwards we
 		// can safely unbind
@@ -137,6 +139,8 @@ public:
 		glBindTexture(GL_TEXTURE_2D, texture - 1);
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+		glEnable(GL_CULL_FACE);
 	}
 
 private:
@@ -317,11 +321,8 @@ private:
 		              texture); // all upcoming GL_TEXTURE_2D operations now have
 		                        // effect on this texture object
 		// set the texture wrapping parameters
-		glTexParameteri(
-		  GL_TEXTURE_2D,
-		  GL_TEXTURE_WRAP_S,
-		  GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		// set texture filtering parameters
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

@@ -38,6 +38,7 @@ LightningSystem::Update(float                             dt,
                      std::shared_ptr<ComponentManager> componentManager)
 {
     int spotLightCounter = 0;
+    int pointLightCounter = 0;
     // Set all uniforms
     for(auto& entity: entities)
     {
@@ -65,29 +66,33 @@ LightningSystem::Update(float                             dt,
         }
         else if (componentManager->GetComponent<Light>(entity).typeOfTheLight == "pointLight")
         {
+
+            std::string pointLightName = "pointLights[" + std::to_string(pointLightCounter) + "].";
+
             for(std::map<std::string, Entity>::iterator it = shaders->begin(); it != shaders->end(); it++)
             {
                 auto& value = componentManager->GetComponent<Shader>(it->second);
                 if (value.shaderType == "modelShader" || value.shaderType == "animatedModelShader")
                 {
                     value.use();
-                    value.setVec3("pointLight.position",
+                    value.setVec3(pointLightName + "position",
                             componentManager->GetComponent<Light>(entity).position);
-                    value.setFloat("pointLight.constant",
+                    value.setFloat(pointLightName + "constant",
                                 componentManager->GetComponent<Light>(entity).constant);
-                    value.setFloat("pointLight.linear",
+                    value.setFloat(pointLightName + "linear",
                                 componentManager->GetComponent<Light>(entity).linear);
-                    value.setFloat("pointLight.quadratic",
+                    value.setFloat(pointLightName + "quadratic",
                                 componentManager->GetComponent<Light>(entity).quadratic);
-                    value.setVec3("pointLight.ambient",
+                    value.setVec3(pointLightName + "ambient",
                                 componentManager->GetComponent<Light>(entity).ambientColor);
-                    value.setVec3("pointLight.diffuse",
+                    value.setVec3(pointLightName + "diffuse",
                                 componentManager->GetComponent<Light>(entity).diffuseColor);
-                    value.setVec3("pointLight.specular",
+                    value.setVec3(pointLightName + "specular",
                                 componentManager->GetComponent<Light>(entity).specularColor);
                 }
                 
             }
+            pointLightCounter++;
         }
         else if (componentManager->GetComponent<Light>(entity).typeOfTheLight == "spotLight")
         {
@@ -132,5 +137,6 @@ LightningSystem::Update(float                             dt,
         auto& value = componentManager->GetComponent<Shader>(it->second);
         value.use();
         value.setInt("numberOfSpotLights", spotLightCounter);
+        value.setInt("numberOfPointLights", pointLightCounter);
     }
 }
