@@ -31,7 +31,7 @@ Game::Game(std::string windowTitle)
 {
 	gameWindow = new Window(windowTitle);
 
-	gameWindow->GetDebugUI()->AddLog("test imgui logger\n");
+	//gameWindow->GetDebugUI()->AddLog("test imgui logger\n");
 
 	gameplayManager = new GameplayManager();
 }
@@ -253,7 +253,7 @@ Game::Loop()
 	colliderSystem->Initiate(gameplayManager->GetComponentManager());
 	std::cout << "ColliderSystem has been initialized" << std::endl;
 
-	renderSystem->Init();
+	renderSystem->Init(gameplayManager->GetComponentManager());
 	std::cout << "RenderSystem has been initialized" << std::endl;
 
 	auto DamagePillIndicator = gameWindow->guiManager->AddWidget(
@@ -563,9 +563,10 @@ Game::LoadLevel(std::string levelPath)
 				// Directional Light
 				if (it2.value()[0] == "directionalLight") {
 					// 1  - 3:  - direction
-					// 4  - 6:  - ambient
-					// 7  - 9:  - diffuse
-					// 10 - 12: - specular
+					// 4  - 6:  - position
+					// 7  - 9:  - ambient
+					// 10 - 12: - diffuse
+					// 13 - 15: - specular
 					gameplayManager->AddComponent(
 					  entity,
 					  Light(
