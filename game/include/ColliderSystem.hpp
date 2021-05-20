@@ -357,7 +357,7 @@ public:
 	Shader*             ourShader;
 	Window*             window;
 	Camera*             camera;
-	glm::vec3*           playerPos;
+	glm::vec3*          playerPos;
 
 	void Update(float                             dt,
 	            std::shared_ptr<ComponentManager> componentManager) override;
@@ -373,11 +373,6 @@ ColliderSystem::Update(float                             dt,
 	// entitiesToCollide.clear();
 	for (auto const& entity : entities) {
 
-		for (int i = 0; i < entitiesToCollide.size(); i++) {
-			componentManager->GetComponent<BoundingBox>(entitiesToCollide[i])
-			  .collisionEnterEntities.clear();
-		}
-
 		glm::vec3 objectPos =
 		  componentManager->GetComponent<Transform>(entity).position;
 		objectPos.y = 0.0f;
@@ -385,10 +380,12 @@ ColliderSystem::Update(float                             dt,
 			continue;
 		}
 		entitiesToCollide.push_back(entity);
-		componentManager->GetComponent<BoundingBox>(entity).Assign(
-		  entity, componentManager);
-		componentManager->GetComponent<BoundingBox>(entity).origin =
-		  componentManager->GetComponent<Transform>(entity).position;
+
+		auto& entitiesBB = componentManager->GetComponent<BoundingBox>(entity);
+
+		entitiesBB.Assign(entity, componentManager);
+		entitiesBB.collisionEnterEntities.clear();
+
 		// DrawBoundingBox(componentManager->GetComponent<BoundingBox>(entity));
 	}
 	CheckCollision(componentManager);
